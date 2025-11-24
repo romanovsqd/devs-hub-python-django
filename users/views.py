@@ -1,7 +1,8 @@
 from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 
-from .forms import RegisterForm
+from .forms import LoginForm, RegisterForm
 
 
 def register(request):
@@ -18,3 +19,7 @@ def register(request):
         'form': form
     }
     return render(request, 'registration/register.html', context)
+
+
+class LoginUserView(LoginView):
+    authentication_form = LoginForm
