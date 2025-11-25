@@ -61,3 +61,20 @@ def card_update(request, card_id):
         'form': form,
     }
     return render(request, 'cards/card_form.html', context)
+
+
+@login_required
+def card_delete(request, card_id):
+    card = get_object_or_404(
+        Card,
+        pk=card_id,
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        card.delete()
+
+    context = {
+        'card': card
+    }
+    return render(request, 'cards/card_confirm_delete.html', context)
