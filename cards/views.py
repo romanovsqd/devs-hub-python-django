@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from .models import Card
 from .forms import CardForm
@@ -13,6 +13,16 @@ def card_list(request):
         'cards': cards
     }
     return render(request, 'cards/card_list.html', context)
+
+
+@login_required
+def card_detail(request, card_id):
+    card = get_object_or_404(Card, pk=card_id)
+
+    context = {
+        'card': card
+    }
+    return render(request, 'cards/card_detail.html', context)
 
 
 @login_required
