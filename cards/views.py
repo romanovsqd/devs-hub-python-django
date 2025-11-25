@@ -40,3 +40,24 @@ def card_create(request):
         'form': form,
     }
     return render(request, 'cards/card_form.html', context)
+
+
+@login_required
+def card_update(request, card_id):
+    card = get_object_or_404(
+        Card,
+        pk=card_id,
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        form = CardForm(request.POST, instance=card)
+        if form.is_valid():
+            card = form.save()
+    else:
+        form = CardForm(instance=card)
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'cards/card_form.html', context)
