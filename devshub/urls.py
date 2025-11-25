@@ -5,4 +5,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls', namespace='users')),
     path('cards/', include('cards.urls', namespace='cards')),
+    path('projects/', include('projects.urls', namespace='projects')),
 ]
