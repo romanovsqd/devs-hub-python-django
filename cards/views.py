@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Card
 from .forms import CardForm
@@ -33,6 +33,7 @@ def card_create(request):
             card = form.save(commit=False)
             card.user = request.user
             card.save()
+            return redirect(card.get_absolute_url())
     else:
         form = CardForm()
 
@@ -54,6 +55,7 @@ def card_update(request, card_id):
         form = CardForm(request.POST, instance=card)
         if form.is_valid():
             card = form.save()
+            return redirect(card.get_absolute_url())
     else:
         form = CardForm(instance=card)
 
@@ -73,6 +75,7 @@ def card_delete(request, card_id):
 
     if request.method == 'POST':
         card.delete()
+        return redirect('cards:card_list')
 
     context = {
         'card': card
