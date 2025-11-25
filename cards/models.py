@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 
 class Card(models.Model):
@@ -20,3 +21,6 @@ class Card(models.Model):
 
     def __str__(self):
         return self.front
+
+    def get_absolute_url(self):
+        return reverse('cards:card_detail', kwargs={'card_id': self.pk})
