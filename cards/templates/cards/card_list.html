@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Список карточек{% endblock title %}
+
+{% block content %}
+
+<h1>Список карточек</h1>
+
+<ul>
+  {% for card in cards %}
+  <li>
+    <h4>
+      <a href="#">
+        {{ card.front }}
+      </a>
+    </h4>
+  </li>
+  {% empty %}
+    <li>
+      Карточек нету
+    </li>
+  {% endfor %}
+
+</ul>
+
+{% endblock content %}
