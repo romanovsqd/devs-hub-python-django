@@ -67,3 +67,15 @@ def user_cards(request, user_id):
         'cards': cards,
     }
     return render(request, 'users/user_cards.html', context)
+
+
+@login_required
+def user_projects(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    projects = user.projects.all()
+
+    context = {
+        'user': user,
+        'projects': projects,
+    }
+    return render(request, 'users/user_projects.html', context)

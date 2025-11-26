@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Проекты {{ user.username }}{% endblock title %}
+
+{% block content %}
+
+  <h1>Проекты {{ user.username }}</h1>
+
+  <ul>
+    {% for project in projects %}
+      <li>
+        <h4>
+          <a href="{{ project.get_absolute_url }}">
+            {{ project.title }}
+          </a>
+        </h4>
+      </li>
+    {% empty %}
+      <li>
+        Проектов нету
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock content %}
