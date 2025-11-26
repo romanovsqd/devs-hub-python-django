@@ -6,4 +6,9 @@
 
   <h1>Профиль {{ user.username }}</h1>
 
+  <div>
+    <a href="{% url "users:user_cards" user.id %}">Карточки пользователя</a>
+    <a href="{% url "users:user_projects" user.id %}">Проекты пользователя</a>
+  </div>
+
 {% endblock content %}
