@@ -39,7 +39,12 @@ class LoginUserView(LoginView):
 
 @login_required
 def user_list(request):
-    users = User.objects.all()
+    query = request.GET.get('query', '')
+
+    if query:
+        users = User.objects.filter(username__icontains=query)
+    else:
+        users = User.objects.all()
 
     context = {
         'users': users,
