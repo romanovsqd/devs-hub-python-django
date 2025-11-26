@@ -8,4 +8,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.LoginUserView.as_view(), name='login'),
     path('', include('django.contrib.auth.urls')),
+
+    path('users/', views.user_list, name='user_list'),
 ]

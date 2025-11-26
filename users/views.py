@@ -1,8 +1,12 @@
-from django.contrib.auth import login
+from django.contrib.auth import get_user_model, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 
 from .forms import LoginForm, RegisterForm
+
+
+User = get_user_model()
 
 
 def register(request):
@@ -31,3 +35,13 @@ class LoginUserView(LoginView):
         if request.user.is_authenticated:
             return redirect('/')
         return super().dispatch(request, *args, **kwargs)
+
+
+@login_required
+def user_list(request):
+    users = User.objects.all()
+
+    context = {
+        'users': users,
+    }
+    return render(request, 'users/user_list.html', context)
