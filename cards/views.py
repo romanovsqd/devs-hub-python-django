@@ -7,7 +7,12 @@ from .forms import CardForm
 
 @login_required
 def card_list(request):
-    cards = Card.objects.all()
+    query = request.GET.get('query', '')
+
+    if query:
+        cards = Card.objects.filter(front__icontains=query)
+    else:
+        cards = Card.objects.all()
 
     context = {
         'cards': cards

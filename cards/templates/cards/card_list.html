@@ -6,6 +6,13 @@
 
   <h1>Список карточек</h1>
 
+  <div>
+    <form method="get">
+      <input type="text" name="query">
+      <button type="submit">Поиск</button>
+    </form>
+  </div>
+
   <ul>
     {% for card in cards %}
       <li>
