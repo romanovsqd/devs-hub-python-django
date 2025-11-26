@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }}{% endblock title %}
+
+{% block content %}
+
+  <h1>{{ project.title }}</h1>
+
+  <div>
+    <p>
+      {{ project.description }}
+    </p>
+  </div>
+
+  <div>
+    <a href="{{ project.live_url }}" target="_blank">Смотреть онлайн</a>
+    <a href="{{ project.repository_url }}" target="_blank">Репозиторий проекта</a>
+  </div>
+
+  <div>
+    <p>Дата создания: <span>{{ project.created_at }}</span></p>
+    <p>Последнее обновление: <span>{{ project.updated_at }}</span></p>
+  </div>
+
+{% endblock content %}
