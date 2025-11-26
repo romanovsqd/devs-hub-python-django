@@ -11,4 +11,5 @@ urlpatterns = [
 
     path('users/', views.user_list, name='user_list'),
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
+    path('users/<int:user_id>/cards/', views.user_cards, name='user_cards'),
 ]

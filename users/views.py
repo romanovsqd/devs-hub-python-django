@@ -55,3 +55,15 @@ def user_detail(request, user_id):
         'user': user,
     }
     return render(request, 'users/user_detail.html', context)
+
+
+@login_required
+def user_cards(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    cards = user.cards.all()
+
+    context = {
+        'user': user,
+        'cards': cards,
+    }
+    return render(request, 'users/user_cards.html', context)

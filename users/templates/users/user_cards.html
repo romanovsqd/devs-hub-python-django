@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Карточки {{ user.username }}{% endblock title %}
+
+{% block content %}
+
+  <h1>Карточки {{ user.username }}</h1>
+
+  <ul>
+    {% for card in cards %}
+      <li>
+        <h4>
+          <a href="{{ card.get_absolute_url }}">
+            {{ card.front }}
+          </a>
+        </h4>
+      </li>
+    {% empty %}
+      <li>
+        Карточек нету
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock content %}
