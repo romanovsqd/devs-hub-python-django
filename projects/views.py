@@ -7,7 +7,12 @@ from .forms import ProjectForm
 
 @login_required
 def project_list(request):
-    projects = Project.objects.all()
+    query = request.GET.get('query', '')
+
+    if query:
+        projects = Project.objects.filter(title__icontains=query)
+    else:
+        projects = Project.objects.all()
 
     context = {
         'projects': projects
