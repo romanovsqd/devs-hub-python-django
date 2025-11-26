@@ -1,3 +1,83 @@
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 
-# Create your views here.
+from .models import Project
+from .forms import ProjectForm
+
+
+@login_required
+def project_list(request):
+    projects = Project.objects.all()
+
+    context = {
+        'projects': projects
+    }
+    return render(request, 'projects/project_list.html', context)
+
+
+@login_required
+def project_detail(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    context = {
+        'project': project
+    }
+    return render(request, 'projects/project_detail.html', context)
+
+
+@login_required
+def project_create(request):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.user = request.user
+            project.save()
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectForm()
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'projects/project_form.html', context)
+
+
+@login_required
+def project_update(request, project_id):
+    project = get_object_or_404(
+        Project,
+        pk=project_id,
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            project = form.save()
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectForm(instance=project)
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'projects/project_form.html', context)
+
+
+@login_required
+def project_delete(request, project_id):
+    project = get_object_or_404(
+        Project,
+        pk=project_id,
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        project.delete()
+        return redirect('projects:project_list')
+
+    context = {
+        'project': project
+    }
+    return render(request, 'projects/project_confirm_delete.html', context)
