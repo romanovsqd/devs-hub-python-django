@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import LoginForm, RegisterForm
 
@@ -45,3 +45,13 @@ def user_list(request):
         'users': users,
     }
     return render(request, 'users/user_list.html', context)
+
+
+@login_required
+def user_detail(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+
+    context = {
+        'user': user,
+    }
+    return render(request, 'users/user_detail.html', context)
