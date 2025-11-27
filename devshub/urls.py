@@ -6,5 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls', namespace='users')),
     path('cards/', include('cards.urls', namespace='cards')),
+    path('card-sets/', include('cards.urls_cardsets', namespace='cardsets')),
     path('projects/', include('projects.urls', namespace='projects')),
 ] + debug_toolbar_urls()
