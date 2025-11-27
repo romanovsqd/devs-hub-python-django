@@ -93,7 +93,7 @@ def cardset_list(request):
     query = request.GET.get('query', '')
 
     if query:
-        cardsets = CardSet.objects.filter(question__icontains=query)
+        cardsets = CardSet.objects.filter(title__icontains=query)
     else:
         cardsets = CardSet.objects.all()
 
