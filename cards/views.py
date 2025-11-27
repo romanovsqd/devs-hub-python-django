@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Card
-from .forms import CardForm
+from .models import Card, CardSet
+from .forms import CardForm, CardSetForm
 
 
 @login_required
@@ -86,3 +86,88 @@ def card_delete(request, card_id):
         'card': card
     }
     return render(request, 'cards/card_confirm_delete.html', context)
+
+
+@login_required
+def cardset_list(request):
+    query = request.GET.get('query', '')
+
+    if query:
+        cardsets = CardSet.objects.filter(question__icontains=query)
+    else:
+        cardsets = CardSet.objects.all()
+
+    context = {
+        'cardsets': cardsets
+    }
+    return render(request, 'cardsets/cardset_list.html', context)
+
+
+@login_required
+def cardset_detail(request, cardset_id):
+    cardset = get_object_or_404(CardSet, pk=cardset_id)
+    cards = cardset.cards.all()
+
+    context = {
+        'cardset': cardset,
+        'cards': cards
+    }
+    return render(request, 'cardsets/cardset_detail.html', context)
+
+
+@login_required
+def cardset_create(request):
+    if request.method == 'POST':
+        form = CardSetForm(request.POST)
+        if form.is_valid():
+            cardset = form.save(commit=False)
+            cardset.author = request.user
+            cardset.save()
+            return redirect(cardset.get_absolute_url())
+    else:
+        form = CardSetForm()
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'cardsets/cardset_form.html', context)
+
+
+@login_required
+def cardset_update(request, cardset_id):
+    cardset = get_object_or_404(
+        CardSet,
+        pk=cardset_id,
+        author=request.user
+    )
+
+    if request.method == 'POST':
+        form = CardSetForm(request.POST, instance=cardset)
+        if form.is_valid():
+            cardset = form.save()
+            return redirect(cardset.get_absolute_url())
+    else:
+        form = CardSetForm(instance=cardset)
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'cardsets/cardset_form.html', context)
+
+
+@login_required
+def cardset_delete(request, cardset_id):
+    cardset = get_object_or_404(
+        CardSet,
+        pk=cardset_id,
+        author=request.user
+    )
+
+    if request.method == 'POST':
+        cardset.delete()
+        return redirect('cardsets:cardset_list')
+
+    context = {
+        'cardset': cardset
+    }
+    return render(request, 'cardsets/cardset_confirm_delete.html', context)
