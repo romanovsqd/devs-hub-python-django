@@ -24,3 +24,32 @@ class Card(models.Model):
 
     def get_absolute_url(self):
         return reverse('cards:card_detail', kwargs={'card_id': self.pk})
+
+
+class CardSet(models.Model):
+    title = models.CharField(max_length=255)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='cardsets',
+        on_delete=models.CASCADE
+    )
+    cards = models.ManyToManyField(
+        'Card',
+        related_name='cardsets',
+        blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['title']),
+        ]
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse(
+            'cardsets:cardset_detail', kwargs={'cardset_id': self.pk}
+        )
