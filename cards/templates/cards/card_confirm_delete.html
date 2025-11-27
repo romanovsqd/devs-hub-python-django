@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Удалить {{ card.front }}{% endblock title %}
+{% block title %}Удалить {{ card.question }}{% endblock title %}
 
 {% block content %}
 
-  <h1>Уверены что хотите удалить карточку "{{ card.front }}"?</h1>
+  <h1>Уверены что хотите удалить карточку "{{ card.question }}"?</h1>
 
   <form method="post">
     {% csrf_token %}

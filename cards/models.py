@@ -4,9 +4,9 @@ from django.urls import reverse
 
 
 class Card(models.Model):
-    front = models.CharField(max_length=255)
-    back = models.TextField()
-    user = models.ForeignKey(
+    question = models.CharField(max_length=255)
+    answer = models.TextField()
+    author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='cards',
         on_delete=models.CASCADE
@@ -16,11 +16,11 @@ class Card(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['front']),
+            models.Index(fields=['question']),
         ]
 
     def __str__(self):
-        return self.front
+        return self.question
 
     def get_absolute_url(self):
         return reverse('cards:card_detail', kwargs={'card_id': self.pk})

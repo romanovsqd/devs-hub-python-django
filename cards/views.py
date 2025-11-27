@@ -10,7 +10,7 @@ def card_list(request):
     query = request.GET.get('query', '')
 
     if query:
-        cards = Card.objects.filter(front__icontains=query)
+        cards = Card.objects.filter(question__icontains=query)
     else:
         cards = Card.objects.all()
 
@@ -36,7 +36,7 @@ def card_create(request):
         form = CardForm(request.POST)
         if form.is_valid():
             card = form.save(commit=False)
-            card.user = request.user
+            card.author = request.user
             card.save()
             return redirect(card.get_absolute_url())
     else:
@@ -53,7 +53,7 @@ def card_update(request, card_id):
     card = get_object_or_404(
         Card,
         pk=card_id,
-        user=request.user
+        author=request.user
     )
 
     if request.method == 'POST':
@@ -75,7 +75,7 @@ def card_delete(request, card_id):
     card = get_object_or_404(
         Card,
         pk=card_id,
-        user=request.user
+        author=request.user
     )
 
     if request.method == 'POST':

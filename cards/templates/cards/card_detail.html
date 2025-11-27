@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}{{ card.front }}{% endblock title %}
+{% block title %}{{ card.question }}{% endblock title %}
 
 {% block content %}
 
-  <h1>{{ card.front }}</h1>
+  <h1>{{ card.question }}</h1>
   <div>
     <p>Дата создания: <span>{{ card.created_at }}</span></p>
     <p>Последнее обновление: <span>{{ card.updated_at }}</span></p>
