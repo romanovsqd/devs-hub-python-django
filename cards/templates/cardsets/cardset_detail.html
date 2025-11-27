@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cardset.title }}{% endblock title %}
+
+{% block content %}
+
+  <h1>{{ cardset.title }}</h1>
+
+    <div>
+      <ul>
+      {% for card in cards %}
+        <li>
+          <h4>
+            <a href="{{ card.get_absolute_url }}">
+              {{ card.question }}
+            </a>
+          </h4>
+        </li>
+      {% empty %}
+        <li>
+          Карточек нету
+        </li>
+      {% endfor %}
+        </ul>
+    </div>
+
+  <div>
+    <p>Дата создания: <span>{{ cardset.created_at }}</span></p>
+    <p>Последнее обновление: <span>{{ cardset.updated_at }}</span></p>
+  </div>
+
+{% endblock content %}
