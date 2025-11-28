@@ -123,6 +123,7 @@ def cardset_create(request):
             cardset = form.save(commit=False)
             cardset.author = request.user
             cardset.save()
+            form.save_m2m()
             return redirect(cardset.get_absolute_url())
     else:
         form = CardSetForm()
