@@ -13,7 +13,7 @@ urlpatterns = [
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
     path('users/<int:user_id>/cards/', views.user_cards, name='user_cards'),
     path(
-        'users/<int:user_id>/cards-sets/',
+        'users/<int:user_id>/card-sets/',
         views.user_cardsets, name='user_cardsets'
     ),
     path(
