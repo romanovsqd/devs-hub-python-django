@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load cardset_tags %}
+
 
 {% block title %}Наборы карточек {{ user.username }}{% endblock title %}
 
@@ -9,11 +11,7 @@
   <ul>
     {% for cardset in cardsets %}
       <li>
-        <h4>
-          <a href="{{ cardset.get_absolute_url }}">
-            {{ cardset.title }}
-          </a>
-        </h4>
+        {% render_cardset cardset %}
       </li>
     {% empty %}
       <li>
