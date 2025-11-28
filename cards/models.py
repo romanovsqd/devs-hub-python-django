@@ -8,7 +8,7 @@ class Card(models.Model):
     answer = models.TextField()
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='cards',
+        related_name='created_cards',
         on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -30,12 +30,17 @@ class CardSet(models.Model):
     title = models.CharField(max_length=255)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='cardsets',
+        related_name='created_cardsets',
         on_delete=models.CASCADE
     )
     cards = models.ManyToManyField(
         'Card',
         related_name='cardsets',
+        blank=True
+    )
+    saved_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='saved_cardsets',
         blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)

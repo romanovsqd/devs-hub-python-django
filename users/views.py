@@ -65,7 +65,7 @@ def user_detail(request, user_id):
 @login_required
 def user_cards(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    cards = user.cards.all()
+    cards = user.created_cards.all()
 
     context = {
         'user': user,
@@ -77,7 +77,7 @@ def user_cards(request, user_id):
 @login_required
 def user_cardsets(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    cardsets = user.cardsets.all()
+    cardsets = user.created_cardsets.all()
 
     context = {
         'user': user,
