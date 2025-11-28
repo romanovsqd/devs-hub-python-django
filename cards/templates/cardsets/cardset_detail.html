@@ -8,8 +8,8 @@
 
   <h1>{{ cardset.title }}</h1>
 
-    <div>
-      <ul>
+  <div>
+    <ul>
       {% for card in cards %}
         <li>
           {% render_card card %}
@@ -19,8 +19,25 @@
           Карточек нету
         </li>
       {% endfor %}
-        </ul>
-    </div>
+    </ul>
+  </div>
+
+  <div>
+    {% comment %}
+      TODO: отправлять AJAX запрос на cardset_toggle_save
+    {% endcomment %}
+    {% if not is_saved %}
+      <form action="{% url "cardsets:cardset_save" cardset.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Сохранить в мой профиль</button>
+      </form>
+    {% else %}
+      <form action="{% url "cardsets:cardset_remove" cardset.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Удалить из моего профиля</button>
+      </form>
+    {% endif %}
+  </div>
 
   <div>
     <p>Дата создания: <span>{{ cardset.created_at }}</span></p>

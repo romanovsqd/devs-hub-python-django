@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from .models import Card, CardSet
 from .forms import CardForm, CardSetForm
@@ -108,9 +110,12 @@ def cardset_detail(request, cardset_id):
     cardset = get_object_or_404(CardSet, pk=cardset_id)
     cards = cardset.cards.all()
 
+    is_saved = request.user.saved_cardsets.filter(pk=cardset.pk).exists()
+
     context = {
         'cardset': cardset,
-        'cards': cards
+        'cards': cards,
+        'is_saved': is_saved,
     }
     return render(request, 'cardsets/cardset_detail.html', context)
 
@@ -172,3 +177,64 @@ def cardset_delete(request, cardset_id):
         'cardset': cardset
     }
     return render(request, 'cardsets/cardset_confirm_delete.html', context)
+
+
+@login_required
+@require_POST
+def cardset_save(request, cardset_id):
+    cardset = get_object_or_404(
+        CardSet,
+        pk=cardset_id,
+    )
+
+    is_saved = request.user.saved_cardsets.filter(pk=cardset.pk).exists()
+
+    if not is_saved:
+        request.user.saved_cardsets.add(cardset)
+
+    return JsonResponse({
+        'message': 'Набор карточек сохранен в ваш профиль'
+    })
+
+
+@login_required
+@require_POST
+def cardset_remove(request, cardset_id):
+    cardset = get_object_or_404(
+        CardSet,
+        pk=cardset_id,
+    )
+
+    is_saved = request.user.saved_cardsets.filter(pk=cardset.pk).exists()
+
+    if is_saved:
+        request.user.saved_cardsets.remove(cardset)
+
+    return JsonResponse({
+        'message': 'Набор карточек удален из вашего профиля'
+    })
+
+
+@login_required
+@require_POST
+def cardset_toggle_save(request, cardset_id):
+    cardset = get_object_or_404(
+        CardSet,
+        pk=cardset_id,
+    )
+
+    is_saved = request.user.saved_cardsets.filter(pk=cardset.pk).exists()
+
+    if is_saved:
+        request.user.saved_cardsets.remove(cardset)
+        message = 'Набор карточек удален из вашего профиля'
+        button_text = 'Сохранить в мой профиль'
+    else:
+        request.user.saved_cardsets.add(cardset)
+        message = 'Набор карточек сохранен в ваш профиль'
+        button_text = 'Удалить из моего профиля'
+
+    return JsonResponse({
+        'message': message,
+        'button_text': button_text,
+    })

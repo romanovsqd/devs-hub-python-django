@@ -1,7 +1,10 @@
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+
+from cards.models import CardSet
 
 from .forms import LoginForm, RegisterForm
 
@@ -77,7 +80,9 @@ def user_cards(request, user_id):
 @login_required
 def user_cardsets(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    cardsets = user.created_cardsets.all()
+    cardsets = CardSet.objects.filter(
+        Q(author=user) | Q(saved_by=user)
+    ).distinct()
 
     context = {
         'user': user,
