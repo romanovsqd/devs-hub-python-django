@@ -11,6 +11,11 @@ class Card(models.Model):
         related_name='created_cards',
         on_delete=models.CASCADE
     )
+    saved_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='saved_cards',
+        blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

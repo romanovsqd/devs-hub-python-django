@@ -10,4 +10,21 @@
     <p>Последнее обновление: <span>{{ card.updated_at }}</span></p>
   </div>
 
+  <div>
+    {% comment %}
+      TODO: отправлять AJAX запрос на card_toggle_save
+    {% endcomment %}
+    {% if not is_saved %}
+      <form action="{% url "cards:card_save" card.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Сохранить в мой профиль</button>
+      </form>
+    {% else %}
+      <form action="{% url "cards:card_remove" card.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Удалить из моего профиля</button>
+      </form>
+    {% endif %}
+  </div>
+
 {% endblock content %}

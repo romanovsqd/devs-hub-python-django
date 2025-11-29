@@ -10,4 +10,10 @@ urlpatterns = [
     path('create/', views.card_create, name='card_create'),
     path('<int:card_id>/edit/', views.card_update, name='card_update'),
     path('<int:card_id>/delete/', views.card_delete, name='card_delete'),
+    path('<int:card_id>/save/', views.card_save, name='card_save'),
+    path('<int:card_id>/remove/', views.card_remove, name='card_remove'),
+    path(
+        '<int:card_id>/toggle-save/',
+        views.card_toggle_save, name='card_toggle_save'
+    ),
 ]

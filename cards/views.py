@@ -26,8 +26,11 @@ def card_list(request):
 def card_detail(request, card_id):
     card = get_object_or_404(Card, pk=card_id)
 
+    is_saved = request.user.saved_cards.filter(pk=card.pk).exists()
+
     context = {
-        'card': card
+        'card': card,
+        'is_saved': is_saved,
     }
     return render(request, 'cards/card_detail.html', context)
 
@@ -88,6 +91,63 @@ def card_delete(request, card_id):
         'card': card
     }
     return render(request, 'cards/card_confirm_delete.html', context)
+
+
+def card_save(request, card_id):
+    card = get_object_or_404(
+        Card,
+        pk=card_id,
+    )
+
+    is_saved = request.user.saved_cards.filter(pk=card.pk).exists()
+
+    if not is_saved:
+        request.user.saved_cards.add(card)
+
+    return JsonResponse({
+        'message': 'Набор карточек сохранен из вашего профиля'
+    })
+
+
+def card_remove(request, card_id):
+    card = get_object_or_404(
+        Card,
+        pk=card_id,
+    )
+
+    is_saved = request.user.saved_cards.filter(pk=card.pk).exists()
+
+    if is_saved:
+        request.user.saved_cards.remove(card)
+
+    return JsonResponse({
+        'message': 'Набор карточек удален из вашего профиля'
+    })
+
+
+@login_required
+@require_POST
+def card_toggle_save(request, card_id):
+    card = get_object_or_404(
+        Card,
+        pk=card_id,
+    )
+
+    is_saved = request.user.saved_cards.filter(pk=card.pk).exists()
+
+    if is_saved:
+        request.user.saved_cards.remove(card)
+        message = 'Карточка удалена из вашего профиля'
+        button_text = 'Сохранить в мой профиль'
+    else:
+        request.user.saved_cards.add(card)
+        message = 'Карточка сохранена в ваш профиль'
+        button_text = 'Удалить из моего профиля'
+
+    return JsonResponse({
+        'message': message,
+        'button_text': button_text,
+    })
 
 
 @login_required
