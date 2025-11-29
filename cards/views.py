@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -182,8 +183,12 @@ def cardset_detail(request, cardset_id):
 
 @login_required
 def cardset_create(request):
+    cards_queryset = Card.objects.filter(
+        Q(author=request.user) | Q(saved_by=request.user)
+    ).distinct()
+
     if request.method == 'POST':
-        form = CardSetForm(request.POST)
+        form = CardSetForm(request.POST, cards_queryset=cards_queryset)
         if form.is_valid():
             cardset = form.save(commit=False)
             cardset.author = request.user
@@ -191,7 +196,7 @@ def cardset_create(request):
             form.save_m2m()
             return redirect(cardset.get_absolute_url())
     else:
-        form = CardSetForm()
+        form = CardSetForm(cards_queryset=cards_queryset)
 
     context = {
         'form': form,
