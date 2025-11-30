@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Card(models.Model):
@@ -63,3 +64,26 @@ class CardSet(models.Model):
         return reverse(
             'cardsets:cardset_detail', kwargs={'cardset_id': self.pk}
         )
+
+
+class CardSetProgress(models.Model):
+    learner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='cardset_progresses',
+        on_delete=models.CASCADE
+    )
+    cardset = models.ForeignKey(
+        'CardSet',
+        related_name='card_progresses',
+        on_delete=models.CASCADE
+    )
+    card = models.ForeignKey(
+        'Card',
+        related_name='cardset_progresses',
+        on_delete=models.CASCADE
+    )
+
+    repetitions = models.PositiveIntegerField(default=0)
+    efactor = models.FloatField(default=2.5)
+    interval = models.PositiveIntegerField(default=0)
+    next_review_date = models.DateTimeField(default=timezone.now)
