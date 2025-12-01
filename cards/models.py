@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 
 
 class Card(models.Model):
@@ -83,7 +82,11 @@ class CardSetProgress(models.Model):
         on_delete=models.CASCADE
     )
 
-    repetitions = models.PositiveIntegerField(default=0)
-    efactor = models.FloatField(default=2.5)
-    interval = models.PositiveIntegerField(default=0)
-    next_review_date = models.DateTimeField(default=timezone.now)
+    class Meta:
+        unique_together = ['learner', 'cardset', 'card']
+        indexes = [
+            models.Index(fields=['learner']),
+        ]
+
+    def __str__(self):
+        return f'{self.learner} – {self.card}'
