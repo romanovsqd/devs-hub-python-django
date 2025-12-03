@@ -81,6 +81,7 @@ class CardSetProgress(models.Model):
         related_name='cardset_progresses',
         on_delete=models.CASCADE
     )
+    repetitions = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
