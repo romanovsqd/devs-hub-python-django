@@ -83,6 +83,7 @@ class CardSetProgress(models.Model):
     )
     repetitions = models.PositiveIntegerField(default=0)
     efactor = models.FloatField(default=2.5)
+    interval = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
