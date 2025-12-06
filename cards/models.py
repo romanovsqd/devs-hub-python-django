@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Card(models.Model):
@@ -84,6 +85,7 @@ class CardSetProgress(models.Model):
     repetitions = models.PositiveIntegerField(default=0)
     efactor = models.FloatField(default=2.5)
     interval = models.PositiveIntegerField(default=0)
+    next_review_date = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
