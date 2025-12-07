@@ -86,6 +86,7 @@ class CardSetProgress(models.Model):
     efactor = models.FloatField(default=2.5)
     interval = models.PositiveIntegerField(default=0)
     next_review_date = models.DateTimeField(default=timezone.now)
+    last_review_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
