@@ -94,6 +94,7 @@ class CardSetProgress(models.Model):
         unique_together = ['learner', 'cardset', 'card']
         indexes = [
             models.Index(fields=['learner']),
+            models.Index(fields=['next_review_date']),
         ]
 
     def __str__(self):
