@@ -98,4 +98,4 @@ class CardSetProgress(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.learner} – {self.card}'
+        return f'{self.learner} – {self.card}: {self.next_review_date}'
