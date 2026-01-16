@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
-from cards.models import CardSet
+from cards.models import Card, CardSet
 
 from .forms import LoginForm, RegisterForm
 
@@ -68,7 +68,9 @@ def user_detail(request, user_id):
 @login_required
 def user_cards(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    cards = user.created_cards.all()
+    cards = Card.objects.filter(
+        Q(author=user_id) | Q(saved_by=user_id)
+    ).distinct()
 
     context = {
         'user': user,
