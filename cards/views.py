@@ -94,6 +94,8 @@ def card_delete(request, card_id):
     return render(request, 'cards/card_confirm_delete.html', context)
 
 
+@login_required
+@require_POST
 def card_save(request, card_id):
     card = get_object_or_404(
         Card,
@@ -106,10 +108,12 @@ def card_save(request, card_id):
         request.user.saved_cards.add(card)
 
     return JsonResponse({
-        'message': 'Набор карточек сохранен из вашего профиля'
+        'message': 'Набор карточек сохранен в ваш профиль'
     })
 
 
+@login_required
+@require_POST
 def card_remove(request, card_id):
     card = get_object_or_404(
         Card,
