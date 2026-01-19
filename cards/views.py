@@ -96,42 +96,6 @@ def card_delete(request, card_id):
 
 @login_required
 @require_POST
-def card_save(request, card_id):
-    card = get_object_or_404(
-        Card,
-        pk=card_id,
-    )
-
-    is_saved = request.user.saved_cards.filter(pk=card.pk).exists()
-
-    if not is_saved:
-        request.user.saved_cards.add(card)
-
-    return JsonResponse({
-        'message': 'Набор карточек сохранен в ваш профиль'
-    })
-
-
-@login_required
-@require_POST
-def card_remove(request, card_id):
-    card = get_object_or_404(
-        Card,
-        pk=card_id,
-    )
-
-    is_saved = request.user.saved_cards.filter(pk=card.pk).exists()
-
-    if is_saved:
-        request.user.saved_cards.remove(card)
-
-    return JsonResponse({
-        'message': 'Набор карточек удален из вашего профиля'
-    })
-
-
-@login_required
-@require_POST
 def card_toggle_save(request, card_id):
     card = get_object_or_404(
         Card,
