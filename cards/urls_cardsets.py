@@ -15,12 +15,6 @@ urlpatterns = [
         '<int:cardset_id>/delete/', views.cardset_delete, name='cardset_delete'
     ),
     path(
-        '<int:cardset_id>/save/', views.cardset_save, name='cardset_save'
-    ),
-    path(
-        '<int:cardset_id>/remove/', views.cardset_remove, name='cardset_remove'
-    ),
-    path(
         '<int:cardset_id>/toggle-save/',
         views.cardset_toggle_save, name='cardset_toggle_save'
     ),

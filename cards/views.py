@@ -214,42 +214,6 @@ def cardset_delete(request, cardset_id):
 
 @login_required
 @require_POST
-def cardset_save(request, cardset_id):
-    cardset = get_object_or_404(
-        CardSet,
-        pk=cardset_id,
-    )
-
-    is_saved = request.user.saved_cardsets.filter(pk=cardset.pk).exists()
-
-    if not is_saved:
-        request.user.saved_cardsets.add(cardset)
-
-    return JsonResponse({
-        'message': 'Набор карточек сохранен в ваш профиль'
-    })
-
-
-@login_required
-@require_POST
-def cardset_remove(request, cardset_id):
-    cardset = get_object_or_404(
-        CardSet,
-        pk=cardset_id,
-    )
-
-    is_saved = request.user.saved_cardsets.filter(pk=cardset.pk).exists()
-
-    if is_saved:
-        request.user.saved_cardsets.remove(cardset)
-
-    return JsonResponse({
-        'message': 'Набор карточек удален из вашего профиля'
-    })
-
-
-@login_required
-@require_POST
 def cardset_toggle_save(request, cardset_id):
     cardset = get_object_or_404(
         CardSet,
