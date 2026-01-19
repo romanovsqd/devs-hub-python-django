@@ -20,7 +20,7 @@ def card_list(request):
     context = {
         'cards': cards
     }
-    return render(request, 'cards/card_list.html', context)
+    return render(request, 'cards/cards/card_list.html', context)
 
 
 @login_required
@@ -33,7 +33,7 @@ def card_detail(request, card_id):
         'card': card,
         'is_saved': is_saved,
     }
-    return render(request, 'cards/card_detail.html', context)
+    return render(request, 'cards/cards/card_detail.html', context)
 
 
 @login_required
@@ -51,7 +51,7 @@ def card_create(request):
     context = {
         'form': form,
     }
-    return render(request, 'cards/card_form.html', context)
+    return render(request, 'cards/cards/card_form.html', context)
 
 
 @login_required
@@ -73,7 +73,7 @@ def card_update(request, card_id):
     context = {
         'form': form,
     }
-    return render(request, 'cards/card_form.html', context)
+    return render(request, 'cards/cards/card_form.html', context)
 
 
 @login_required
@@ -91,7 +91,7 @@ def card_delete(request, card_id):
     context = {
         'card': card
     }
-    return render(request, 'cards/card_confirm_delete.html', context)
+    return render(request, 'cards/cards/card_confirm_delete.html', context)
 
 
 @login_required
@@ -131,7 +131,7 @@ def cardset_list(request):
     context = {
         'cardsets': cardsets
     }
-    return render(request, 'cardsets/cardset_list.html', context)
+    return render(request, 'cards/cardsets/cardset_list.html', context)
 
 
 @login_required
@@ -146,7 +146,7 @@ def cardset_detail(request, cardset_id):
         'cards': cards,
         'is_saved': is_saved,
     }
-    return render(request, 'cardsets/cardset_detail.html', context)
+    return render(request, 'cards/cardsets/cardset_detail.html', context)
 
 
 @login_required
@@ -169,7 +169,7 @@ def cardset_create(request):
     context = {
         'form': form,
     }
-    return render(request, 'cardsets/cardset_form.html', context)
+    return render(request, 'cards/cardsets/cardset_form.html', context)
 
 
 @login_required
@@ -191,7 +191,7 @@ def cardset_update(request, cardset_id):
     context = {
         'form': form,
     }
-    return render(request, 'cardsets/cardset_form.html', context)
+    return render(request, 'cards/cardsets/cardset_form.html', context)
 
 
 @login_required
@@ -209,7 +209,7 @@ def cardset_delete(request, cardset_id):
     context = {
         'cardset': cardset
     }
-    return render(request, 'cardsets/cardset_confirm_delete.html', context)
+    return render(request, 'cards/cardsets/cardset_confirm_delete.html', context)
 
 
 @login_required

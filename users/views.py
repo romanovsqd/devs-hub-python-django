@@ -52,7 +52,7 @@ def user_list(request):
     context = {
         'users': users,
     }
-    return render(request, 'users/user_list.html', context)
+    return render(request, 'users/users/user_list.html', context)
 
 
 @login_required
@@ -62,7 +62,7 @@ def user_detail(request, user_id):
     context = {
         'user': user,
     }
-    return render(request, 'users/user_detail.html', context)
+    return render(request, 'users/users/user_detail.html', context)
 
 
 @login_required
@@ -76,7 +76,7 @@ def user_cards(request, user_id):
         'user': user,
         'cards': cards,
     }
-    return render(request, 'users/user_cards.html', context)
+    return render(request, 'users/users/user_cards.html', context)
 
 
 @login_required
@@ -90,7 +90,7 @@ def user_cardsets(request, user_id):
         'user': user,
         'cardsets': cardsets,
     }
-    return render(request, 'users/user_cardsets.html', context)
+    return render(request, 'users/users/user_cardsets.html', context)
 
 
 @login_required
@@ -102,4 +102,4 @@ def user_projects(request, user_id):
         'user': user,
         'projects': projects,
     }
-    return render(request, 'users/user_projects.html', context)
+    return render(request, 'users/users/user_projects.html', context)
