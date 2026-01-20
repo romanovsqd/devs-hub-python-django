@@ -18,4 +18,8 @@ urlpatterns = [
         '<int:cardset_id>/toggle-save/',
         views.cardset_toggle_save, name='cardset_toggle_save'
     ),
+    path(
+        '<int:cardset_id>/toggle-study/',
+        views.cardset_toggle_study, name='cardset_toggle_study'
+    ),
 ]

@@ -12,6 +12,19 @@
     {% for cardset in cardsets %}
       <li>
         {% render_cardset cardset %}
+        {% comment %} TODO: сделать ajax запрос {% endcomment %}
+        {% if cardset.id not in studying_cardsets_ids %}
+          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Добавить в изучаемые</button>
+          </form>
+        {% else %}
+          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Удалить из изучаемых</button>
+          </form>
+        {% endif %}
+
       </li>
     {% empty %}
       <li>

@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .models import Card, CardSet
+from .models import Card, CardSet, CardSetProgress
 from .forms import CardForm, CardSetForm
 
 
@@ -234,4 +234,33 @@ def cardset_toggle_save(request, cardset_id):
     return JsonResponse({
         'message': message,
         'button_text': button_text,
+    })
+
+
+@login_required
+def cardset_toggle_study(request, cardset_id):
+    cardset = get_object_or_404(
+        CardSet,
+        pk=cardset_id,
+    )
+
+    progress_qs = CardSetProgress.objects.filter(
+        learner=request.user,
+        cardset=cardset
+    )
+
+    if progress_qs.exists():
+        progress_qs.delete()
+        message = f'Вы больше не изучаете колоду {cardset.title}'
+    else:
+        for card in cardset.cards.all():
+            CardSetProgress.objects.get_or_create(
+                learner=request.user,
+                card=card,
+                cardset=cardset
+            )
+        message = f'Теперь вы изучаете колоду {cardset.title}'
+
+    return JsonResponse({
+        'message': message
     })

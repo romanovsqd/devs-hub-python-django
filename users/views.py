@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
-from cards.models import Card, CardSet
+from cards.models import Card, CardSet, CardSetProgress
 
 from .forms import LoginForm, RegisterForm
 
@@ -86,9 +86,14 @@ def user_cardsets(request, user_id):
         Q(author=user) | Q(saved_by=user)
     ).distinct()
 
+    studying_cardsets_ids = CardSetProgress.objects.filter(
+        learner=user,
+    ).values_list('cardset_id', flat=True)
+
     context = {
         'user': user,
         'cardsets': cardsets,
+        'studying_cardsets_ids': studying_cardsets_ids,
     }
     return render(request, 'users/users/user_cardsets.html', context)
 
