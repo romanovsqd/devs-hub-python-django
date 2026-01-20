@@ -24,16 +24,20 @@
   </div>
 
   <div>
-    <form action="{% url "cardsets:cardset_toggle_save" cardset.id %}" method="post" data-js-toggle-save-form>
-      {% csrf_token %}
-      <button type="submit" data-js-toggle-button>
-        {% if not is_saved %}
-          Сохранить в мой профиль
-        {% else %}
-          Удалить из моего профиля
-        {% endif %}
-      </button>
-    </form>
+    {% if not cardset.author == request.user %}
+      <form action="{% url "cardsets:cardset_toggle_save" cardset.id %}" method="post" data-js-toggle-save-form>
+        {% csrf_token %}
+        <button type="submit" data-js-toggle-button>
+          {% if not is_saved %}
+            Сохранить в мой профиль
+          {% else %}
+            Удалить из моего профиля
+          {% endif %}
+        </button>
+      </form>
+      {% else %}
+        <p>Вы автор этого набора</p>
+      {% endif %}
   </div>
 
   <div>
