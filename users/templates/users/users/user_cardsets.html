@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load cardset_tags %}
 
 
@@ -12,19 +13,18 @@
     {% for cardset in cardsets %}
       <li>
         {% render_cardset cardset %}
-        {% comment %} TODO: сделать ajax запрос {% endcomment %}
-        {% if cardset.id not in studying_cardsets_ids %}
-          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post">
+        {% if user == request.user %}
+          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
             {% csrf_token %}
-            <button type="submit">Добавить в изучаемые</button>
-          </form>
-        {% else %}
-          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Удалить из изучаемых</button>
+            <button type="submit" data-js-toggle-button>
+              {% if cardset.id not in studying_cardsets_ids %}
+                Добавить в изучаемые
+              {% else %}
+                Удалить из изучаемых
+              {% endif %}
+            </button>
           </form>
         {% endif %}
-
       </li>
     {% empty %}
       <li>
@@ -34,3 +34,7 @@
   </ul>
 
 {% endblock content %}
+
+{% block scripts %}
+  <script src="{% static "cards/js/form_toggles.js" %}"></script>
+{% endblock scripts %}
