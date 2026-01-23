@@ -253,9 +253,12 @@ def cardset_toggle_study(request, cardset_id):
         cardset=cardset
     )
 
-    if progress_qs.exists():
+    is_studying = progress_qs.exists()
+
+    if is_studying:
         progress_qs.delete()
         message = f'Вы больше не изучаете колоду {cardset.title}'
+        button_text = 'Добавить в изучаемые'
     else:
         cards = cardset.cards.all()
 
@@ -270,9 +273,11 @@ def cardset_toggle_study(request, cardset_id):
             ignore_conflicts=True
         )
         message = f'Теперь вы изучаете колоду {cardset.title}'
+        button_text = 'Удалить из изучаемых'
 
     return JsonResponse({
-        'message': message
+        'message': message,
+        'button_text': button_text,
     })
 
 
@@ -282,11 +287,13 @@ def review(request):
 
 
 def next_card(request):
+    today = timezone.localdate()
+
     progress = (
         CardSetProgress.objects
         .filter(
             learner=request.user,
-            next_review_date__lte=timezone.now()
+            next_review_date__date=today
         )
         .select_related('card')
         .order_by('next_review_date')
@@ -320,35 +327,34 @@ def submit(request, cardset_id, card_id):
         card_id=card_id,
     )
 
+    now = timezone.now()
+
     if quality < 3:
         progress.repetitions = 0
-        progress.interval = 1
+        progress.interval = 0
+        progress.next_review_date = now
     else:
-        if progress.repetitions == 0:
+        progress.efactor += 0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)
+        progress.efactor = max(progress.efactor, 1.3)
+
+        progress.repetitions += 1
+
+        if progress.repetitions == 1:
             progress.interval = 1
-        elif progress.repetitions == 1:
+        elif progress.repetitions == 2:
             progress.interval = 6
         else:
             progress.interval = round(progress.interval * progress.efactor)
 
-        progress.repetitions += 1
-
-    progress.efactor += (
-        0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)
-    )
-    progress.efactor = max(progress.efactor, 1.3)
-
-    now = timezone.now()
+        progress.next_review_date = now + timedelta(days=progress.interval)
 
     progress.last_review_date = now.date()
-    progress.next_review_date = now + timedelta(days=progress.interval)
-
     progress.save()
 
     return JsonResponse({
-        'status': 'ok',
+        'cardset_id': cardset_id,
         'card_id': card_id,
-        'next_review_date': progress.next_review_date,
+        'next_review_date': progress.next_review_date.isoformat(),
         'interval': progress.interval,
         'efactor': progress.efactor,
         'repetitions': progress.repetitions,
