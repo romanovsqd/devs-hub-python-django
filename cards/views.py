@@ -242,6 +242,7 @@ def cardset_toggle_save(request, cardset_id):
 
 
 @login_required
+@require_POST
 def cardset_toggle_study(request, cardset_id):
     cardset = get_object_or_404(
         CardSet,
@@ -286,6 +287,7 @@ def review(request):
     return render(request, 'cards/study/review.html')
 
 
+@login_required
 def next_card(request):
     today = timezone.localdate()
 
@@ -316,6 +318,8 @@ def next_card(request):
     })
 
 
+@login_required
+@require_POST
 def submit(request, cardset_id, card_id):
     data = json.loads(request.body)
     quality = int(data.get('quality'))
