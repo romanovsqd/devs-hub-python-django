@@ -257,12 +257,18 @@ def cardset_toggle_study(request, cardset_id):
         progress_qs.delete()
         message = f'Вы больше не изучаете колоду {cardset.title}'
     else:
-        for card in cardset.cards.all():
-            CardSetProgress.objects.get_or_create(
+        cards = cardset.cards.all()
+
+        CardSetProgress.objects.bulk_create([
+            CardSetProgress(
                 learner=request.user,
                 card=card,
                 cardset=cardset
             )
+            for card in cards
+        ],
+            ignore_conflicts=True
+        )
         message = f'Теперь вы изучаете колоду {cardset.title}'
 
     return JsonResponse({
