@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Изучение карточек{% endblock title %}
+
+{% block content %}
+
+<div data-js-review-container data-next-card-url="{% url "study:next_card" %}" data-submit-url="{% url "study:submit" 0 0 %}">
+
+  <div data-js-review-body>
+    <div data-js-card-front>
+      <p data-js-card-question>Вопрос</p>
+      <button data-js-flip-card-button>Показать ответ</button>
+    </div>
+
+    <div data-js-card-back>
+      <p data-js-card-answer></p>
+      <div data-js-quality-buttons>
+        <button data-quality="0">Еще раз</button>
+        <button data-quality="3">Трудно</button>
+        <button data-quality="4">Хорошо</button>
+        <button data-quality="5">Легко</button>
+      </div>
+    </div>
+
+    <div style="display: none;" data-js-card-empty>
+      <p data-js-card-message>Вы выучили всё на сегодня!</p>
+    </div>
+  </div>
+
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+  <script src="{% static "cards/js/review.js" %}"></script>
+{% endblock scripts %}

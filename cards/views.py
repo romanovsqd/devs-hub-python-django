@@ -1,7 +1,11 @@
+from datetime import timedelta
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .models import Card, CardSet, CardSetProgress
@@ -263,4 +267,83 @@ def cardset_toggle_study(request, cardset_id):
 
     return JsonResponse({
         'message': message
+    })
+
+
+@login_required
+def review(request):
+    return render(request, 'cards/study/review.html')
+
+
+def next_card(request):
+    progress = (
+        CardSetProgress.objects
+        .filter(
+            learner=request.user,
+            next_review_date__lte=timezone.now()
+        )
+        .select_related('card')
+        .order_by('next_review_date')
+        .first()
+    )
+
+    if not progress:
+        return JsonResponse({
+            'done': True
+        })
+
+    card = progress.card
+    cardset = progress.cardset
+
+    return JsonResponse({
+        'card_id': card.id,
+        'question': card.question,
+        'answer': card.answer,
+        'cardset_id': cardset.id,
+    })
+
+
+def submit(request, cardset_id, card_id):
+    data = json.loads(request.body)
+    quality = int(data.get('quality'))
+
+    progress = get_object_or_404(
+        CardSetProgress,
+        learner=request.user,
+        cardset_id=cardset_id,
+        card_id=card_id,
+    )
+
+    if quality < 3:
+        progress.repetitions = 0
+        progress.interval = 1
+    else:
+        if progress.repetitions == 0:
+            progress.interval = 1
+        elif progress.repetitions == 1:
+            progress.interval = 6
+        else:
+            progress.interval = round(progress.interval * progress.efactor)
+
+        progress.repetitions += 1
+
+    progress.efactor += (
+        0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)
+    )
+    progress.efactor = max(progress.efactor, 1.3)
+
+    now = timezone.now()
+
+    progress.last_review_date = now.date()
+    progress.next_review_date = now + timedelta(days=progress.interval)
+
+    progress.save()
+
+    return JsonResponse({
+        'status': 'ok',
+        'card_id': card_id,
+        'next_review_date': progress.next_review_date,
+        'interval': progress.interval,
+        'efactor': progress.efactor,
+        'repetitions': progress.repetitions,
     })
