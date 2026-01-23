@@ -3,17 +3,17 @@
 {% load cardset_tags %}
 
 
-{% block title %}Наборы карточек {{ user.username }}{% endblock title %}
+{% block title %}Наборы карточек {{ current_user.username }}{% endblock title %}
 
 {% block content %}
 
-  <h1>Наборы карточек {{ user.username }}</h1>
+  <h1>Наборы карточек {{ current_user.username }}</h1>
 
   <ul>
     {% for cardset in cardsets %}
       <li>
         {% render_cardset cardset %}
-        {% if user == request.user %}
+        {% if current_user == request.user %}
           <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
             {% csrf_token %}
             <button type="submit" data-js-toggle-button>

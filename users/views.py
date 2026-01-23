@@ -57,23 +57,23 @@ def user_list(request):
 
 @login_required
 def user_detail(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    current_user = get_object_or_404(User, pk=user_id)
 
     context = {
-        'user': user,
+        'current_user': current_user,
     }
     return render(request, 'users/users/user_detail.html', context)
 
 
 @login_required
 def user_cards(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    current_user = get_object_or_404(User, pk=user_id)
     cards = Card.objects.filter(
-        Q(author=user_id) | Q(saved_by=user_id)
+        Q(author=current_user) | Q(saved_by=current_user)
     ).distinct()
 
     context = {
-        'user': user,
+        'current_user': current_user,
         'cards': cards,
     }
     return render(request, 'users/users/user_cards.html', context)
@@ -81,17 +81,17 @@ def user_cards(request, user_id):
 
 @login_required
 def user_cardsets(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    current_user = get_object_or_404(User, pk=user_id)
     cardsets = CardSet.objects.filter(
-        Q(author=user) | Q(saved_by=user)
+        Q(author=current_user) | Q(saved_by=current_user)
     ).distinct()
 
     studying_cardsets_ids = CardSetProgress.objects.filter(
-        learner=user,
+        learner=current_user,
     ).values_list('cardset_id', flat=True)
 
     context = {
-        'user': user,
+        'current_user': current_user,
         'cardsets': cardsets,
         'studying_cardsets_ids': studying_cardsets_ids,
     }
@@ -100,11 +100,11 @@ def user_cardsets(request, user_id):
 
 @login_required
 def user_projects(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    projects = user.projects.all()
+    current_user = get_object_or_404(User, pk=user_id)
+    projects = current_user.projects.all()
 
     context = {
-        'user': user,
+        'current_user': current_user,
         'projects': projects,
     }
     return render(request, 'users/users/user_projects.html', context)
