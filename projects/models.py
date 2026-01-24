@@ -33,3 +33,17 @@ class Project(models.Model):
         return reverse(
             'projects:project_detail', kwargs={'project_id': self.pk}
         )
+
+
+class ProjectImage(models.Model):
+    project = models.ForeignKey(
+        'Project',
+        related_name='images',
+        on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to='projects/images/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Image for {self.project.title}'
