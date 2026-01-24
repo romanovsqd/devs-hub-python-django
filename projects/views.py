@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Project
+from .models import Project, ProjectImage
 from .forms import ProjectForm
 
 
@@ -33,11 +33,23 @@ def project_detail(request, project_id):
 @login_required
 def project_create(request):
     if request.method == 'POST':
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, request.FILES)
         if form.is_valid():
             project = form.save(commit=False)
             project.user = request.user
             project.save()
+
+            images = form.cleaned_data.get('images')
+
+            if images:
+                ProjectImage.objects.bulk_create([
+                    ProjectImage(
+                        project=project,
+                        image=image
+                    )
+                    for image in images
+                ])
+
             return redirect(project.get_absolute_url())
     else:
         form = ProjectForm()
@@ -57,9 +69,22 @@ def project_update(request, project_id):
     )
 
     if request.method == 'POST':
-        form = ProjectForm(request.POST, instance=project)
+        form = ProjectForm(request.POST, request.FILES, instance=project)
         if form.is_valid():
             project = form.save()
+
+            images = form.cleaned_data.get('images')
+
+            if images:
+                for img in project.images.all():
+                    img.image.delete(save=False)
+                    img.delete()
+
+                ProjectImage.objects.bulk_create([
+                    ProjectImage(project=project, image=image)
+                    for image in images
+                ])
+
             return redirect(project.get_absolute_url())
     else:
         form = ProjectForm(instance=project)
