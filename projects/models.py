@@ -8,6 +8,11 @@ class Project(models.Model):
     description = models.TextField(blank=True)
     repository_url = models.URLField(max_length=255, blank=True)
     live_url = models.URLField(max_length=255, blank=True)
+    cover_image = models.ImageField(
+        upload_to='projects/covers/',
+        blank=True,
+        null=True
+    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='projects',
