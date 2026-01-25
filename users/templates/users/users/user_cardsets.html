@@ -13,19 +13,6 @@
     {% for cardset in user_cardsets %}
       <li>
         {% render_cardset cardset %}
-        {% comment %} TODO: Перенести форму в profile_detail {% endcomment %}
-        {% comment %} {% if user == request.user %}
-          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
-            {% csrf_token %}
-            <button type="submit" data-js-toggle-button>
-              {% if cardset.id not in studying_cardsets_ids %}
-                Добавить в изучаемые
-              {% else %}
-                Удалить из изучаемых
-              {% endif %}
-            </button>
-          </form>
-        {% endif %} {% endcomment %}
       </li>
     {% empty %}
       <li>
@@ -35,7 +22,3 @@
   </ul>
 
 {% endblock content %}
-
-{% block scripts %}
-  <script src="{% static "cards/js/form_toggles.js" %}"></script>
-{% endblock scripts %}

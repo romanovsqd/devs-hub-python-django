@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load card_tags %}
+
+{% block title %}Мои карточки{% endblock title %}
+
+{% block content %}
+
+  <h1>Мои карточки</h1>
+
+  <ul>
+    {% for card in user_cards %}
+      <li>
+        {% render_card card %}
+      </li>
+    {% empty %}
+      <li>
+        Карточек нету
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock content %}

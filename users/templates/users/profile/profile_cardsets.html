@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cardset_tags %}
+
+
+{% block title %}Мои наборы карточек{% endblock title %}
+
+{% block content %}
+
+  <h1>Мои наборы карточек</h1>
+
+  <ul>
+    {% for cardset in user_cardsets %}
+      <li>
+        {% render_cardset cardset %}
+          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
+            {% csrf_token %}
+            <button type="submit" data-js-toggle-button>
+              {% if cardset.id not in studying_cardsets_ids %}
+                Добавить в изучаемые
+              {% else %}
+                Удалить из изучаемых
+              {% endif %}
+            </button>
+          </form>
+      </li>
+    {% empty %}
+      <li>
+        Наборов карточек нету
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock content %}
+
+{% block scripts %}
+  <script src="{% static "cards/js/form_toggles.js" %}"></script>
+{% endblock scripts %}

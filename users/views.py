@@ -59,6 +59,9 @@ def user_list(request):
 def user_detail(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
+    if user == request.user:
+        return redirect('users:profile_detail')
+
     context = {
         'user': user,
     }
@@ -86,15 +89,9 @@ def user_cardsets(request, user_id):
         Q(author=user) | Q(saved_by=user)
     ).distinct()
 
-    # TODO: Перенести в profile_deatil view
-    # studying_cardsets_ids = CardSetProgress.objects.filter(
-    #     learner=user,
-    # ).values_list('cardset_id', flat=True)
-
     context = {
         'user': user,
         'user_cardsets': user_cardsets,
-        # 'studying_cardsets_ids': studying_cardsets_ids,
     }
     return render(request, 'users/users/user_cardsets.html', context)
 
@@ -109,3 +106,58 @@ def user_projects(request, user_id):
         'user_projects': user_projects,
     }
     return render(request, 'users/users/user_projects.html', context)
+
+
+def profile_detail(request):
+    user = request.user
+
+    context = {
+        'user': user,
+    }
+    return render(request, 'users/profile/profile_detail.html', context)
+
+
+def profile_update(request):
+    pass
+
+
+def profile_cards(request):
+    user = request.user
+    user_cards = Card.objects.filter(
+        Q(author=user) | Q(saved_by=user)
+    ).distinct()
+
+    context = {
+        'user': user,
+        'user_cards': user_cards,
+    }
+    return render(request, 'users/profile/profile_cards.html', context)
+
+
+def profile_cardsets(request):
+    user = request.user
+    user_cardsets = CardSet.objects.filter(
+        Q(author=user) | Q(saved_by=user)
+    ).distinct()
+
+    studying_cardsets_ids = CardSetProgress.objects.filter(
+        learner=user,
+    ).values_list('cardset_id', flat=True)
+
+    context = {
+        'user': user,
+        'user_cardsets': user_cardsets,
+        'studying_cardsets_ids': studying_cardsets_ids,
+    }
+    return render(request, 'users/profile/profile_cardsets.html', context)
+
+
+def profile_projects(request):
+    user = request.user
+    user_projects = user.projects.all()
+
+    context = {
+        'user': user,
+        'user_projects': user_projects,
+    }
+    return render(request, 'users/profile/profile_projects.html', context)
