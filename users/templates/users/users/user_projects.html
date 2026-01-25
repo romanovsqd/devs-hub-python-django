@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Проекты {{ current_user.username }}{% endblock title %}
+{% block title %}Проекты {{ user.username }}{% endblock title %}
 
 {% block content %}
 
-  <h1>Проекты {{ current_user.username }}</h1>
+  <h1>Проекты {{ user.username }}</h1>
 
   <ul>
-    {% for project in projects %}
+    {% for project in user_projects %}
       <li>
         <h4>
           <a href="{{ project.get_absolute_url }}">

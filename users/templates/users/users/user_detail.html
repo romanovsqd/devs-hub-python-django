@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Профиль {{ current_user.username }}{% endblock title %}
+{% block title %}Профиль {{ user.username }}{% endblock title %}
 
 {% block content %}
 
-  <h1>Профиль {{ current_user.username }}</h1>
+  <h1>Профиль {{ user.username }}</h1>
 
   <div>
-    <a href="{% url "users:user_cards" current_user.id %}">Карточки пользователя</a>
-    <a href="{% url "users:user_cardsets" current_user.id %}">Наборы карточек пользователя</a>
-    <a href="{% url "users:user_projects" current_user.id %}">Проекты пользователя</a>
+    <a href="{% url "users:user_cards" user.id %}">Карточки пользователя</a>
+    <a href="{% url "users:user_cardsets" user.id %}">Наборы карточек пользователя</a>
+    <a href="{% url "users:user_projects" user.id %}">Проекты пользователя</a>
   </div>
 
 {% endblock content %}
