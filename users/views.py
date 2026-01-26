@@ -1,12 +1,13 @@
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from cards.models import Card, CardSet, CardSetProgress
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, UserForm
 
 
 User = get_user_model()
@@ -118,7 +119,34 @@ def profile_detail(request):
 
 
 def profile_update(request):
-    pass
+    user = request.user
+
+    if request.method == 'POST':
+        if 'update_profile' in request.POST:
+            user_form = UserForm(request.POST, request.FILES, instance=user)
+            password_form = PasswordChangeForm(user)
+
+            if user_form.is_valid():
+                user_form.save()
+                return redirect('users:profile_update')
+
+        elif 'change_password' in request.POST:
+            user_form = UserForm(instance=user)
+            password_form = PasswordChangeForm(user, request.POST)
+
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                return redirect('users:profile_update')
+    else:
+        user_form = UserForm(instance=user)
+        password_form = PasswordChangeForm(user)
+
+    return render(request, 'users/profile/profile_form.html', {
+        'user_form': user_form,
+        'password_form': password_form,
+    })
+
 
 
 def profile_cards(request):

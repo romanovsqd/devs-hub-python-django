@@ -24,7 +24,8 @@ urlpatterns = [
     path('profile/', views.profile_detail, name='profile_detail'),
     path('profile/edit/', views.profile_update, name='profile_update'),
     path('profile/cards/', views.profile_cards, name='profile_cards'),
-    path('profile/card-sets/',
-         views.profile_cardsets, name='profile_cardsets'),
+    path(
+        'profile/card-sets/', views.profile_cardsets, name='profile_cardsets'
+    ),
     path('profile/projects/', views.profile_projects, name='profile_projects'),
 ]

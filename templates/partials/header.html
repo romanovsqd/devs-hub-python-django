@@ -16,6 +16,7 @@
         <li><a href="{% url "users:login" %}">Войти</a></li>
       {% else %}
         <li><a href="{% url "users:profile_detail" %}">Мой профиль</a></li>
+        <li><a href="{% url "users:profile_update" %}">Редактировать профиль</a></li>
         <li>
           <form action="{% url "users:logout" %}" method="post">
             {% csrf_token %}

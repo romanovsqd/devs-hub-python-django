@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать профиль{% endblock title %}
+
+{% block content %}
+
+<h1>Редактировать профиль</h1>
+<div>
+  <form action="{% url "users:profile_update" %}" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    <button type="submit" name="update_profile">Сохранить профиль</button>
+  </form>
+</div>
+
+<h2>Изменить пароль</h2>
+<div>
+  <form action="{% url "users:profile_update" %}" method="post" novalidate>
+    {% csrf_token %}
+    {{ password_form.as_p }}
+    <button type="submit" name="change_password">Изменить пароль</button>
+  </form>
+</div>
+
+{% endblock content %}
