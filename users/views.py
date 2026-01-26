@@ -45,10 +45,10 @@ class LoginUserView(LoginView):
 def user_list(request):
     query = request.GET.get('query', '')
 
+    users = User.objects.all()
+
     if query:
-        users = User.objects.filter(username__icontains=query)
-    else:
-        users = User.objects.all()
+        users = users.filter(username__icontains=query)
 
     context = {
         'users': users,
@@ -72,9 +72,14 @@ def user_detail(request, user_id):
 @login_required
 def user_cards(request, user_id):
     user = get_object_or_404(User, pk=user_id)
+    query = request.GET.get('query', '')
+
     user_cards = Card.objects.filter(
         Q(author=user) | Q(saved_by=user)
     ).distinct()
+
+    if query:
+        user_cards = user_cards.filter(question__icontains=query)
 
     context = {
         'user': user,
@@ -86,9 +91,14 @@ def user_cards(request, user_id):
 @login_required
 def user_cardsets(request, user_id):
     user = get_object_or_404(User, pk=user_id)
+    query = request.GET.get('query', '')
+
     user_cardsets = CardSet.objects.filter(
         Q(author=user) | Q(saved_by=user)
     ).distinct()
+
+    if query:
+        user_cardsets = user_cardsets.filter(title__icontains=query)
 
     context = {
         'user': user,
@@ -100,7 +110,12 @@ def user_cardsets(request, user_id):
 @login_required
 def user_projects(request, user_id):
     user = get_object_or_404(User, pk=user_id)
+    query = request.GET.get('query', '')
+
     user_projects = user.projects.all()
+
+    if query:
+        user_projects = user_projects.filter(title__icontains=query)
 
     context = {
         'user': user,
@@ -148,12 +163,16 @@ def profile_update(request):
     })
 
 
-
 def profile_cards(request):
     user = request.user
+    query = request.GET.get('query', '')
+
     user_cards = Card.objects.filter(
         Q(author=user) | Q(saved_by=user)
     ).distinct()
+
+    if query:
+        user_cards = user_cards.filter(question__icontains=query)
 
     context = {
         'user': user,
@@ -164,9 +183,14 @@ def profile_cards(request):
 
 def profile_cardsets(request):
     user = request.user
+    query = request.GET.get('query', '')
+
     user_cardsets = CardSet.objects.filter(
         Q(author=user) | Q(saved_by=user)
     ).distinct()
+
+    if query:
+        user_cardsets = user_cardsets.filter(title__icontains=query)
 
     studying_cardsets_ids = CardSetProgress.objects.filter(
         learner=user,
@@ -182,7 +206,12 @@ def profile_cardsets(request):
 
 def profile_projects(request):
     user = request.user
+    query = request.GET.get('query', '')
+
     user_projects = user.projects.all()
+
+    if query:
+        user_projects = user_projects.filter(title__icontains=query)
 
     context = {
         'user': user,

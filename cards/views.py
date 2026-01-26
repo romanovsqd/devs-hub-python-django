@@ -16,10 +16,10 @@ from .forms import CardForm, CardSetForm
 def card_list(request):
     query = request.GET.get('query', '')
 
+    cards = Card.objects.all()
+
     if query:
-        cards = Card.objects.filter(question__icontains=query)
-    else:
-        cards = Card.objects.all()
+        cards = cards.filter(question__icontains=query)
 
     context = {
         'cards': cards
@@ -127,10 +127,10 @@ def card_toggle_save(request, card_id):
 def cardset_list(request):
     query = request.GET.get('query', '')
 
+    cardsets = CardSet.objects.all()
+
     if query:
-        cardsets = CardSet.objects.filter(title__icontains=query)
-    else:
-        cardsets = CardSet.objects.all()
+        cardsets = cardsets.filter(title__icontains=query)
 
     context = {
         'cardsets': cardsets
