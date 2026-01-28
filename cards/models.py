@@ -74,7 +74,7 @@ class CardSetProgress(models.Model):
     )
     cardset = models.ForeignKey(
         'CardSet',
-        related_name='card_progresses',
+        related_name='progresses',
         on_delete=models.CASCADE
     )
     card = models.ForeignKey(

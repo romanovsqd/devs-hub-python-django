@@ -7,9 +7,29 @@
   <h1>Мой профиль</h1>
 
   <div>
-    <a href="{% url "users:profile_cards" %}">Мои карточки</a>
+    <a href="{% url "users:profile_cards" %}">Мои карточки </a>
     <a href="{% url "users:profile_cardsets" %}">Мои наборы карточек</a>
     <a href="{% url "users:profile_projects" %}">Мои проекты</a>
+  </div>
+
+  <h2>Статистика по профилю</h2>
+
+  <div>
+    <div>
+      <span>Всего карточек: {{ cards_stats.total }}</span>
+      <span>Создано карточек: {{ cards_stats.created }}</span>
+      <span>Сохранено карточек: {{ cards_stats.saved }}</span>
+      <span>В изучении: {{ cards_stats.in_study }}</span>
+    </div>
+    <div>
+      <span>Всего наборов: {{ cardsets_stats.total }}</span>
+      <span>Создано наборов: {{ cardsets_stats.created }}</span>
+      <span>Сохранено наборов: {{ cardsets_stats.saved }}</span>
+      <span>В изучении: {{ cardsets_stats.in_study }}</span>
+    </div>
+    <div>
+      <span>Всего проектов: {{ projects_stats.total }}</span>
+    </div>
   </div>
 
 {% endblock content %}

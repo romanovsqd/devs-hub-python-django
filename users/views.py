@@ -2,10 +2,11 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import LoginView
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect, render
 
 from cards.models import Card, CardSet, CardSetProgress
+from projects.models import Project
 
 from .forms import LoginForm, RegisterForm, UserForm
 
@@ -63,9 +64,63 @@ def user_detail(request, user_id):
     if user == request.user:
         return redirect('users:profile_detail')
 
+    cards_stats = Card.objects.aggregate(
+        total=Count(
+            'id',
+            filter=Q(author=user) | Q(saved_by=user),
+        ),
+        created=Count(
+            'id',
+            filter=Q(author=user),
+        ),
+        saved=Count(
+            'id',
+            filter=Q(saved_by=user),
+        ),
+        in_study=Count(
+            'id',
+            filter=Q(cardset_progresses__learner=user),
+            distinct=True
+        )
+    )
+
+    cardsets_stats = CardSet.objects.aggregate(
+        total=Count(
+            'id',
+            filter=Q(author=user) | Q(saved_by=user),
+            distinct=True
+        ),
+        created=Count(
+            'id',
+            filter=Q(author=user),
+            distinct=True
+        ),
+        saved=Count(
+            'id',
+            filter=Q(saved_by=user),
+            distinct=True
+        ),
+        in_study=Count(
+            'id',
+            filter=Q(progresses__learner=user),
+            distinct=True
+        ),
+    )
+
+    projects_stats = Project.objects.aggregate(
+        total=Count(
+            'id',
+            filter=Q(user=user),
+        ),
+    )
+
     context = {
         'user': user,
+        'cards_stats': cards_stats,
+        'cardsets_stats': cardsets_stats,
+        'projects_stats': projects_stats,
     }
+
     return render(request, 'users/users/user_detail.html', context)
 
 
@@ -127,9 +182,63 @@ def user_projects(request, user_id):
 def profile_detail(request):
     user = request.user
 
+    cards_stats = Card.objects.aggregate(
+        total=Count(
+            'id',
+            filter=Q(author=user) | Q(saved_by=user),
+        ),
+        created=Count(
+            'id',
+            filter=Q(author=user),
+        ),
+        saved=Count(
+            'id',
+            filter=Q(saved_by=user),
+        ),
+        in_study=Count(
+            'id',
+            filter=Q(cardset_progresses__learner=user),
+            distinct=True
+        )
+    )
+
+    cardsets_stats = CardSet.objects.aggregate(
+        total=Count(
+            'id',
+            filter=Q(author=user) | Q(saved_by=user),
+            distinct=True
+        ),
+        created=Count(
+            'id',
+            filter=Q(author=user),
+            distinct=True
+        ),
+        saved=Count(
+            'id',
+            filter=Q(saved_by=user),
+            distinct=True
+        ),
+        in_study=Count(
+            'id',
+            filter=Q(progresses__learner=user),
+            distinct=True
+        ),
+    )
+
+    projects_stats = Project.objects.aggregate(
+        total=Count(
+            'id',
+            filter=Q(user=user),
+        ),
+    )
+
     context = {
         'user': user,
+        'cards_stats': cards_stats,
+        'cardsets_stats': cardsets_stats,
+        'projects_stats': projects_stats,
     }
+
     return render(request, 'users/profile/profile_detail.html', context)
 
 
