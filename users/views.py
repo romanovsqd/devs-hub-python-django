@@ -16,14 +16,14 @@ User = get_user_model()
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect('/')
+        return redirect('users:profile_detail')
 
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('/')
+            return redirect('users:profile_detail')
     else:
         form = RegisterForm()
 
@@ -38,7 +38,7 @@ class LoginUserView(LoginView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('/')
+            return redirect('users:profile_detail')
         return super().dispatch(request, *args, **kwargs)
 
 
