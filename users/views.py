@@ -179,6 +179,7 @@ def user_projects(request, user_id):
     return render(request, 'users/users/user_projects.html', context)
 
 
+@login_required
 def profile_detail(request):
     user = request.user
 
@@ -242,6 +243,7 @@ def profile_detail(request):
     return render(request, 'users/profile/profile_detail.html', context)
 
 
+@login_required
 def profile_update(request):
     user = request.user
 
@@ -272,6 +274,7 @@ def profile_update(request):
     })
 
 
+@login_required
 def profile_cards(request):
     user = request.user
     query = request.GET.get('query', '')
@@ -290,6 +293,7 @@ def profile_cards(request):
     return render(request, 'users/profile/profile_cards.html', context)
 
 
+@login_required
 def profile_cardsets(request):
     user = request.user
     query = request.GET.get('query', '')
@@ -313,6 +317,7 @@ def profile_cardsets(request):
     return render(request, 'users/profile/profile_cardsets.html', context)
 
 
+@login_required
 def profile_projects(request):
     user = request.user
     query = request.GET.get('query', '')
