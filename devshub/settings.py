@@ -144,7 +144,16 @@ LOGIN_REDIRECT_URL = 'users:profile_detail'
 
 LOGOUT_REDIRECT_URL = 'users:login'
 
+# Auth backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.EmailAuthBackend',
+]
+
 # Internal IPs
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+# email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
