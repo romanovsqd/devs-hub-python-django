@@ -28,4 +28,9 @@ urlpatterns = [
         'profile/card-sets/', views.profile_cardsets, name='profile_cardsets'
     ),
     path('profile/projects/', views.profile_projects, name='profile_projects'),
+
+    path(
+        'confirm-email/<uidb64>/<token>/',
+        views.confirm_email, name='confirm_email'
+    )
 ]

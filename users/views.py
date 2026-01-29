@@ -1,9 +1,14 @@
 from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView
+from django.core.mail import send_mail
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from cards.models import Card, CardSet, CardSetProgress
 from projects.models import Project
@@ -251,9 +256,36 @@ def profile_update(request):
         if 'update_profile' in request.POST:
             user_form = UserForm(request.POST, request.FILES, instance=user)
             password_form = PasswordChangeForm(user)
+            old_email = user.email
 
             if user_form.is_valid():
+                user_email = user_form.cleaned_data['email']
+                if user_email != old_email:
+                    user.email_verified = False
+
                 user_form.save()
+
+                if user_email and user_email != old_email:
+                    uid = urlsafe_base64_encode(force_bytes(user.pk))
+                    token = default_token_generator.make_token(user)
+
+                    link = request.build_absolute_uri(
+                        reverse(
+                            'users:confirm_email',
+                            kwargs={
+                                'uidb64': uid,
+                                'token': token
+                            }
+                        )
+                    )
+
+                    send_mail(
+                        'Подтверждение почты',
+                        f'Перейдите по ссылке:\n{link}',
+                        'devs-hub@mail.com',
+                        [user_email],
+                    )
+
                 return redirect('users:profile_update')
 
         elif 'change_password' in request.POST:
@@ -272,6 +304,21 @@ def profile_update(request):
         'user_form': user_form,
         'password_form': password_form,
     })
+
+
+def confirm_email(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except Exception:
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        user.email_verified = True
+        user.save()
+        return redirect('users:profile_update')
+
+    return redirect('users:profile_update')
 
 
 @login_required

@@ -7,6 +7,7 @@ class User(AbstractUser):
     specialization = models.CharField(max_length=50, blank=True)
     primary_skill = models.CharField(max_length=50, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    email_verified = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse('users:user_detail', kwargs={'user_id': self.pk})
