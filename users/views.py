@@ -2,11 +2,16 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import (
+    LoginView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView
+)
 from django.core.mail import send_mail
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
@@ -40,6 +45,31 @@ def register(request):
 
 class LoginUserView(LoginView):
     authentication_form = LoginForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('users:profile_detail')
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UserPasswordResetView(PasswordResetView):
+    success_url = reverse_lazy('users:password_reset_done')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('users:profile_detail')
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UserPasswordResetDoneView(PasswordResetDoneView):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('users:profile_detail')
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UserPasswordResetConfirmView(PasswordResetConfirmView):
+    success_url = reverse_lazy('users:password_reset_complete')
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
