@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model, login, update_session_auth_hash
+from django.contrib.auth import authenticate, get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.tokens import default_token_generator
@@ -30,9 +30,16 @@ def register(request):
 
     if request.method == 'POST':
         form = RegisterForm(request.POST)
+
         if form.is_valid():
             user = form.save()
+            user = authenticate(
+                request,
+                username=user.username,
+                password=form.cleaned_data['password1']
+            )
             login(request, user)
+
             return redirect('users:profile_detail')
     else:
         form = RegisterForm()
@@ -282,6 +289,7 @@ def profile_detail(request):
 def profile_update(request):
     user = request.user
 
+    # TODO: сделать проверку на уникальный email
     if request.method == 'POST':
         if 'update_profile' in request.POST:
             user_form = UserForm(request.POST, request.FILES, instance=user)
