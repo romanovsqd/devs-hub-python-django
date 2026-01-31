@@ -8,11 +8,17 @@ from .forms import ProjectForm
 @login_required
 def project_list(request):
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
+
+    projects = Project.objects.all()
 
     if query:
         projects = Project.objects.filter(title__icontains=query)
-    else:
-        projects = Project.objects.all()
+
+    if sort_by == 'newest':
+        projects = projects.order_by('-created_at')
+    elif sort_by == 'oldest':
+        projects = projects.order_by('created_at')
 
     context = {
         'projects': projects

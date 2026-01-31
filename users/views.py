@@ -220,11 +220,17 @@ def user_cardsets(request, user_id):
 def user_projects(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
 
     user_projects = user.projects.all()
 
     if query:
         user_projects = user_projects.filter(title__icontains=query)
+
+    if sort_by == 'newest':
+        user_projects = user_projects.order_by('-created_at')
+    elif sort_by == 'oldest':
+        user_projects = user_projects.order_by('created_at')
 
     context = {
         'user': user,
@@ -432,11 +438,17 @@ def profile_cardsets(request):
 def profile_projects(request):
     user = request.user
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
 
     user_projects = user.projects.all()
 
     if query:
         user_projects = user_projects.filter(title__icontains=query)
+
+    if sort_by == 'newest':
+        user_projects = user_projects.order_by('-created_at')
+    elif sort_by == 'oldest':
+        user_projects = user_projects.order_by('created_at')
 
     context = {
         'user': user,
