@@ -170,6 +170,7 @@ def user_detail(request, user_id):
 def user_cards(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
 
     user_cards = Card.objects.filter(
         Q(author=user) | Q(saved_by=user)
@@ -177,6 +178,11 @@ def user_cards(request, user_id):
 
     if query:
         user_cards = user_cards.filter(question__icontains=query)
+
+    if sort_by == 'newest':
+        user_cards = user_cards.order_by('-created_at')
+    elif sort_by == 'oldest':
+        user_cards = user_cards.order_by('created_at')
 
     context = {
         'user': user,
@@ -363,6 +369,9 @@ def confirm_email(request, uidb64, token):
 def profile_cards(request):
     user = request.user
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
+
+    print(sort_by)
 
     user_cards = Card.objects.filter(
         Q(author=user) | Q(saved_by=user)
@@ -370,6 +379,11 @@ def profile_cards(request):
 
     if query:
         user_cards = user_cards.filter(question__icontains=query)
+
+    if sort_by == 'newest':
+        user_cards = user_cards.order_by('-created_at')
+    elif sort_by == 'oldest':
+        user_cards = user_cards.order_by('created_at')
 
     context = {
         'user': user,

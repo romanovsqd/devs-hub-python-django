@@ -15,11 +15,17 @@ from .forms import CardForm, CardSetForm
 @login_required
 def card_list(request):
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by')
 
     cards = Card.objects.all()
 
     if query:
         cards = cards.filter(question__icontains=query)
+
+    if sort_by == 'newest':
+        cards = cards.order_by('-created_at')
+    elif sort_by == 'oldest':
+        cards = cards.order_by('created_at')
 
     context = {
         'cards': cards
