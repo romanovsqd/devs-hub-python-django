@@ -132,11 +132,17 @@ def card_toggle_save(request, card_id):
 @login_required
 def cardset_list(request):
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
 
     cardsets = CardSet.objects.all()
 
     if query:
         cardsets = cardsets.filter(title__icontains=query)
+
+    if sort_by == 'newest':
+        cardsets = cardsets.order_by('-created_at')
+    elif sort_by == 'oldest':
+        cardsets = cardsets.order_by('created_at')
 
     context = {
         'cardsets': cardsets

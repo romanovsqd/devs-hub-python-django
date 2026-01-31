@@ -195,6 +195,7 @@ def user_cards(request, user_id):
 def user_cardsets(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
 
     user_cardsets = CardSet.objects.filter(
         Q(author=user) | Q(saved_by=user)
@@ -202,6 +203,11 @@ def user_cardsets(request, user_id):
 
     if query:
         user_cardsets = user_cardsets.filter(title__icontains=query)
+
+    if sort_by == 'newest':
+        user_cardsets = user_cardsets.order_by('-created_at')
+    elif sort_by == 'oldest':
+        user_cardsets = user_cardsets.order_by('created_at')
 
     context = {
         'user': user,
@@ -396,6 +402,7 @@ def profile_cards(request):
 def profile_cardsets(request):
     user = request.user
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
 
     user_cardsets = CardSet.objects.filter(
         Q(author=user) | Q(saved_by=user)
@@ -403,6 +410,11 @@ def profile_cardsets(request):
 
     if query:
         user_cardsets = user_cardsets.filter(title__icontains=query)
+
+    if sort_by == 'newest':
+        user_cardsets = user_cardsets.order_by('-created_at')
+    elif sort_by == 'oldest':
+        user_cardsets = user_cardsets.order_by('created_at')
 
     studying_cardsets_ids = CardSetProgress.objects.filter(
         learner=user,
