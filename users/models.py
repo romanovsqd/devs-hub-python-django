@@ -9,6 +9,12 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     email_verified = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['-username']
+        indexes = [
+            models.Index(fields=['-username']),
+        ]
+
     def get_absolute_url(self):
         return reverse('users:user_detail', kwargs={'user_id': self.pk})
 

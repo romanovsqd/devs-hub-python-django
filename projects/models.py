@@ -22,8 +22,10 @@ class Project(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        ordering = ['-created_at']
         indexes = [
             models.Index(fields=['title']),
+            models.Index(fields=['-created_at']),
         ]
 
     def __str__(self):

@@ -21,8 +21,10 @@ class Card(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        ordering = ['-created_at']
         indexes = [
             models.Index(fields=['question']),
+            models.Index(fields=['-created_at']),
         ]
 
     def __str__(self):
@@ -53,8 +55,10 @@ class CardSet(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        ordering = ['-created_at']
         indexes = [
             models.Index(fields=['title']),
+            models.Index(fields=['-created_at']),
         ]
 
     def __str__(self):
@@ -92,6 +96,7 @@ class CardSetProgress(models.Model):
 
     class Meta:
         unique_together = ['learner', 'cardset', 'card']
+        ordering = ['next_review_date']
         indexes = [
             models.Index(fields=['learner']),
             models.Index(fields=['next_review_date']),
