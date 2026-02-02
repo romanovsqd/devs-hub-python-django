@@ -1,10 +1,11 @@
 from datetime import timedelta
 import json
+from urllib.parse import quote
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -134,6 +135,28 @@ def card_toggle_save(request, card_id):
         'message': message,
         'button_text': button_text,
     })
+
+
+@login_required
+def card_export(request, card_id):
+    card = get_object_or_404(
+        Card,
+        pk=card_id
+    )
+    filename = f'{card.question}.txt'
+    response = HttpResponse(content_type='text/plain')
+
+    response['Content-Disposition'] = (
+        'attachment; '
+        f"filename*=UTF-8''{quote(filename)}"
+    )
+
+    response.write(f'#author_id: {card.author.id}\n')
+    response.write(f'#card_id: {card.id}\n')
+    response.write(f'{card.question}\t')
+    response.write(f'{card.answer}\n')
+
+    return response
 
 
 @login_required
@@ -388,3 +411,31 @@ def submit(request, cardset_id, card_id):
         'efactor': progress.efactor,
         'repetitions': progress.repetitions,
     })
+
+
+@login_required
+def cardset_export(request, cardset_id):
+    cardset = get_object_or_404(
+        CardSet,
+        pk=cardset_id
+    )
+    filename = f'{cardset.title}.txt'
+
+    def generate_card():
+        for card in cardset.cards.all().iterator(chunk_size=1000):
+            yield (
+                f'#author_id: {card.author_id}\n'
+                f'#card_id: {card.id}\n'
+                f'{card.question}\t{card.answer}\n'
+                '\n'
+            )
+
+    response = StreamingHttpResponse(
+        generate_card(),
+        content_type='text/plain; charset=utf-8'
+    )
+    response['Content-Disposition'] = (
+        'attachment; '
+        f"filename*=UTF-8''{quote(filename)}"
+    )
+    return response

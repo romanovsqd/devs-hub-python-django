@@ -14,4 +14,8 @@ urlpatterns = [
         '<int:card_id>/toggle-save/',
         views.card_toggle_save, name='card_toggle_save'
     ),
+    path(
+        '<int:card_id>/export/',
+        views.card_export, name='card_export'
+    ),
 ]
