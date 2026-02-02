@@ -1,4 +1,9 @@
-from django.contrib.auth import authenticate, get_user_model, login, update_session_auth_hash
+from django.contrib.auth import (
+    authenticate,
+    get_user_model,
+    login,
+    update_session_auth_hash
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.tokens import default_token_generator
@@ -87,11 +92,21 @@ class UserPasswordResetConfirmView(PasswordResetConfirmView):
 @login_required
 def user_list(request):
     query = request.GET.get('query', '')
+    sort_by = request.GET.get('sort_by', '')
 
     users = User.objects.all()
 
     if query:
-        users = users.filter(username__icontains=query)
+        users = users.filter(
+            Q(username__icontains=query)
+            | Q(primary_skill__icontains=query)
+            | Q(specialization__icontains=query)
+        )
+
+    if sort_by == 'username_asc':
+        users = users.order_by('username')
+    elif sort_by == 'username_desc':
+        users = users.order_by('-username')
 
     context = {
         'users': users,
