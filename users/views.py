@@ -322,7 +322,6 @@ def profile_detail(request):
 def profile_update(request):
     user = request.user
 
-    # TODO: сделать проверку на уникальный email
     if request.method == 'POST':
         if 'update_profile' in request.POST:
             user_form = UserForm(request.POST, request.FILES, instance=user)
