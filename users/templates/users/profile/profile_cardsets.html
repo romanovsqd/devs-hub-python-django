@@ -22,7 +22,7 @@
 
 
   <ul>
-    {% for cardset in user_cardsets %}
+    {% for cardset in page_obj %}
       <li>
         {% render_cardset cardset %}
           <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
@@ -42,6 +42,20 @@
       </li>
     {% endfor %}
   </ul>
+
+<div>
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
+  {% endif %}
+
+  <span>
+    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+  </span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
+  {% endif %}
+</div>
 
 {% endblock content %}
 

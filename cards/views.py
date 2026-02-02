@@ -2,6 +2,7 @@ from datetime import timedelta
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -27,8 +28,14 @@ def card_list(request):
     elif sort_by == 'oldest':
         cards = cards.order_by('created_at')
 
+    paginator = Paginator(cards, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'cards': cards
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
     return render(request, 'cards/cards/card_list.html', context)
 
@@ -144,8 +151,14 @@ def cardset_list(request):
     elif sort_by == 'oldest':
         cardsets = cardsets.order_by('created_at')
 
+    paginator = Paginator(cardsets, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'cardsets': cardsets
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
     return render(request, 'cards/cardsets/cardset_list.html', context)
 

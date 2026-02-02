@@ -14,6 +14,7 @@ from django.contrib.auth.views import (
     PasswordResetView
 )
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -108,8 +109,14 @@ def user_list(request):
     elif sort_by == 'username_desc':
         users = users.order_by('-username')
 
+    paginator = Paginator(users, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'users': users,
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
     return render(request, 'users/users/user_list.html', context)
 
@@ -199,9 +206,15 @@ def user_cards(request, user_id):
     elif sort_by == 'oldest':
         user_cards = user_cards.order_by('created_at')
 
+    paginator = Paginator(user_cards, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
         'user': user,
-        'user_cards': user_cards,
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
     return render(request, 'users/users/user_cards.html', context)
 
@@ -224,10 +237,17 @@ def user_cardsets(request, user_id):
     elif sort_by == 'oldest':
         user_cardsets = user_cardsets.order_by('created_at')
 
+    paginator = Paginator(user_cardsets, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
         'user': user,
-        'user_cardsets': user_cardsets,
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
+
     return render(request, 'users/users/user_cardsets.html', context)
 
 
@@ -247,10 +267,17 @@ def user_projects(request, user_id):
     elif sort_by == 'oldest':
         user_projects = user_projects.order_by('created_at')
 
+    paginator = Paginator(user_projects, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
         'user': user,
-        'user_projects': user_projects,
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
+
     return render(request, 'users/users/user_projects.html', context)
 
 
@@ -411,10 +438,17 @@ def profile_cards(request):
     elif sort_by == 'oldest':
         user_cards = user_cards.order_by('created_at')
 
+    paginator = Paginator(user_cards, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
         'user': user,
-        'user_cards': user_cards,
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
+
     return render(request, 'users/profile/profile_cards.html', context)
 
 
@@ -440,11 +474,18 @@ def profile_cardsets(request):
         learner=user,
     ).values_list('cardset_id', flat=True)
 
+    paginator = Paginator(user_cardsets, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
         'user': user,
-        'user_cardsets': user_cardsets,
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
         'studying_cardsets_ids': studying_cardsets_ids,
     }
+
     return render(request, 'users/profile/profile_cardsets.html', context)
 
 
@@ -464,8 +505,14 @@ def profile_projects(request):
     elif sort_by == 'oldest':
         user_projects = user_projects.order_by('created_at')
 
+    paginator = Paginator(user_projects, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
         'user': user,
-        'user_projects': user_projects,
+        'page_obj': page_obj,
+        'query': query,
+        'sort_by': sort_by,
     }
     return render(request, 'users/profile/profile_projects.html', context)
