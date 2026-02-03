@@ -36,5 +36,11 @@ class CodewarsProfile(models.Model):
     languages = models.JSONField(default=list)
     total_completed_katas = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ['username']
+        indexes = [
+            models.Index(fields=['username']),
+        ]
+
     def __str__(self):
         return f'{self.user.username} — Codewars: {self.username}'
