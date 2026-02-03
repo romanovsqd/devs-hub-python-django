@@ -30,6 +30,13 @@
     <div>
       <span>Всего проектов: {{ projects_stats.total }}</span>
     </div>
+    <div>
+      <span>ссылка: {{ codewars_stats.username }}</span>
+      <span>honor: {{ codewars_stats.honor }}</span>
+      <span>leaderboard_position: {{ codewars_stats.leaderboard_position }}</span>
+      <span>languages: {{ codewars_stats.languages|join:', ' }}</span>
+      <span>total_completed_katas: {{ codewars_stats.total_completed_katas }}</span>
+    </div>
   </div>
 
 {% endblock content %}

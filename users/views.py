@@ -20,9 +20,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+import requests
 
 from cards.models import Card, CardSet, CardSetProgress
 from projects.models import Project
+from .models import CodewarsProfile
 
 from .forms import LoginForm, RegisterForm, UserForm
 
@@ -335,11 +337,14 @@ def profile_detail(request):
         ),
     )
 
+    codewars_stats = user.codewars_profile
+
     context = {
         'user': user,
         'cards_stats': cards_stats,
         'cardsets_stats': cardsets_stats,
         'projects_stats': projects_stats,
+        'codewars_stats': codewars_stats,
     }
 
     return render(request, 'users/profile/profile_detail.html', context)
@@ -357,10 +362,10 @@ def profile_update(request):
 
             if user_form.is_valid():
                 user_email = user_form.cleaned_data['email']
+                codewars_username = user_form.cleaned_data['codewars_username']
+
                 if user_email != old_email:
                     user.email_verified = False
-
-                user_form.save()
 
                 if user_email and user_email != old_email:
                     uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -382,6 +387,27 @@ def profile_update(request):
                         'devs-hub@mail.com',
                         [user_email],
                     )
+
+                if codewars_username:
+                    url = f'https://www.codewars.com/api/v1/users/{codewars_username}'
+                    response = requests.get(url)
+
+                    print(response.status_code)
+
+                    if response.status_code == 200:
+                        data = response.json()
+                        CodewarsProfile.objects.update_or_create(
+                            user=user,
+                            defaults={
+                                'username': data['username'],
+                                'honor': data['honor'],
+                                'leaderboard_position': data['leaderboardPosition'],
+                                'languages': list(data['ranks']['languages'].keys()),
+                                'total_completed_katas': data['codeChallenges']['totalCompleted']
+                            }
+                        )
+
+                user_form.save()
 
                 return redirect('users:profile_update')
 

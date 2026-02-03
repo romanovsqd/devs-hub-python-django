@@ -60,6 +60,7 @@ class UserForm(UserChangeForm):
             'email',
             'specialization',
             'primary_skill',
+            'codewars_username',
             'avatar',
         ]
 
