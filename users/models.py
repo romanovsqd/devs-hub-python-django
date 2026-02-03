@@ -10,9 +10,9 @@ class User(AbstractUser):
     email_verified = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-username']
+        ordering = ['username']
         indexes = [
-            models.Index(fields=['-username']),
+            models.Index(fields=['username']),
         ]
 
     def get_absolute_url(self):
