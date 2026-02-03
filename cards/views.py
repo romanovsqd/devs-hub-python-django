@@ -141,7 +141,8 @@ def card_toggle_save(request, card_id):
 def card_export(request, card_id):
     card = get_object_or_404(
         Card,
-        pk=card_id
+        Q(saved_by=request.user) | Q(author=request.user),
+        pk=card_id,
     )
     filename = f'{card.question}.txt'
     response = HttpResponse(content_type='text/plain')
@@ -417,7 +418,8 @@ def submit(request, cardset_id, card_id):
 def cardset_export(request, cardset_id):
     cardset = get_object_or_404(
         CardSet,
-        pk=cardset_id
+        Q(saved_by=request.user) | Q(author=request.user),
+        pk=cardset_id,
     )
     filename = f'{cardset.title}.txt'
 
