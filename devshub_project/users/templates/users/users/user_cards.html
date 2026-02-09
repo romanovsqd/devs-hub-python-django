@@ -19,7 +19,7 @@
   </div>
 
   <ul>
-    {% for card in page_obj %}
+    {% for card in user_cards %}
       <li>
         {% render_card card %}
       </li>
@@ -31,16 +31,16 @@
   </ul>
 
 <div>
-  {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
+  {% if user_cards.has_previous %}
+    <a href="?page={{ user_cards.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
   {% endif %}
 
   <span>
-    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    Страница {{ user_cards.number }} из {{ user_cards.paginator.num_pages }}
   </span>
 
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
+  {% if user_cards.has_next %}
+    <a href="?page={{ user_cards.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
   {% endif %}
 </div>
 

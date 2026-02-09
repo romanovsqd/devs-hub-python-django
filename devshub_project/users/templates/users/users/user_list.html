@@ -18,7 +18,7 @@
   </div>
 
   <ul>
-    {% for user in page_obj %}
+    {% for user in users %}
       <li>
         <h4>
           <a href="{{ user.get_absolute_url }}">
@@ -34,16 +34,16 @@
   </ul>
 
 <div>
-  {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
+  {% if users.has_previous %}
+    <a href="?page={{ users.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
   {% endif %}
 
   <span>
-    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    Страница {{ users.number }} из {{ users.paginator.num_pages }}
   </span>
 
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
+  {% if users.has_next %}
+    <a href="?page={{ users.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
   {% endif %}
 </div>
 

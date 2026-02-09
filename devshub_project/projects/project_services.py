@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from .models import Project
 
@@ -22,6 +23,14 @@ def get_user_created_project_by_id(project_id, user):
     )
 
 
+def get_all_user_created_projects(user):
+    """
+    возвращает queryset всех проектов,
+    которые пользователь создал.
+    """
+    return Project.objects.filter(user=user)
+
+
 def filter_sort_paginate_projects(
     projects, query, sort_by, page_number, per_page=20
 ):
@@ -38,3 +47,17 @@ def filter_sort_paginate_projects(
     page_obj = paginator.get_page(page_number)
 
     return page_obj
+
+
+def get_user_project_stats(user):
+    """возвращает словарь со статистикой проектов для пользователя."""
+    projects = get_all_projects()
+
+    projects_stats = projects.aggregate(
+        total=Count(
+            'id',
+            filter=Q(user=user),
+        ),
+    )
+
+    return projects_stats

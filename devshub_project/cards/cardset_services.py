@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from .models import CardSet
 
@@ -15,7 +15,7 @@ def get_cardset_by_id(cardset_id):
 
 
 def get_cardet_cards(cardset):
-    """Возращает все карточки из набора карточек"""
+    """Возращает все карточки из набора карточек."""
     return cardset.cards.all()
 
 
@@ -40,6 +40,16 @@ def get_user_created_or_saved_cardset_by_id(cardset_id, user):
         Q(saved_by=user) | Q(author=user),
         pk=cardset_id,
     )
+
+
+def get_all_user_created_or_saved_cardsets(user):
+    """
+    возвращает queryset всех наборов карточек,
+    которые пользователь создал или сохранил.
+    """
+    return CardSet.objects.filter(
+        Q(author=user) | Q(saved_by=user)
+    ).distinct()
 
 
 def filter_sort_paginate_cardsets(
@@ -96,7 +106,7 @@ def generate_cards_data_for_export(cardset_cards):
 def prepare_cardset_for_export(cardset):
     """
     Подготовливает набор карточек к экспорту.
-    Возвращает кортеж (filename, cards_generator)
+    Возвращает кортеж (filename, cards_generator).
     """
     cardset_cards = get_cardet_cards(cardset)
 
@@ -104,3 +114,33 @@ def prepare_cardset_for_export(cardset):
     cards_generator = generate_cards_data_for_export(cardset_cards)
 
     return filename, cards_generator
+
+
+def get_user_cardsets_stats(user):
+    """возвращает словарь со статистикой наборов карточек для пользователя."""
+    cardsets = get_all_cardsets()
+
+    cardsets_stats = cardsets.aggregate(
+        total=Count(
+            'id',
+            filter=Q(author=user) | Q(saved_by=user),
+            distinct=True
+        ),
+        created=Count(
+            'id',
+            filter=Q(author=user),
+            distinct=True
+        ),
+        saved=Count(
+            'id',
+            filter=Q(saved_by=user),
+            distinct=True
+        ),
+        in_study=Count(
+            'id',
+            filter=Q(progresses__learner=user),
+            distinct=True
+        ),
+    )
+
+    return cardsets_stats

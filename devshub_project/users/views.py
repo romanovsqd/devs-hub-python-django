@@ -14,16 +14,16 @@ from django.contrib.auth.views import (
     PasswordResetView
 )
 from django.core.mail import send_mail
-from django.core.paginator import Paginator
-from django.db.models import Q, Count
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 import requests
 
-from cards.models import Card, CardSet, CardSetProgress
-from projects.models import Project
+from cards.models import CardSetProgress
+from cards import card_services, cardset_services
+from . import user_services
+from projects import project_services
 from .models import CodewarsProfile
 
 from .forms import LoginForm, RegisterForm, UserForm
@@ -96,27 +96,20 @@ class UserPasswordResetConfirmView(PasswordResetConfirmView):
 def user_list(request):
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    users = User.objects.all()
+    users = user_services.get_all_users()
 
-    if query:
-        users = users.filter(
-            Q(username__icontains=query)
-            | Q(primary_skill__icontains=query)
-            | Q(specialization__icontains=query)
-        )
-
-    if sort_by == 'username_asc':
-        users = users.order_by('username')
-    elif sort_by == 'username_desc':
-        users = users.order_by('-username')
-
-    paginator = Paginator(users, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    users = user_services.filter_sort_paginate_users(
+        users,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     context = {
-        'page_obj': page_obj,
+        'users': users,
         'query': query,
         'sort_by': sort_by,
     }
@@ -125,60 +118,16 @@ def user_list(request):
 
 @login_required
 def user_detail(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = user_services.get_user_by_id(user_id)
 
     if user == request.user:
         return redirect('users:profile_detail')
 
-    cards_stats = Card.objects.aggregate(
-        total=Count(
-            'id',
-            filter=Q(author=user) | Q(saved_by=user),
-        ),
-        created=Count(
-            'id',
-            filter=Q(author=user),
-        ),
-        saved=Count(
-            'id',
-            filter=Q(saved_by=user),
-        ),
-        in_study=Count(
-            'id',
-            filter=Q(cardset_progresses__learner=user),
-            distinct=True
-        )
-    )
+    cards_stats = card_services.get_user_cards_stats(user)
 
-    cardsets_stats = CardSet.objects.aggregate(
-        total=Count(
-            'id',
-            filter=Q(author=user) | Q(saved_by=user),
-            distinct=True
-        ),
-        created=Count(
-            'id',
-            filter=Q(author=user),
-            distinct=True
-        ),
-        saved=Count(
-            'id',
-            filter=Q(saved_by=user),
-            distinct=True
-        ),
-        in_study=Count(
-            'id',
-            filter=Q(progresses__learner=user),
-            distinct=True
-        ),
-    )
+    cardsets_stats = cardset_services.get_user_cardsets_stats(user)
 
-    projects_stats = Project.objects.aggregate(
-        total=Count(
-            'id',
-            filter=Q(user=user),
-        ),
-    )
+    projects_stats = project_services.get_user_project_stats(user)
 
     context = {
         'user': user,
@@ -192,29 +141,24 @@ def user_detail(request, user_id):
 
 @login_required
 def user_cards(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = user_services.get_user_by_id(user_id)
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    user_cards = Card.objects.filter(
-        Q(author=user) | Q(saved_by=user)
-    ).distinct()
+    user_cards = card_services.get_all_user_created_or_saved_cards(user)
 
-    if query:
-        user_cards = user_cards.filter(question__icontains=query)
-
-    if sort_by == 'newest':
-        user_cards = user_cards.order_by('-created_at')
-    elif sort_by == 'oldest':
-        user_cards = user_cards.order_by('created_at')
-
-    paginator = Paginator(user_cards, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    user_cards = card_services.filter_sort_paginate_cards(
+        user_cards,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     context = {
         'user': user,
-        'page_obj': page_obj,
+        'user_cards': user_cards,
         'query': query,
         'sort_by': sort_by,
     }
@@ -223,29 +167,26 @@ def user_cards(request, user_id):
 
 @login_required
 def user_cardsets(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = user_services.get_user_by_id(user_id)
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    user_cardsets = CardSet.objects.filter(
-        Q(author=user) | Q(saved_by=user)
-    ).distinct()
+    user_cardsets = (
+        cardset_services.get_all_user_created_or_saved_cardsets(user)
+    )
 
-    if query:
-        user_cardsets = user_cardsets.filter(title__icontains=query)
-
-    if sort_by == 'newest':
-        user_cardsets = user_cardsets.order_by('-created_at')
-    elif sort_by == 'oldest':
-        user_cardsets = user_cardsets.order_by('created_at')
-
-    paginator = Paginator(user_cardsets, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    user_cardsets = cardset_services.filter_sort_paginate_cardsets(
+        user_cardsets,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     context = {
         'user': user,
-        'page_obj': page_obj,
+        'user_cardsets': user_cardsets,
         'query': query,
         'sort_by': sort_by,
     }
@@ -255,27 +196,23 @@ def user_cardsets(request, user_id):
 
 @login_required
 def user_projects(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = user_services.get_user_by_id(user_id)
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    user_projects = user.projects.all()
-
-    if query:
-        user_projects = user_projects.filter(title__icontains=query)
-
-    if sort_by == 'newest':
-        user_projects = user_projects.order_by('-created_at')
-    elif sort_by == 'oldest':
-        user_projects = user_projects.order_by('created_at')
-
-    paginator = Paginator(user_projects, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    user_projects = project_services.get_all_user_created_projects(user)
+    user_projects = project_services.filter_sort_paginate_projects(
+        user_projects,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     context = {
         'user': user,
-        'page_obj': page_obj,
+        'user_projects': user_projects,
         'query': query,
         'sort_by': sort_by,
     }
@@ -287,55 +224,11 @@ def user_projects(request, user_id):
 def profile_detail(request):
     user = request.user
 
-    cards_stats = Card.objects.aggregate(
-        total=Count(
-            'id',
-            filter=Q(author=user) | Q(saved_by=user),
-        ),
-        created=Count(
-            'id',
-            filter=Q(author=user),
-        ),
-        saved=Count(
-            'id',
-            filter=Q(saved_by=user),
-        ),
-        in_study=Count(
-            'id',
-            filter=Q(cardset_progresses__learner=user),
-            distinct=True
-        )
-    )
+    cards_stats = card_services.get_user_cards_stats(user)
 
-    cardsets_stats = CardSet.objects.aggregate(
-        total=Count(
-            'id',
-            filter=Q(author=user) | Q(saved_by=user),
-            distinct=True
-        ),
-        created=Count(
-            'id',
-            filter=Q(author=user),
-            distinct=True
-        ),
-        saved=Count(
-            'id',
-            filter=Q(saved_by=user),
-            distinct=True
-        ),
-        in_study=Count(
-            'id',
-            filter=Q(progresses__learner=user),
-            distinct=True
-        ),
-    )
+    cardsets_stats = cardset_services.get_user_cardsets_stats(user)
 
-    projects_stats = Project.objects.aggregate(
-        total=Count(
-            'id',
-            filter=Q(user=user),
-        ),
-    )
+    projects_stats = project_services.get_user_project_stats(user)
 
     if hasattr(user, 'codewars_profile'):
         codewars_stats = user.codewars_profile
@@ -452,28 +345,21 @@ def profile_cards(request):
     user = request.user
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    print(sort_by)
+    user_cards = card_services.get_all_user_created_or_saved_cards(user)
 
-    user_cards = Card.objects.filter(
-        Q(author=user) | Q(saved_by=user)
-    ).distinct()
-
-    if query:
-        user_cards = user_cards.filter(question__icontains=query)
-
-    if sort_by == 'newest':
-        user_cards = user_cards.order_by('-created_at')
-    elif sort_by == 'oldest':
-        user_cards = user_cards.order_by('created_at')
-
-    paginator = Paginator(user_cards, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    user_cards = card_services.filter_sort_paginate_cards(
+        user_cards,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     context = {
         'user': user,
-        'page_obj': page_obj,
+        'user_cards': user_cards,
         'query': query,
         'sort_by': sort_by,
     }
@@ -486,30 +372,27 @@ def profile_cardsets(request):
     user = request.user
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    user_cardsets = CardSet.objects.filter(
-        Q(author=user) | Q(saved_by=user)
-    ).distinct()
+    user_cardsets = (
+        cardset_services.get_all_user_created_or_saved_cardsets(user)
+    )
 
-    if query:
-        user_cardsets = user_cardsets.filter(title__icontains=query)
-
-    if sort_by == 'newest':
-        user_cardsets = user_cardsets.order_by('-created_at')
-    elif sort_by == 'oldest':
-        user_cardsets = user_cardsets.order_by('created_at')
+    user_cardsets = cardset_services.filter_sort_paginate_cardsets(
+        user_cardsets,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     studying_cardsets_ids = CardSetProgress.objects.filter(
         learner=user,
     ).values_list('cardset_id', flat=True)
 
-    paginator = Paginator(user_cardsets, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
     context = {
         'user': user,
-        'page_obj': page_obj,
+        'user_cardsets': user_cardsets,
         'query': query,
         'sort_by': sort_by,
         'studying_cardsets_ids': studying_cardsets_ids,
@@ -523,24 +406,20 @@ def profile_projects(request):
     user = request.user
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    user_projects = user.projects.all()
-
-    if query:
-        user_projects = user_projects.filter(title__icontains=query)
-
-    if sort_by == 'newest':
-        user_projects = user_projects.order_by('-created_at')
-    elif sort_by == 'oldest':
-        user_projects = user_projects.order_by('created_at')
-
-    paginator = Paginator(user_projects, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    user_projects = project_services.get_all_user_created_projects(user)
+    user_projects = project_services.filter_sort_paginate_projects(
+        user_projects,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     context = {
         'user': user,
-        'page_obj': page_obj,
+        'user_projects': user_projects,
         'query': query,
         'sort_by': sort_by,
     }

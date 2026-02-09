@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from .models import Card
 
@@ -36,6 +36,10 @@ def get_user_created_or_saved_card_by_id(card_id, user):
 
 
 def get_all_user_created_or_saved_cards(user):
+    """
+    возвращает queryset всех карточек,
+    которые пользователь создал или сохранил.
+    """
     return Card.objects.filter(
         Q(author=user) | Q(saved_by=user)
     ).distinct()
@@ -79,7 +83,7 @@ def toggle_card_save_by_user(card, user):
 def generate_card_data_for_export(card):
     """
     Формирует данные карточки для экспорта в txt формат.
-    Возвращает кортеж (filename, content)
+    Возвращает кортеж (filename, content).
     """
     filename = f'{card.question}.txt'
 
@@ -90,3 +94,30 @@ def generate_card_data_for_export(card):
         f'{card.answer}\n'
     )
     return filename, content
+
+
+def get_user_cards_stats(user):
+    """возвращает словарь со статистикой карточек для пользователя."""
+    cards = get_all_cards()
+
+    cards_stats = cards.aggregate(
+        total=Count(
+            'id',
+            filter=Q(author=user) | Q(saved_by=user),
+        ),
+        created=Count(
+            'id',
+            filter=Q(author=user),
+        ),
+        saved=Count(
+            'id',
+            filter=Q(saved_by=user),
+        ),
+        in_study=Count(
+            'id',
+            filter=Q(cardset_progresses__learner=user),
+            distinct=True
+        )
+    )
+
+    return cards_stats
