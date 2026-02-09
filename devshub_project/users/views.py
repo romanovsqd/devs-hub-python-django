@@ -337,7 +337,10 @@ def profile_detail(request):
         ),
     )
 
-    codewars_stats = user.codewars_profile
+    if hasattr(user, 'codewars_profile'):
+        codewars_stats = user.codewars_profile
+    else:
+        codewars_stats = None
 
     context = {
         'user': user,
