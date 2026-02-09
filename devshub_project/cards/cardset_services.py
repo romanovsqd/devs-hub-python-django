@@ -14,7 +14,7 @@ def get_cardset_by_id(cardset_id):
     return get_object_or_404(CardSet, pk=cardset_id)
 
 
-def get_cardet_cards(cardset):
+def get_cardset_cards(cardset):
     """Возращает все карточки из набора карточек."""
     return cardset.cards.all()
 
@@ -108,7 +108,7 @@ def prepare_cardset_for_export(cardset):
     Подготовливает набор карточек к экспорту.
     Возвращает кортеж (filename, cards_generator).
     """
-    cardset_cards = get_cardet_cards(cardset)
+    cardset_cards = get_cardset_cards(cardset)
 
     filename = f'{cardset.title}.txt'
     cards_generator = generate_cards_data_for_export(cardset_cards)

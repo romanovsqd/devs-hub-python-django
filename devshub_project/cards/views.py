@@ -8,9 +8,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from . import card_services, cardset_services
-
-from .models import CardSet, CardSetProgress
+from . import (
+    card_services,
+    cardset_services,
+    cardsetprogress_services
+)
+from .models import CardSetProgress
 from .forms import CardForm, CardSetForm
 
 
@@ -162,7 +165,7 @@ def cardset_list(request):
 @login_required
 def cardset_detail(request, cardset_id):
     cardset = cardset_services.get_cardset_by_id(cardset_id)
-    cards = cardset_services.get_cardet_cards(cardset)
+    cards = cardset_services.get_cardset_cards(cardset)
 
     is_saved = cardset_services.is_cardset_saved_by_user(cardset, request.user)
 
@@ -276,37 +279,20 @@ def cardset_export(request, cardset_id):
 @login_required
 @require_POST
 def cardset_toggle_study(request, cardset_id):
-    cardset = get_object_or_404(
-        CardSet,
-        pk=cardset_id,
+    cardset = cardset_services.get_user_created_or_saved_cardset_by_id(
+        cardset_id, request.user
     )
 
-    progress_qs = CardSetProgress.objects.filter(
-        learner=request.user,
-        cardset=cardset
+    is_studying = cardsetprogress_services.toggle_cardset_study_for_user(
+        cardset, request.user
     )
-
-    is_studying = progress_qs.exists()
 
     if is_studying:
-        progress_qs.delete()
-        message = f'Вы больше не изучаете колоду {cardset.title}'
-        button_text = 'Добавить в изучаемые'
-    else:
-        cards = cardset.cards.all()
-
-        CardSetProgress.objects.bulk_create([
-            CardSetProgress(
-                learner=request.user,
-                card=card,
-                cardset=cardset
-            )
-            for card in cards
-        ],
-            ignore_conflicts=True
-        )
         message = f'Теперь вы изучаете колоду {cardset.title}'
         button_text = 'Удалить из изучаемых'
+    else:
+        message = f'Вы больше не изучаете колоду {cardset.title}'
+        button_text = 'Добавить в изучаемые'
 
     return JsonResponse({
         'message': message,
@@ -321,40 +307,20 @@ def review(request):
 
 @login_required
 def next_card(request):
-    today = timezone.localdate()
+    card_data = cardsetprogress_services.get_next_card_for_review(request.user)
 
-    progress = (
-        CardSetProgress.objects
-        .filter(
-            learner=request.user,
-            next_review_date__date=today
-        )
-        .select_related('card')
-        .order_by('next_review_date')
-        .first()
-    )
-
-    if not progress:
-        return JsonResponse({
-            'done': True
-        })
-
-    card = progress.card
-    cardset = progress.cardset
-
-    return JsonResponse({
-        'card_id': card.id,
-        'question': card.question,
-        'answer': card.answer,
-        'cardset_id': cardset.id,
-    })
+    if card_data:
+        return JsonResponse(card_data)
+    else:
+        return JsonResponse({'done': True})
 
 
 @login_required
 @require_POST
 def submit(request, cardset_id, card_id):
+    # TODO: переписать алгоритм интервального повторения
     data = json.loads(request.body)
-    quality = int(data.get('quality'))
+    quality = int(data.get('quality', 0))
 
     progress = get_object_or_404(
         CardSetProgress,
