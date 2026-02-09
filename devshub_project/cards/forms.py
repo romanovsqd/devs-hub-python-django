@@ -1,5 +1,7 @@
 from django import forms
 
+from . import card_services
+
 from .models import Card, CardSet
 
 
@@ -14,9 +16,10 @@ class CardSetForm(forms.ModelForm):
         model = CardSet
         fields = ['title', 'cards']
 
-    def __init__(self, *args, **kwargs):
-        cards_queryset = kwargs.pop('cards_queryset', None)
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.user = user
 
-        if cards_queryset is not None:
-            self.fields['cards'].queryset = cards_queryset
+        self.fields['cards'].queryset = (
+            card_services.get_all_user_created_or_saved_cards(self.user)
+        )

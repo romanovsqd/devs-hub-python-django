@@ -19,7 +19,7 @@
   </div>
 
   <ul>
-    {% for cardset in page_obj %}
+    {% for cardset in cardsets %}
       <li>
         {% render_cardset cardset %}
       </li>
@@ -31,16 +31,16 @@
   </ul>
 
 <div>
-  {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
+  {% if cardsets.has_previous %}
+    <a href="?page={{ cardsets.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
   {% endif %}
 
   <span>
-    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    Страница {{ cardsets.number }} из {{ cardsets.paginator.num_pages }}
   </span>
 
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
+  {% if cardsets.has_next %}
+    <a href="?page={{ cardsets.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
   {% endif %}
 </div>
 
