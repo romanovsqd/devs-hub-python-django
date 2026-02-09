@@ -127,7 +127,7 @@ def card_export(request, card_id):
         card_id, request.user
     )
 
-    filename, content = card_services.prepare_card_for_export(card)
+    filename, content = card_services.generate_card_data_for_export(card)
 
     response = HttpResponse(content_type='text/plain')
     response['Content-Disposition'] = (
