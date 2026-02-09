@@ -66,15 +66,16 @@ class UserForm(UserChangeForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        users_with_same_email = (
-            User.objects
-            .filter(email=email)
-            .exclude(pk=self.instance.pk)
-        )
 
-        if users_with_same_email.exists():
-            raise forms.ValidationError(
-                'Пользователь с таким email уже существует'
+        if email:
+            users_with_same_email = (
+                User.objects
+                .filter(email=email)
+                .exclude(pk=self.instance.pk)
             )
+            if users_with_same_email.exists():
+                raise forms.ValidationError(
+                    'Пользователь с таким email уже существует'
+                )
 
         return email
