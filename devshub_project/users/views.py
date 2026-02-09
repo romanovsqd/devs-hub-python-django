@@ -36,21 +36,18 @@ def register(request):
     if request.user.is_authenticated:
         return redirect('users:profile_detail')
 
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
+    form = RegisterForm(request.POST or None)
 
-        if form.is_valid():
-            user = form.save()
-            user = authenticate(
-                request,
-                username=user.username,
-                password=form.cleaned_data['password1']
-            )
-            login(request, user)
+    if form.is_valid():
+        user = form.save()
+        user = authenticate(
+            request,
+            username=user.username,
+            password=form.cleaned_data['password1']
+        )
+        login(request, user)
 
-            return redirect('users:profile_detail')
-    else:
-        form = RegisterForm()
+        return redirect('users:profile_detail')
 
     context = {
         'form': form
@@ -250,74 +247,71 @@ def profile_detail(request):
 def profile_update(request):
     user = request.user
 
-    if request.method == 'POST':
-        if 'update_profile' in request.POST:
-            user_form = UserForm(request.POST, request.FILES, instance=user)
-            password_form = PasswordChangeForm(user)
-            old_email = user.email
+    user_form = UserForm(
+        request.POST or None, request.FILES or None, instance=user
+    )
+    password_form = PasswordChangeForm(user, request.POST or None)
 
-            if user_form.is_valid():
-                user_email = user_form.cleaned_data['email']
-                codewars_username = user_form.cleaned_data['codewars_username']
+    if 'update_profile' in request.POST:
+        old_email = user.email
 
-                if user_email != old_email:
-                    user.email_verified = False
+        if user_form.is_valid():
+            user_email = user_form.cleaned_data['email']
+            codewars_username = user_form.cleaned_data['codewars_username']
 
-                if user_email and user_email != old_email:
-                    uid = urlsafe_base64_encode(force_bytes(user.pk))
-                    token = default_token_generator.make_token(user)
+            if user_email != old_email:
+                user.email_verified = False
 
-                    link = request.build_absolute_uri(
-                        reverse(
-                            'users:confirm_email',
-                            kwargs={
-                                'uidb64': uid,
-                                'token': token
-                            }
-                        )
+            if user_email and user_email != old_email:
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+
+                link = request.build_absolute_uri(
+                    reverse(
+                        'users:confirm_email',
+                        kwargs={
+                            'uidb64': uid,
+                            'token': token
+                        }
+                    )
+                )
+
+                send_mail(
+                    'Подтверждение почты',
+                    f'Перейдите по ссылке:\n{link}',
+                    'devs-hub@mail.com',
+                    [user_email],
+                )
+
+            if codewars_username:
+                url = f'https://www.codewars.com/api/v1/users/{codewars_username}'
+                response = requests.get(url)
+
+                print(response.status_code)
+
+                if response.status_code == 200:
+                    data = response.json()
+                    CodewarsProfile.objects.update_or_create(
+                        user=user,
+                        defaults={
+                            'username': data['username'],
+                            'honor': data['honor'],
+                            'leaderboard_position': data['leaderboardPosition'],
+                            'languages': list(data['ranks']['languages'].keys()),
+                            'total_completed_katas': data['codeChallenges']['totalCompleted']
+                        }
                     )
 
-                    send_mail(
-                        'Подтверждение почты',
-                        f'Перейдите по ссылке:\n{link}',
-                        'devs-hub@mail.com',
-                        [user_email],
-                    )
+            user_form.save()
 
-                if codewars_username:
-                    url = f'https://www.codewars.com/api/v1/users/{codewars_username}'
-                    response = requests.get(url)
+            return redirect('users:profile_update')
 
-                    print(response.status_code)
+    elif 'change_password' in request.POST:
 
-                    if response.status_code == 200:
-                        data = response.json()
-                        CodewarsProfile.objects.update_or_create(
-                            user=user,
-                            defaults={
-                                'username': data['username'],
-                                'honor': data['honor'],
-                                'leaderboard_position': data['leaderboardPosition'],
-                                'languages': list(data['ranks']['languages'].keys()),
-                                'total_completed_katas': data['codeChallenges']['totalCompleted']
-                            }
-                        )
-
-                user_form.save()
-
-                return redirect('users:profile_update')
-
-        elif 'change_password' in request.POST:
-            user_form = UserForm(instance=user)
-            password_form = PasswordChangeForm(user, request.POST)
-
-            if password_form.is_valid():
-                user = password_form.save()
-                update_session_auth_hash(request, user)
-                return redirect('users:profile_update')
-    else:
-        user_form = UserForm(instance=user)
-        password_form = PasswordChangeForm(user)
+        if password_form.is_valid():
+            user = password_form.save()
+            update_session_auth_hash(request, user)
+            return redirect('users:profile_update')
 
     return render(request, 'users/profile/profile_form.html', {
         'user_form': user_form,

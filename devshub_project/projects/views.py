@@ -43,27 +43,25 @@ def project_detail(request, project_id):
 
 @login_required
 def project_create(request):
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            project = form.save(commit=False)
-            project.user = request.user
-            project.save()
+    form = ProjectForm(request.POST or None, request.FILES or None)
 
-            images = form.cleaned_data.get('images')
+    if form.is_valid():
+        project = form.save(commit=False)
+        project.user = request.user
+        project.save()
 
-            if images:
-                ProjectImage.objects.bulk_create([
-                    ProjectImage(
-                        project=project,
-                        image=image
-                    )
-                    for image in images
-                ])
+        images = form.cleaned_data.get('images')
 
-            return redirect(project.get_absolute_url())
-    else:
-        form = ProjectForm()
+        if images:
+            ProjectImage.objects.bulk_create([
+                ProjectImage(
+                    project=project,
+                    image=image
+                )
+                for image in images
+            ])
+
+        return redirect(project.get_absolute_url())
 
     context = {
         'form': form,
@@ -77,26 +75,26 @@ def project_update(request, project_id):
         project_id, request.user
     )
 
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES, instance=project)
-        if form.is_valid():
-            project = form.save()
+    form = ProjectForm(
+        request.POST or None, request.FILES or None, instance=project
+    )
 
-            images = form.cleaned_data.get('images')
+    if form.is_valid():
+        project = form.save()
 
-            if images:
-                for img in project.images.all():
-                    img.image.delete(save=False)
-                    img.delete()
+        images = form.cleaned_data.get('images')
 
-                ProjectImage.objects.bulk_create([
-                    ProjectImage(project=project, image=image)
-                    for image in images
-                ])
+        if images:
+            for img in project.images.all():
+                img.image.delete(save=False)
+                img.delete()
 
-            return redirect(project.get_absolute_url())
-    else:
-        form = ProjectForm(instance=project)
+            ProjectImage.objects.bulk_create([
+                ProjectImage(project=project, image=image)
+                for image in images
+            ])
+
+        return redirect(project.get_absolute_url())
 
     context = {
         'form': form,

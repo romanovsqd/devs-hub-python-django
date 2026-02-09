@@ -53,15 +53,13 @@ def card_detail(request, card_id):
 
 @login_required
 def card_create(request):
-    if request.method == 'POST':
-        form = CardForm(request.POST)
-        if form.is_valid():
-            card = form.save(commit=False)
-            card.author = request.user
-            card.save()
-            return redirect(card.get_absolute_url())
-    else:
-        form = CardForm()
+    form = CardForm(request.POST or None)
+
+    if form.is_valid():
+        card = form.save(commit=False)
+        card.author = request.user
+        card.save()
+        return redirect(card.get_absolute_url())
 
     context = {
         'form': form,
@@ -73,13 +71,11 @@ def card_create(request):
 def card_update(request, card_id):
     card = card_services.get_user_created_card_by_id(card_id, request.user)
 
-    if request.method == 'POST':
-        form = CardForm(request.POST, instance=card)
-        if form.is_valid():
-            card = form.save()
-            return redirect(card.get_absolute_url())
-    else:
-        form = CardForm(instance=card)
+    form = CardForm(request.POST or None, instance=card)
+
+    if form.is_valid():
+        card = form.save()
+        return redirect(card.get_absolute_url())
 
     context = {
         'form': form,
@@ -180,16 +176,14 @@ def cardset_detail(request, cardset_id):
 
 @login_required
 def cardset_create(request):
-    if request.method == 'POST':
-        form = CardSetForm(request.POST, user=request.user)
-        if form.is_valid():
-            cardset = form.save(commit=False)
-            cardset.author = request.user
-            cardset.save()
-            form.save_m2m()
-            return redirect(cardset.get_absolute_url())
-    else:
-        form = CardSetForm(user=request.user)
+    form = CardSetForm(request.POST or None, user=request.user)
+
+    if form.is_valid():
+        cardset = form.save(commit=False)
+        cardset.author = request.user
+        cardset.save()
+        form.save_m2m()
+        return redirect(cardset.get_absolute_url())
 
     context = {
         'form': form,
@@ -203,13 +197,13 @@ def cardset_update(request, cardset_id):
         cardset_id, request.user
     )
 
-    if request.method == 'POST':
-        form = CardSetForm(request.POST, instance=cardset, user=request.user)
-        if form.is_valid():
-            cardset = form.save()
-            return redirect(cardset.get_absolute_url())
-    else:
-        form = CardSetForm(instance=cardset, user=request.user)
+    form = CardSetForm(
+        request.POST or None, instance=cardset, user=request.user
+    )
+
+    if form.is_valid():
+        cardset = form.save()
+        return redirect(cardset.get_absolute_url())
 
     context = {
         'form': form,
@@ -230,7 +224,9 @@ def cardset_delete(request, cardset_id):
     context = {
         'cardset': cardset
     }
-    return render(request, 'cards/cardsets/cardset_confirm_delete.html', context)
+    return render(
+        request, 'cards/cardsets/cardset_confirm_delete.html', context
+    )
 
 
 @login_required
