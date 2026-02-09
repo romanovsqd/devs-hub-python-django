@@ -18,7 +18,7 @@
   </div>
 
   <ul>
-    {% for project in page_obj %}
+    {% for project in projects %}
       <li>
         <h4>
           <a href="{{ project.get_absolute_url }}">
@@ -34,16 +34,16 @@
   </ul>
 
 <div>
-  {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
+  {% if projects.has_previous %}
+    <a href="?page={{ projects.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
   {% endif %}
 
   <span>
-    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    Страница {{ projects.number }} из {{ projects.paginator.num_pages }}
   </span>
 
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
+  {% if projects.has_next %}
+    <a href="?page={{ projects.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
   {% endif %}
 </div>
 

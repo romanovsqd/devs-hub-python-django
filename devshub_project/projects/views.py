@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 
-from .models import Project, ProjectImage
+from . import project_services
+
+from .models import ProjectImage
 from .forms import ProjectForm
 
 
@@ -10,23 +11,20 @@ from .forms import ProjectForm
 def project_list(request):
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
+    page_number = request.GET.get('page', 1)
 
-    projects = Project.objects.all()
+    projects = project_services.get_all_projects()
 
-    if query:
-        projects = Project.objects.filter(title__icontains=query)
-
-    if sort_by == 'newest':
-        projects = projects.order_by('-created_at')
-    elif sort_by == 'oldest':
-        projects = projects.order_by('created_at')
-
-    paginator = Paginator(projects, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    projects = project_services.filter_sort_paginate_projects(
+        projects,
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20
+    )
 
     context = {
-        'page_obj': page_obj,
+        'projects': projects,
         'query': query,
         'sort_by': sort_by,
     }
@@ -35,7 +33,7 @@ def project_list(request):
 
 @login_required
 def project_detail(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+    project = project_services.get_project_by_id(project_id)
 
     context = {
         'project': project
@@ -75,10 +73,8 @@ def project_create(request):
 
 @login_required
 def project_update(request, project_id):
-    project = get_object_or_404(
-        Project,
-        pk=project_id,
-        user=request.user
+    project = project_services.get_user_created_project_by_id(
+        project_id, request.user
     )
 
     if request.method == 'POST':
@@ -110,10 +106,8 @@ def project_update(request, project_id):
 
 @login_required
 def project_delete(request, project_id):
-    project = get_object_or_404(
-        Project,
-        pk=project_id,
-        user=request.user
+    project = project_services.get_user_created_project_by_id(
+        project_id, request.user
     )
 
     if request.method == 'POST':
