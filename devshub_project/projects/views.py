@@ -3,7 +3,6 @@ from django.shortcuts import redirect, render
 
 from . import project_services
 
-from .models import ProjectImage
 from .forms import ProjectForm
 
 
@@ -50,16 +49,10 @@ def project_create(request):
         project.user = request.user
         project.save()
 
-        images = form.cleaned_data.get('images')
-
-        if images:
-            ProjectImage.objects.bulk_create([
-                ProjectImage(
-                    project=project,
-                    image=image
-                )
-                for image in images
-            ])
+        project_services.create_images_for_project(
+            project=project,
+            images=form.cleaned_data.get('images', None)
+        )
 
         return redirect(project.get_absolute_url())
 
@@ -80,19 +73,13 @@ def project_update(request, project_id):
     )
 
     if form.is_valid():
+        new_images = form.cleaned_data.get('images', None)
         project = form.save()
 
-        images = form.cleaned_data.get('images')
-
-        if images:
-            for img in project.images.all():
-                img.image.delete(save=False)
-                img.delete()
-
-            ProjectImage.objects.bulk_create([
-                ProjectImage(project=project, image=image)
-                for image in images
-            ])
+        project_services.update_project_images(
+            project=project,
+            new_images=new_images
+        )
 
         return redirect(project.get_absolute_url())
 

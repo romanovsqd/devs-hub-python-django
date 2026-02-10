@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
-from .models import Project
+from .models import Project, ProjectImage
 
 
 def get_all_projects():
@@ -61,3 +61,22 @@ def get_user_project_stats(user):
     )
 
     return projects_stats
+
+
+def create_images_for_project(project, images):
+    """Создает изображения проекта."""
+    if images:
+        ProjectImage.objects.bulk_create([
+            ProjectImage(project=project, image=image)
+            for image in images
+        ])
+
+
+def update_project_images(project, new_images):
+    """Удаляет старые изображения для проекта и создает новые"""
+    if new_images:
+        for img in project.images.all():
+            img.image.delete()
+        project.images.all().delete()
+
+        create_images_for_project(project=project, images=new_images)

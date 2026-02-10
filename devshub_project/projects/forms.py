@@ -34,6 +34,3 @@ class ProjectForm(forms.ModelForm):
             'live_url',
             'cover_image',
         ]
-
-
-
