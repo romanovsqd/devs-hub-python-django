@@ -1,11 +1,9 @@
-from datetime import timedelta
 import json
 from urllib.parse import quote
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
 from . import (
@@ -13,7 +11,6 @@ from . import (
     cardset_services,
     cardsetprogress_services
 )
-from .models import CardSetProgress
 from .forms import CardForm, CardSetForm
 
 
@@ -318,40 +315,18 @@ def next_card(request):
 @login_required
 @require_POST
 def submit(request, cardset_id, card_id):
-    # TODO: переписать алгоритм интервального повторения
     data = json.loads(request.body)
     quality = int(data.get('quality', 0))
 
-    progress = get_object_or_404(
-        CardSetProgress,
-        learner=request.user,
-        cardset_id=cardset_id,
-        card_id=card_id,
+    card_progress = (
+        cardsetprogress_services.get_cardset_card_progress_for_user(
+            cardset_id=cardset_id,
+            card_id=card_id,
+            user=request.user,
+        )
     )
 
-    now = timezone.now()
-
-    if quality < 3:
-        progress.repetitions = 0
-        progress.interval = 0
-        progress.next_review_date = now
-    else:
-        progress.efactor += 0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)
-        progress.efactor = max(progress.efactor, 1.3)
-
-        progress.repetitions += 1
-
-        if progress.repetitions == 1:
-            progress.interval = 1
-        elif progress.repetitions == 2:
-            progress.interval = 6
-        else:
-            progress.interval = round(progress.interval * progress.efactor)
-
-        progress.next_review_date = now + timedelta(days=progress.interval)
-
-    progress.last_review_date = now.date()
-    progress.save()
+    progress = cardsetprogress_services.apply_sm2(card_progress, quality)
 
     return JsonResponse({
         'cardset_id': cardset_id,
