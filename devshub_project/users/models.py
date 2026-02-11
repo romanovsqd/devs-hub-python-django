@@ -30,17 +30,18 @@ class CodewarsProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='codewars_profile'
     )
-    username = models.CharField(max_length=50)
     honor = models.PositiveIntegerField(default=0)
     leaderboard_position = models.PositiveIntegerField(default=0)
     languages = models.JSONField(default=list)
     total_completed_katas = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ['username']
         indexes = [
-            models.Index(fields=['username']),
+            models.Index(fields=['honor']),
+            models.Index(fields=['leaderboard_position']),
         ]
 
     def __str__(self):
-        return f'{self.user.username} — Codewars: {self.username}'
+        return (
+            f'{self.user.username} — Codewars: {self.user.codewars_username}'
+        )

@@ -119,3 +119,9 @@ def apply_sm2(progress, quality):
     progress.save()
 
     return progress
+
+
+def get_user_studying_cardsets_ids(user):
+    return CardSetProgress.objects.filter(
+        learner=user,
+    ).values_list('cardset_id', flat=True)

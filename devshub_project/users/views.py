@@ -1,35 +1,24 @@
 from django.contrib.auth import (
     authenticate,
-    get_user_model,
     login,
     update_session_auth_hash
 )
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import (
     LoginView,
     PasswordResetConfirmView,
     PasswordResetDoneView,
     PasswordResetView
 )
-from django.core.mail import send_mail
 from django.shortcuts import redirect, render
-from django.urls import reverse, reverse_lazy
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-import requests
+from django.urls import reverse_lazy
 
-from cards.models import CardSetProgress
-from cards import card_services, cardset_services
-from . import user_services
+from cards import card_services, cardset_services, cardsetprogress_services
 from projects import project_services
-from .models import CodewarsProfile
 
+from . import user_services, codewars_services
 from .forms import LoginForm, RegisterForm, UserForm
-
-
-User = get_user_model()
 
 
 def register(request):
@@ -227,10 +216,7 @@ def profile_detail(request):
 
     projects_stats = project_services.get_user_project_stats(user)
 
-    if hasattr(user, 'codewars_profile'):
-        codewars_stats = user.codewars_profile
-    else:
-        codewars_stats = None
+    codewars_stats = codewars_services.get_user_codewars_stats(user)
 
     context = {
         'user': user,
@@ -254,55 +240,27 @@ def profile_update(request):
 
     if 'update_profile' in request.POST:
         old_email = user.email
+        old_codewars_username = user.codewars_username
 
         if user_form.is_valid():
-            user_email = user_form.cleaned_data['email']
-            codewars_username = user_form.cleaned_data['codewars_username']
+            cleaned_data = user_form.cleaned_data
+            email = cleaned_data.get('email', None)
+            codewars_username = cleaned_data.get('codewars_username', None)
 
-            if user_email != old_email:
-                user.email_verified = False
+            user_services.update_user_email(
+                base_url=request.build_absolute_uri('/'),
+                old_email=old_email,
+                new_email=email,
+                user=user,
+            )
 
-            if user_email and user_email != old_email:
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                token = default_token_generator.make_token(user)
+            codewars_services.create_or_update_user_codears_profile(
+                user=user,
+                codewars_username=codewars_username,
+                old_codewars_username=old_codewars_username,
+            )
 
-                link = request.build_absolute_uri(
-                    reverse(
-                        'users:confirm_email',
-                        kwargs={
-                            'uidb64': uid,
-                            'token': token
-                        }
-                    )
-                )
-
-                send_mail(
-                    'Подтверждение почты',
-                    f'Перейдите по ссылке:\n{link}',
-                    'devs-hub@mail.com',
-                    [user_email],
-                )
-
-            if codewars_username:
-                url = f'https://www.codewars.com/api/v1/users/{codewars_username}'
-                response = requests.get(url)
-
-                print(response.status_code)
-
-                if response.status_code == 200:
-                    data = response.json()
-                    CodewarsProfile.objects.update_or_create(
-                        user=user,
-                        defaults={
-                            'username': data['username'],
-                            'honor': data['honor'],
-                            'leaderboard_position': data['leaderboardPosition'],
-                            'languages': list(data['ranks']['languages'].keys()),
-                            'total_completed_katas': data['codeChallenges']['totalCompleted']
-                        }
-                    )
-
-            user_form.save()
+            user.save()
 
             return redirect('users:profile_update')
 
@@ -320,17 +278,10 @@ def profile_update(request):
 
 
 def confirm_email(request, uidb64, token):
-    try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = User.objects.get(pk=uid)
-    except Exception:
-        user = None
-
-    if user and default_token_generator.check_token(user, token):
-        user.email_verified = True
-        user.save()
-        return redirect('users:profile_update')
-
+    user_services.confirm_user_email(
+        uidb64=uidb64,
+        token=token
+    )
     return redirect('users:profile_update')
 
 
@@ -380,9 +331,9 @@ def profile_cardsets(request):
         per_page=20
     )
 
-    studying_cardsets_ids = CardSetProgress.objects.filter(
-        learner=user,
-    ).values_list('cardset_id', flat=True)
+    studying_cardsets_ids = (
+        cardsetprogress_services.get_user_studying_cardsets_ids(request.user)
+    )
 
     context = {
         'user': user,
