@@ -122,6 +122,7 @@ def apply_sm2(progress, quality):
 
 
 def get_user_studying_cardsets_ids(user):
+    """Возращает id изучаемых пользователем наборов карточек."""
     return CardSetProgress.objects.filter(
         learner=user,
     ).values_list('cardset_id', flat=True)

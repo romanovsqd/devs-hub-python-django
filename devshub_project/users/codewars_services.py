@@ -4,12 +4,14 @@ from .models import CodewarsProfile
 
 
 def get_user_codewars_stats(user):
+    """Возвращает статистику codewars профиля."""
     if user.codewars_username:
         return user.codewars_profile
     return None
 
 
 def fetch_codewars_data(codewars_username):
+    """Получает статистику codewars профиля по codewars API."""
     url = f'https://www.codewars.com/api/v1/users/{codewars_username}'
     response = requests.get(url)
 
@@ -36,6 +38,7 @@ def fetch_codewars_data(codewars_username):
 def create_or_update_user_codears_profile(
     old_codewars_username, codewars_username, user
 ):
+    """Создает или обновляет данные codewars профиля."""
     if not codewars_username:
         return None
 

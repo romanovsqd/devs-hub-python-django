@@ -80,6 +80,7 @@ def _send_confirmation_email(base_url, user):
 
 
 def confirm_user_email(uidb64, token):
+    """Подтверждает email пользователя по токену."""
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
