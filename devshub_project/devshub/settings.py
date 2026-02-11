@@ -140,7 +140,7 @@ AUTH_USER_MODEL = 'users.User'
 
 # Auth urls
 LOGIN_URL = 'users:login'
-LOGIN_REDIRECT_URL = 'users:profile_detail'
+LOGIN_REDIRECT_URL = 'cards:card_list'
 
 LOGOUT_REDIRECT_URL = 'users:login'
 

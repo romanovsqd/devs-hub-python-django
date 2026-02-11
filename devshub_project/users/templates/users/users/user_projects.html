@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Проекты {{ user.username }}{% endblock title %}
+{% block title %}
+  {% if is_owner %}Мои проекты{% else %}Проекты {{ user.username }}{% endif %}
+{% endblock title %}
 
 {% block content %}
 
-  <h1>Проекты {{ user.username }}</h1>
+  <h1>{% if is_owner %}Мои проекты{% else %}Проекты {{ user.username }}{% endif %}</h1>
 
   <div>
     <form method="get">

@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Профиль {{ user.username }}{% endblock title %}
+{% block title %}
+  {% if is_owner %}Мой профиль{% else %}Профиль {{ user.username }}{% endif %}
+{% endblock title %}
 
 {% block content %}
 
-  <h1>Профиль {{ user.username }}</h1>
+  <h1>
+    {% if is_owner %}Привет, {% endif %}{{ user.username }}
+  </h1>
 
   <div>
-    <a href="{% url "users:user_cards" user.id %}">Карточки пользователя</a>
-    <a href="{% url "users:user_cardsets" user.id %}">Наборы карточек пользователя</a>
-    <a href="{% url "users:user_projects" user.id %}">Проекты пользователя</a>
+    <a href="{% url "users:user_cards" user.id %}">Карточки</a>
+    <a href="{% url "users:user_cardsets" user.id %}">Наборы карточек</a>
+    <a href="{% url "users:user_projects" user.id %}">Проекты</a>
   </div>
 
-  <h2>Статистика по профилю</h2>
+  <h2>Статистика</h2>
 
   <div>
     <div>
@@ -30,6 +34,14 @@
     <div>
       <span>Всего проектов: {{ projects_stats.total }}</span>
     </div>
+    {% if codewars_stats %}
+      <span>ссылка: {{ user.codewars_username }}</span>
+      <span>honor: {{ codewars_stats.honor }}</span>
+      <span>leaderboard_position: {{ codewars_stats.leaderboard_position }}</span>
+      <span>languages: {{ codewars_stats.languages|join:', ' }}</span>
+      <span>total_completed_katas: {{ codewars_stats.total_completed_katas }}</span>
+    </div>
+    {% endif %}
   </div>
 
 {% endblock content %}
