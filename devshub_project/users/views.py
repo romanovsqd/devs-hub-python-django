@@ -15,16 +15,15 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 
 from cards import card_services, cardset_services, cardsetprogress_services
+from .decorators import redirect_authenticated
 from projects import project_services
 
 from . import user_services, codewars_services
 from .forms import LoginForm, RegisterForm, UserForm
 
 
+@redirect_authenticated
 def register(request):
-    if request.user.is_authenticated:
-        return redirect('users:user_detail', user_id=request.user.pk)
-
     form = RegisterForm(request.POST or None)
 
     if form.is_valid():
