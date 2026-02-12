@@ -7,29 +7,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0007_alter_cardsetprogress_cardset'),
+        ("cards", "0007_alter_cardsetprogress_cardset"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='card',
-            options={'ordering': ['-created_at']},
+            name="card",
+            options={"ordering": ["-created_at"]},
         ),
         migrations.AlterModelOptions(
-            name='cardset',
-            options={'ordering': ['-created_at']},
+            name="cardset",
+            options={"ordering": ["-created_at"]},
         ),
         migrations.AlterModelOptions(
-            name='cardsetprogress',
-            options={'ordering': ['next_review_date']},
+            name="cardsetprogress",
+            options={"ordering": ["next_review_date"]},
         ),
         migrations.AddIndex(
-            model_name='card',
-            index=models.Index(fields=['-created_at'], name='cards_card_created_98fc81_idx'),
+            model_name="card",
+            index=models.Index(
+                fields=["-created_at"], name="cards_card_created_98fc81_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='cardset',
-            index=models.Index(fields=['-created_at'], name='cards_cards_created_8ae81a_idx'),
+            model_name="cardset",
+            index=models.Index(
+                fields=["-created_at"], name="cards_cards_created_8ae81a_idx"
+            ),
         ),
     ]

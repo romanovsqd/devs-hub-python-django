@@ -6,16 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0004_codewarsprofile_alter_user_options_and_more'),
+        ("users", "0004_codewarsprofile_alter_user_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='codewarsprofile',
-            options={'ordering': ['username']},
+            name="codewarsprofile",
+            options={"ordering": ["username"]},
         ),
         migrations.AddIndex(
-            model_name='codewarsprofile',
-            index=models.Index(fields=['username'], name='users_codew_usernam_f40461_idx'),
+            model_name="codewarsprofile",
+            index=models.Index(
+                fields=["username"], name="users_codew_usernam_f40461_idx"
+            ),
         ),
     ]

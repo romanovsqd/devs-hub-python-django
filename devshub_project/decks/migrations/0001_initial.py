@@ -10,25 +10,57 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('cards', '0010_remove_cardset_author_remove_cardset_cards_and_more'),
+        ("cards", "0010_remove_cardset_author_remove_cardset_cards_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CardSet',
+            name="CardSet",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='created_cardsets', to=settings.AUTH_USER_MODEL)),
-                ('cards', models.ManyToManyField(blank=True, related_name='cardsets', to='cards.card')),
-                ('saved_by', models.ManyToManyField(blank=True, related_name='saved_cardsets', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="created_cardsets",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "cards",
+                    models.ManyToManyField(
+                        blank=True, related_name="cardsets", to="cards.card"
+                    ),
+                ),
+                (
+                    "saved_by",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="saved_cardsets",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
-                'indexes': [models.Index(fields=['title'], name='decks_cards_title_0023f3_idx'), models.Index(fields=['-created_at'], name='decks_cards_created_e3edc1_idx')],
+                "ordering": ["-created_at"],
+                "indexes": [
+                    models.Index(fields=["title"], name="decks_cards_title_0023f3_idx"),
+                    models.Index(
+                        fields=["-created_at"], name="decks_cards_created_e3edc1_idx"
+                    ),
+                ],
             },
         ),
     ]

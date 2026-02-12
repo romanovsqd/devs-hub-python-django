@@ -8,37 +8,64 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0011_delete_cardset'),
-        ('decks', '0001_initial'),
+        ("cards", "0011_delete_cardset"),
+        ("decks", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cardset',
-            name='author',
+            model_name="cardset",
+            name="author",
         ),
         migrations.RemoveField(
-            model_name='cardset',
-            name='cards',
+            model_name="cardset",
+            name="cards",
         ),
         migrations.RemoveField(
-            model_name='cardset',
-            name='saved_by',
+            model_name="cardset",
+            name="saved_by",
         ),
         migrations.CreateModel(
-            name='Deck',
+            name="Deck",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='created_decks', to=settings.AUTH_USER_MODEL)),
-                ('cards', models.ManyToManyField(blank=True, related_name='decks', to='cards.card')),
-                ('saved_by', models.ManyToManyField(blank=True, related_name='saved_decks', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="created_decks",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "cards",
+                    models.ManyToManyField(
+                        blank=True, related_name="decks", to="cards.card"
+                    ),
+                ),
+                (
+                    "saved_by",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="saved_decks",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
     ]

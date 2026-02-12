@@ -21,9 +21,7 @@ def get_user_by_id(user_id):
     return get_object_or_404(User, pk=user_id)
 
 
-def filter_sort_paginate_users(
-    users, query, sort_by, page_number, per_page=20
-):
+def filter_sort_paginate_users(users, query, sort_by, page_number, per_page=20):
     """Фильтрует, сортирует, пагинирует пользователей. Возвращает page_obj."""
     if query:
         users = users.filter(
@@ -32,10 +30,10 @@ def filter_sort_paginate_users(
             | Q(specialization__icontains=query)
         )
 
-    if sort_by == 'username_asc':
-        users = users.order_by('username')
-    elif sort_by == 'username_desc':
-        users = users.order_by('-username')
+    if sort_by == "username_asc":
+        users = users.order_by("username")
+    elif sort_by == "username_desc":
+        users = users.order_by("-username")
 
     paginator = Paginator(users, per_page)
     page_obj = paginator.get_page(page_number)
@@ -62,19 +60,13 @@ def _send_confirmation_email(base_url, user):
     """
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    confirm_url = reverse(
-            'confirm_email',
-            kwargs={
-                'uidb64': uid,
-                'token': token
-            }
-        )
-    confirm_link = f'{base_url[:-1]}{confirm_url}'
+    confirm_url = reverse("confirm_email", kwargs={"uidb64": uid, "token": token})
+    confirm_link = f"{base_url[:-1]}{confirm_url}"
 
     send_mail(
-        'Подтверждение почты',
-        f'Перейдите по ссылке:\n{confirm_link}',
-        'devs-hub@mail.com',
+        "Подтверждение почты",
+        f"Перейдите по ссылке:\n{confirm_link}",
+        "devs-hub@mail.com",
         [user.email],
     )
 

@@ -8,24 +8,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0003_cardset'),
+        ("cards", "0003_cardset"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cardset',
-            name='saved_by',
-            field=models.ManyToManyField(blank=True, related_name='saved_cardsets', to=settings.AUTH_USER_MODEL),
+            model_name="cardset",
+            name="saved_by",
+            field=models.ManyToManyField(
+                blank=True, related_name="saved_cardsets", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AlterField(
-            model_name='card',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='created_cards', to=settings.AUTH_USER_MODEL),
+            model_name="card",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="created_cards",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='cardset',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='created_cardsets', to=settings.AUTH_USER_MODEL),
+            model_name="cardset",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="created_cardsets",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

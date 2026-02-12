@@ -9,7 +9,7 @@ class MultipleFileInput(forms.ClearableFileInput):
 
 class MultipleImageField(forms.ImageField):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('widget', MultipleFileInput())
+        kwargs.setdefault("widget", MultipleFileInput())
         super().__init__(*args, **kwargs)
 
     def clean(self, data, initial=None):
@@ -28,9 +28,9 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = [
-            'title',
-            'description',
-            'repository_url',
-            'live_url',
-            'cover_image',
+            "title",
+            "description",
+            "repository_url",
+            "live_url",
+            "cover_image",
         ]

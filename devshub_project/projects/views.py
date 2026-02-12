@@ -2,32 +2,28 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from . import services
-
 from .forms import ProjectForm
 
 
 @login_required
 def project_list(request):
-    query = request.GET.get('query', '')
-    sort_by = request.GET.get('sort_by', '')
-    page_number = request.GET.get('page', 1)
+    query = request.GET.get("query", "")
+    sort_by = request.GET.get("sort_by", "")
+    page_number = request.GET.get("page", 1)
 
     projects = services.get_all_projects()
 
     projects = services.filter_sort_paginate_projects(
-        projects,
-        query=query,
-        sort_by=sort_by,
-        page_number=page_number,
-        per_page=20
+        projects, query=query, sort_by=sort_by, page_number=page_number, per_page=20
     )
 
     context = {
-        'projects': projects,
-        'query': query,
-        'sort_by': sort_by,
+        "projects": projects,
+        "query": query,
+        "sort_by": sort_by,
     }
-    return render(request, 'projects/project_list.html', context)
+
+    return render(request, "projects/project_list.html", context)
 
 
 @login_required
@@ -35,9 +31,10 @@ def project_detail(request, project_id):
     project = services.get_project_by_id(project_id)
 
     context = {
-        'project': project
+        "project": project,
     }
-    return render(request, 'projects/project_detail.html', context)
+
+    return render(request, "projects/project_detail.html", context)
 
 
 @login_required
@@ -50,56 +47,49 @@ def project_create(request):
         project.save()
 
         services.create_images_for_project(
-            project=project,
-            images=form.cleaned_data.get('images', None)
+            project=project, images=form.cleaned_data.get("images", None)
         )
 
         return redirect(project.get_absolute_url())
 
     context = {
-        'form': form,
+        "form": form,
     }
-    return render(request, 'projects/project_form.html', context)
+
+    return render(request, "projects/project_form.html", context)
 
 
 @login_required
 def project_update(request, project_id):
-    project = services.get_user_created_project_by_id(
-        project_id, request.user
-    )
+    project = services.get_user_created_project_by_id(project_id, request.user)
 
-    form = ProjectForm(
-        request.POST or None, request.FILES or None, instance=project
-    )
+    form = ProjectForm(request.POST or None, request.FILES or None, instance=project)
 
     if form.is_valid():
-        new_images = form.cleaned_data.get('images', None)
+        new_images = form.cleaned_data.get("images", None)
         project = form.save()
 
-        services.update_project_images(
-            project=project,
-            new_images=new_images
-        )
+        services.update_project_images(project=project, new_images=new_images)
 
         return redirect(project.get_absolute_url())
 
     context = {
-        'form': form,
+        "form": form,
     }
-    return render(request, 'projects/project_form.html', context)
+
+    return render(request, "projects/project_form.html", context)
 
 
 @login_required
 def project_delete(request, project_id):
-    project = services.get_user_created_project_by_id(
-        project_id, request.user
-    )
+    project = services.get_user_created_project_by_id(project_id, request.user)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         project.delete()
-        return redirect('project_list')
+        return redirect("project_list")
 
     context = {
-        'project': project
+        "project": project,
     }
-    return render(request, 'projects/project_confirm_delete.html', context)
+
+    return render(request, "projects/project_confirm_delete.html", context)

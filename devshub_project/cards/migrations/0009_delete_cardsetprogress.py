@@ -6,11 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0008_alter_card_options_alter_cardset_options_and_more'),
+        ("cards", "0008_alter_card_options_alter_cardset_options_and_more"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='CardSetProgress',
+            name="CardSetProgress",
         ),
     ]

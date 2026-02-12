@@ -6,18 +6,14 @@ from django.utils import timezone
 class DeckProgress(models.Model):
     learner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='deck_progresses',
-        on_delete=models.CASCADE
+        related_name="deck_progresses",
+        on_delete=models.CASCADE,
     )
     deck = models.ForeignKey(
-        'decks.Deck',
-        related_name='progresses',
-        on_delete=models.CASCADE
+        "decks.Deck", related_name="progresses", on_delete=models.CASCADE
     )
     card = models.ForeignKey(
-        'cards.Card',
-        related_name='deck_progresses',
-        on_delete=models.CASCADE
+        "cards.Card", related_name="deck_progresses", on_delete=models.CASCADE
     )
     repetitions = models.PositiveIntegerField(default=0)
     efactor = models.FloatField(default=2.5)
@@ -28,12 +24,12 @@ class DeckProgress(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['learner', 'deck', 'card']
-        ordering = ['next_review_date']
+        unique_together = ["learner", "deck", "card"]
+        ordering = ["next_review_date"]
         indexes = [
-            models.Index(fields=['learner']),
-            models.Index(fields=['next_review_date']),
+            models.Index(fields=["learner"]),
+            models.Index(fields=["next_review_date"]),
         ]
 
     def __str__(self):
-        return f'{self.learner} – {self.card}: {self.next_review_date}'
+        return f"{self.learner} – {self.card}: {self.next_review_date}"

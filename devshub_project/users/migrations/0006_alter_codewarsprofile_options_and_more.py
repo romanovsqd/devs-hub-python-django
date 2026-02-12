@@ -6,28 +6,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0005_alter_codewarsprofile_options_and_more'),
+        ("users", "0005_alter_codewarsprofile_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='codewarsprofile',
+            name="codewarsprofile",
             options={},
         ),
         migrations.RemoveIndex(
-            model_name='codewarsprofile',
-            name='users_codew_usernam_f40461_idx',
+            model_name="codewarsprofile",
+            name="users_codew_usernam_f40461_idx",
         ),
         migrations.RemoveField(
-            model_name='codewarsprofile',
-            name='username',
+            model_name="codewarsprofile",
+            name="username",
         ),
         migrations.AddIndex(
-            model_name='codewarsprofile',
-            index=models.Index(fields=['honor'], name='users_codew_honor_a2e9ec_idx'),
+            model_name="codewarsprofile",
+            index=models.Index(fields=["honor"], name="users_codew_honor_a2e9ec_idx"),
         ),
         migrations.AddIndex(
-            model_name='codewarsprofile',
-            index=models.Index(fields=['leaderboard_position'], name='users_codew_leaderb_1fbba4_idx'),
+            model_name="codewarsprofile",
+            index=models.Index(
+                fields=["leaderboard_position"], name="users_codew_leaderb_1fbba4_idx"
+            ),
         ),
     ]

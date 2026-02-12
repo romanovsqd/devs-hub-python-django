@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
-from django.db.models import Q, Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
+
 from .models import Deck
 
 
@@ -23,11 +24,7 @@ def get_user_created_deck_by_id(deck_id, user):
     """
     Возвращает набор карточек по id, если он создан пользователем, иначе 404.
     """
-    return get_object_or_404(
-        Deck,
-        pk=deck_id,
-        author=user
-    )
+    return get_object_or_404(Deck, pk=deck_id, author=user)
 
 
 def get_user_created_or_saved_deck_by_id(deck_id, user):
@@ -48,23 +45,21 @@ def get_all_user_created_or_saved_decks(user):
     которые пользователь создал или сохранил.
     """
     return Deck.objects.filter(
-        Q(author=user) | Q(saved_by=user)
+        Q(author=user) | Q(saved_by=user),
     ).distinct()
 
 
-def filter_sort_paginate_decks(
-    decks, query, sort_by, page_number, per_page=20
-):
+def filter_sort_paginate_decks(decks, query, sort_by, page_number, per_page=20):
     """
     Фильтрует, сортирует, пагинирует наборы карточек. Возвращает page_obj.
     """
     if query:
         decks = decks.filter(title__icontains=query)
 
-    if sort_by == 'newest':
-        decks = decks.order_by('-created_at')
-    elif sort_by == 'oldest':
-        decks = decks.order_by('created_at')
+    if sort_by == "newest":
+        decks = decks.order_by("-created_at")
+    elif sort_by == "oldest":
+        decks = decks.order_by("created_at")
 
     paginator = Paginator(decks, per_page)
     page_obj = paginator.get_page(page_number)
@@ -96,10 +91,10 @@ def generate_cards_data_for_export(deck_cards):
     """
     for card in deck_cards.iterator(chunk_size=1000):
         yield (
-            f'#author_id: {card.author_id}\n'
-            f'#card_id: {card.id}\n'
-            f'{card.question}\t{card.answer}\n'
-            '\n'
+            f"#author_id: {card.author_id}\n"
+            f"#card_id: {card.id}\n"
+            f"{card.question}\t{card.answer}\n"
+            "\n"
         )
 
 
@@ -110,7 +105,7 @@ def prepare_deck_for_export(deck):
     """
     deck_cards = get_deck_cards(deck)
 
-    filename = f'{deck.title}.txt'
+    filename = f"{deck.title}.txt"
     cards_generator = generate_cards_data_for_export(deck_cards)
 
     return filename, cards_generator
@@ -122,25 +117,26 @@ def get_user_decks_stats(user):
 
     decks_stats = decks.aggregate(
         total=Count(
-            'id',
+            "id",
             filter=Q(author=user) | Q(saved_by=user),
-            distinct=True
+            distinct=True,
         ),
         created=Count(
-            'id',
+            "id",
             filter=Q(author=user),
-            distinct=True
+            distinct=True,
         ),
         saved=Count(
-            'id',
+            "id",
             filter=Q(saved_by=user),
-            distinct=True
+            distinct=True,
         ),
         in_study=Count(
-            'id',
+            "id",
             filter=Q(progresses__learner=user),
-            distinct=True
+            distinct=True,
         ),
     )
+    decks_stats = decks.aggregate()
 
     return decks_stats

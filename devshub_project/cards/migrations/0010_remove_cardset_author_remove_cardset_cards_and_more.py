@@ -6,20 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0009_delete_cardsetprogress'),
+        ("cards", "0009_delete_cardsetprogress"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cardset',
-            name='author',
+            model_name="cardset",
+            name="author",
         ),
         migrations.RemoveField(
-            model_name='cardset',
-            name='cards',
+            model_name="cardset",
+            name="cards",
         ),
         migrations.RemoveField(
-            model_name='cardset',
-            name='saved_by',
+            model_name="cardset",
+            name="saved_by",
         ),
     ]

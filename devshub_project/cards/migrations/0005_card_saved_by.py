@@ -7,14 +7,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0004_cardset_saved_by_alter_card_author_and_more'),
+        ("cards", "0004_cardset_saved_by_alter_card_author_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='card',
-            name='saved_by',
-            field=models.ManyToManyField(blank=True, related_name='saved_cards', to=settings.AUTH_USER_MODEL),
+            model_name="card",
+            name="saved_by",
+            field=models.ManyToManyField(
+                blank=True, related_name="saved_cards", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

@@ -1,26 +1,22 @@
-from django.contrib.auth import (
-    authenticate,
-    login,
-    update_session_auth_hash
-)
+from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import (
     LoginView,
     PasswordResetConfirmView,
-    PasswordResetView
+    PasswordResetView,
 )
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 
 from cards import services as card_services
 from decks import services as deck_services
-from repetitions import services as deckprogress_services
 from projects import services as project_services
+from repetitions import services as deckprogress_services
+
 from .decorators import redirect_authenticated
 from .forms import LoginForm, RegisterForm, UserForm
-from .services import codewars_services
-from .services import user_services
+from .services import codewars_services, user_services
 
 
 @redirect_authenticated
@@ -32,16 +28,17 @@ def register(request):
         user = authenticate(
             request,
             username=user.username,
-            password=form.cleaned_data['password1']
+            password=form.cleaned_data["password1"],
         )
         login(request, user)
 
-        return redirect('user_detail', user_id=request.user.pk)
+        return redirect("user_detail", user_id=request.user.pk)
 
     context = {
-        'form': form
+        "form": form,
     }
-    return render(request, 'registration/register.html', context)
+
+    return render(request, "registration/register.html", context)
 
 
 class LoginUserView(LoginView):
@@ -49,43 +46,36 @@ class LoginUserView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        return reverse('user_detail', kwargs={
-            'user_id': self.request.user.pk
-            }
-        )
+        return reverse("user_detail", kwargs={"user_id": self.request.user.pk})
 
 
 class UserPasswordResetView(PasswordResetView):
     # TODO: сделать асинхронную отправку пиьсма
-    success_url = reverse_lazy('password_reset_done')
+    success_url = reverse_lazy("password_reset_done")
 
 
 class UserPasswordResetConfirmView(PasswordResetConfirmView):
-    success_url = reverse_lazy('password_reset_complete')
+    success_url = reverse_lazy("password_reset_complete")
 
 
 @login_required
 def user_list(request):
-    query = request.GET.get('query', '')
-    sort_by = request.GET.get('sort_by', '')
-    page_number = request.GET.get('page', 1)
+    query = request.GET.get("query", "")
+    sort_by = request.GET.get("sort_by", "")
+    page_number = request.GET.get("page", 1)
 
     users = user_services.get_all_users()
-
     users = user_services.filter_sort_paginate_users(
-        users,
-        query=query,
-        sort_by=sort_by,
-        page_number=page_number,
-        per_page=20
+        users, query=query, sort_by=sort_by, page_number=page_number, per_page=20
     )
 
     context = {
-        'users': users,
-        'query': query,
-        'sort_by': sort_by,
+        "users": users,
+        "query": query,
+        "sort_by": sort_by,
     }
-    return render(request, 'users/user_list.html', context)
+
+    return render(request, "users/user_list.html", context)
 
 
 @login_required
@@ -93,101 +83,84 @@ def user_detail(request, user_id):
     user = user_services.get_user_by_id(user_id)
 
     cards_stats = card_services.get_user_cards_stats(user)
-
     decks_stats = deck_services.get_user_decks_stats(user)
-
     projects_stats = project_services.get_user_project_stats(user)
-
     codewars_stats = codewars_services.get_user_codewars_stats(user)
-
     is_owner = user == request.user
 
     context = {
-        'user': user,
-        'cards_stats': cards_stats,
-        'decks_stats': decks_stats,
-        'projects_stats': projects_stats,
-        'codewars_stats': codewars_stats,
-        'is_owner': is_owner,
+        "user": user,
+        "cards_stats": cards_stats,
+        "decks_stats": decks_stats,
+        "projects_stats": projects_stats,
+        "codewars_stats": codewars_stats,
+        "is_owner": is_owner,
     }
 
-    return render(request, 'users/user_detail.html', context)
+    return render(request, "users/user_detail.html", context)
 
 
 @login_required
 def user_cards(request, user_id):
     user = user_services.get_user_by_id(user_id)
-    query = request.GET.get('query', '')
-    sort_by = request.GET.get('sort_by', '')
-    page_number = request.GET.get('page', 1)
+    query = request.GET.get("query", "")
+    sort_by = request.GET.get("sort_by", "")
+    page_number = request.GET.get("page", 1)
 
     user_cards = card_services.get_all_user_created_or_saved_cards(user)
-
     user_cards = card_services.filter_sort_paginate_cards(
-        user_cards,
-        query=query,
-        sort_by=sort_by,
-        page_number=page_number,
-        per_page=20
+        user_cards, query=query, sort_by=sort_by, page_number=page_number, per_page=20
     )
 
     is_owner = user == request.user
 
     context = {
-        'user': user,
-        'user_cards': user_cards,
-        'query': query,
-        'sort_by': sort_by,
-        'is_owner': is_owner,
+        "user": user,
+        "user_cards": user_cards,
+        "query": query,
+        "sort_by": sort_by,
+        "is_owner": is_owner,
     }
-    return render(request, 'users/user_cards.html', context)
+
+    return render(request, "users/user_cards.html", context)
 
 
 @login_required
 def user_decks(request, user_id):
     user = user_services.get_user_by_id(user_id)
-    query = request.GET.get('query', '')
-    sort_by = request.GET.get('sort_by', '')
-    page_number = request.GET.get('page', 1)
+    query = request.GET.get("query", "")
+    sort_by = request.GET.get("sort_by", "")
+    page_number = request.GET.get("page", 1)
     studying_decks_ids = []
 
-    user_decks = (
-        deck_services.get_all_user_created_or_saved_decks(user)
-    )
-
+    user_decks = deck_services.get_all_user_created_or_saved_decks(user)
     user_decks = deck_services.filter_sort_paginate_decks(
-        user_decks,
-        query=query,
-        sort_by=sort_by,
-        page_number=page_number,
-        per_page=20
+        user_decks, query=query, sort_by=sort_by, page_number=page_number, per_page=20
     )
 
     is_owner = user == request.user
 
     if is_owner:
-        studying_decks_ids = (
-            deckprogress_services.get_user_studying_decks_ids(user)
-        )
+        studying_decks_ids = deckprogress_services.get_user_studying_decks_ids(user)
 
     context = {
-        'user': user,
-        'user_decks': user_decks,
-        'studying_decks_ids': studying_decks_ids,
-        'query': query,
-        'sort_by': sort_by,
-        'is_owner': is_owner
+        "user": user,
+        "user_decks": user_decks,
+        "studying_decks_ids": studying_decks_ids,
+        "query": query,
+        "sort_by": sort_by,
+        "is_owner": is_owner,
     }
 
-    return render(request, 'users/user_decks.html', context)
+    return render(request, "users/user_decks.html", context)
 
 
 @login_required
 def user_projects(request, user_id):
     user = user_services.get_user_by_id(user_id)
-    query = request.GET.get('query', '')
-    sort_by = request.GET.get('sort_by', '')
-    page_number = request.GET.get('page', 1)
+    query = request.GET.get("query", "")
+    sort_by = request.GET.get("sort_by", "")
+    page_number = request.GET.get("page", 1)
 
     user_projects = project_services.get_all_user_created_projects(user)
     user_projects = project_services.filter_sort_paginate_projects(
@@ -195,20 +168,20 @@ def user_projects(request, user_id):
         query=query,
         sort_by=sort_by,
         page_number=page_number,
-        per_page=20
+        per_page=20,
     )
 
     is_owner = user == request.user
 
     context = {
-        'user': user,
-        'user_projects': user_projects,
-        'query': query,
-        'sort_by': sort_by,
-        'is_owner': is_owner,
+        "user": user,
+        "user_projects": user_projects,
+        "query": query,
+        "sort_by": sort_by,
+        "is_owner": is_owner,
     }
 
-    return render(request, 'users/user_projects.html', context)
+    return render(request, "users/user_projects.html", context)
 
 
 @login_required
@@ -218,22 +191,20 @@ def user_update(request, user_id):
     if user != request.user:
         return redirect(user.get_absolute_url())
 
-    user_form = UserForm(
-        request.POST or None, request.FILES or None, instance=user
-    )
+    user_form = UserForm(request.POST or None, request.FILES or None, instance=user)
     password_form = PasswordChangeForm(user, request.POST or None)
 
-    if 'update_user' in request.POST:
+    if "update_user" in request.POST:
         old_email = user.email
         old_codewars_username = user.codewars_username
 
         if user_form.is_valid():
             cleaned_data = user_form.cleaned_data
-            email = cleaned_data.get('email', None)
-            codewars_username = cleaned_data.get('codewars_username', None)
+            email = cleaned_data.get("email", None)
+            codewars_username = cleaned_data.get("codewars_username", None)
 
             user_services.update_user_email(
-                base_url=request.build_absolute_uri('/'),
+                base_url=request.build_absolute_uri("/"),
                 old_email=old_email,
                 new_email=email,
                 user=user,
@@ -246,23 +217,25 @@ def user_update(request, user_id):
             )
 
             user_form.save()
-            return redirect('user_update', user_id=user.pk)
 
-    elif 'change_password' in request.POST:
+            return redirect("user_update", user_id=user.pk)
+
+    elif "change_password" in request.POST:
         if password_form.is_valid():
             user = password_form.save()
             update_session_auth_hash(request, user)
-            return redirect('user_update', user_id=user.pk)
 
-    return render(request, 'users/user_form.html', {
-        'user_form': user_form,
-        'password_form': password_form,
-    })
+            return redirect("user_update", user_id=user.pk)
+
+    context = {
+        "user_form": user_form,
+        "password_form": password_form,
+    }
+
+    return render(request, "users/user_form.html", context)
 
 
 def confirm_email(request, uidb64, token):
-    user_services.confirm_user_email(
-        uidb64=uidb64,
-        token=token
-    )
-    return redirect('user_update', user_id=request.user.pk)
+    user_services.confirm_user_email(uidb64=uidb64, token=token)
+
+    return redirect("user_update", user_id=request.user.pk)

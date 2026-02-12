@@ -7,32 +7,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0001_initial'),
+        ("cards", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RemoveIndex(
-            model_name='card',
-            name='cards_card_front_b54f13_idx',
+            model_name="card",
+            name="cards_card_front_b54f13_idx",
         ),
         migrations.RenameField(
-            model_name='card',
-            old_name='back',
-            new_name='answer',
+            model_name="card",
+            old_name="back",
+            new_name="answer",
         ),
         migrations.RenameField(
-            model_name='card',
-            old_name='user',
-            new_name='author',
+            model_name="card",
+            old_name="user",
+            new_name="author",
         ),
         migrations.RenameField(
-            model_name='card',
-            old_name='front',
-            new_name='question',
+            model_name="card",
+            old_name="front",
+            new_name="question",
         ),
         migrations.AddIndex(
-            model_name='card',
-            index=models.Index(fields=['question'], name='cards_card_questio_9f21e5_idx'),
+            model_name="card",
+            index=models.Index(
+                fields=["question"], name="cards_card_questio_9f21e5_idx"
+            ),
         ),
     ]

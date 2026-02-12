@@ -8,23 +8,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0002_remove_card_cards_card_front_b54f13_idx_and_more'),
+        ("cards", "0002_remove_card_cards_card_front_b54f13_idx_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CardSet',
+            name="CardSet",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cardsets', to=settings.AUTH_USER_MODEL)),
-                ('cards', models.ManyToManyField(blank=True, related_name='cardsets', to='cards.card')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cardsets",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "cards",
+                    models.ManyToManyField(
+                        blank=True, related_name="cardsets", to="cards.card"
+                    ),
+                ),
             ],
             options={
-                'indexes': [models.Index(fields=['title'], name='cards_cards_title_dd85a9_idx')],
+                "indexes": [
+                    models.Index(fields=["title"], name="cards_cards_title_dd85a9_idx")
+                ],
             },
         ),
     ]

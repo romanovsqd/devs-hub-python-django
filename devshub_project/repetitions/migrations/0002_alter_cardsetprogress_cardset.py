@@ -7,14 +7,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('decks', '0001_initial'),
-        ('repetitions', '0001_initial'),
+        ("decks", "0001_initial"),
+        ("repetitions", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cardsetprogress',
-            name='cardset',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='progresses', to='decks.cardset'),
+            model_name="cardsetprogress",
+            name="cardset",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="progresses",
+                to="decks.cardset",
+            ),
         ),
     ]

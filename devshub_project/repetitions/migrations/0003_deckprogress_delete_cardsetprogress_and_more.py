@@ -9,45 +9,81 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0011_delete_cardset'),
-        ('decks', '0002_remove_cardset_author_remove_cardset_cards_and_more'),
-        ('repetitions', '0002_alter_cardsetprogress_cardset'),
+        ("cards", "0011_delete_cardset"),
+        ("decks", "0002_remove_cardset_author_remove_cardset_cards_and_more"),
+        ("repetitions", "0002_alter_cardsetprogress_cardset"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DeckProgress',
+            name="DeckProgress",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('repetitions', models.PositiveIntegerField(default=0)),
-                ('efactor', models.FloatField(default=2.5)),
-                ('interval', models.PositiveIntegerField(default=0)),
-                ('next_review_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('last_review_date', models.DateField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('card', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='deck_progresses', to='cards.card')),
-                ('deck', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='progresses', to='decks.deck')),
-                ('learner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='deck_progresses', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("repetitions", models.PositiveIntegerField(default=0)),
+                ("efactor", models.FloatField(default=2.5)),
+                ("interval", models.PositiveIntegerField(default=0)),
+                (
+                    "next_review_date",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                ("last_review_date", models.DateField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "card",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="deck_progresses",
+                        to="cards.card",
+                    ),
+                ),
+                (
+                    "deck",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="progresses",
+                        to="decks.deck",
+                    ),
+                ),
+                (
+                    "learner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="deck_progresses",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['next_review_date'],
+                "ordering": ["next_review_date"],
             },
         ),
         migrations.DeleteModel(
-            name='CardSetProgress',
+            name="CardSetProgress",
         ),
         migrations.AddIndex(
-            model_name='deckprogress',
-            index=models.Index(fields=['learner'], name='repetitions_learner_84be6e_idx'),
+            model_name="deckprogress",
+            index=models.Index(
+                fields=["learner"], name="repetitions_learner_84be6e_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='deckprogress',
-            index=models.Index(fields=['next_review_date'], name='repetitions_next_re_dcb155_idx'),
+            model_name="deckprogress",
+            index=models.Index(
+                fields=["next_review_date"], name="repetitions_next_re_dcb155_idx"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='deckprogress',
-            unique_together={('learner', 'deck', 'card')},
+            name="deckprogress",
+            unique_together={("learner", "deck", "card")},
         ),
     ]
