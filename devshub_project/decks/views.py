@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
 from .forms import DeckForm
-from . import deck_services
+from . import services
 
 
 @login_required
@@ -14,9 +14,9 @@ def deck_list(request):
     sort_by = request.GET.get('sort_by', '')
     page_number = request.GET.get('page', 1)
 
-    decks = deck_services.get_all_decks()
+    decks = services.get_all_decks()
 
-    decks = deck_services.filter_sort_paginate_decks(
+    decks = services.filter_sort_paginate_decks(
         decks,
         query=query,
         sort_by=sort_by,
@@ -34,10 +34,10 @@ def deck_list(request):
 
 @login_required
 def deck_detail(request, deck_id):
-    deck = deck_services.get_deck_by_id(deck_id)
-    cards = deck_services.get_deck_cards(deck)
+    deck = services.get_deck_by_id(deck_id)
+    cards = services.get_deck_cards(deck)
 
-    is_saved = deck_services.is_deck_saved_by_user(deck, request.user)
+    is_saved = services.is_deck_saved_by_user(deck, request.user)
 
     context = {
         'deck': deck,
@@ -66,7 +66,7 @@ def deck_create(request):
 
 @login_required
 def deck_update(request, deck_id):
-    deck = deck_services.get_user_created_deck_by_id(
+    deck = services.get_user_created_deck_by_id(
         deck_id, request.user
     )
 
@@ -86,7 +86,7 @@ def deck_update(request, deck_id):
 
 @login_required
 def deck_delete(request, deck_id):
-    deck = deck_services.get_user_created_deck_by_id(
+    deck = services.get_user_created_deck_by_id(
         deck_id, request.user
     )
 
@@ -105,9 +105,9 @@ def deck_delete(request, deck_id):
 @login_required
 @require_POST
 def deck_toggle_save(request, deck_id):
-    deck = deck_services.get_deck_by_id(deck_id)
+    deck = services.get_deck_by_id(deck_id)
 
-    is_deck_saved = deck_services.toggle_deck_save_by_user(
+    is_deck_saved = services.toggle_deck_save_by_user(
         deck, request.user
     )
 
@@ -126,11 +126,11 @@ def deck_toggle_save(request, deck_id):
 
 @login_required
 def deck_export(request, deck_id):
-    deck = deck_services.get_user_created_or_saved_deck_by_id(
+    deck = services.get_user_created_or_saved_deck_by_id(
         deck_id, request.user
     )
 
-    filename, cards_generator = deck_services.prepare_deck_for_export(
+    filename, cards_generator = services.prepare_deck_for_export(
         deck
     )
 

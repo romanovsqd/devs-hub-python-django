@@ -1,6 +1,6 @@
 import requests
 
-from .models import CodewarsProfile
+from users.models import CodewarsProfile
 
 
 def get_user_codewars_stats(user):

@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from . import card_services
+from . import services
 from .forms import CardForm
 
 
@@ -14,9 +14,9 @@ def card_list(request):
     sort_by = request.GET.get('sort_by', '')
     page_number = request.GET.get('page', 1)
 
-    cards = card_services.get_all_cards()
+    cards = services.get_all_cards()
 
-    cards = card_services.filter_sort_paginate_cards(
+    cards = services.filter_sort_paginate_cards(
         cards,
         query=query,
         sort_by=sort_by,
@@ -34,9 +34,9 @@ def card_list(request):
 
 @login_required
 def card_detail(request, card_id):
-    card = card_services.get_card_by_id(card_id)
+    card = services.get_card_by_id(card_id)
 
-    is_saved = card_services.is_card_saved_by_user(card, request.user)
+    is_saved = services.is_card_saved_by_user(card, request.user)
 
     context = {
         'card': card,
@@ -63,7 +63,7 @@ def card_create(request):
 
 @login_required
 def card_update(request, card_id):
-    card = card_services.get_user_created_card_by_id(card_id, request.user)
+    card = services.get_user_created_card_by_id(card_id, request.user)
 
     form = CardForm(request.POST or None, instance=card)
 
@@ -79,7 +79,7 @@ def card_update(request, card_id):
 
 @login_required
 def card_delete(request, card_id):
-    card = card_services.get_user_created_card_by_id(card_id, request.user)
+    card = services.get_user_created_card_by_id(card_id, request.user)
 
     if request.method == 'POST':
         card.delete()
@@ -94,9 +94,9 @@ def card_delete(request, card_id):
 @login_required
 @require_POST
 def card_toggle_save(request, card_id):
-    card = card_services.get_card_by_id(card_id)
+    card = services.get_card_by_id(card_id)
 
-    is_card_saved = card_services.toggle_card_save_by_user(card, request.user)
+    is_card_saved = services.toggle_card_save_by_user(card, request.user)
 
     if is_card_saved:
         message = 'Карточка сохранена в ваш профиль'
@@ -113,11 +113,11 @@ def card_toggle_save(request, card_id):
 
 @login_required
 def card_export(request, card_id):
-    card = card_services.get_user_created_or_saved_card_by_id(
+    card = services.get_user_created_or_saved_card_by_id(
         card_id, request.user
     )
 
-    filename, content = card_services.generate_card_data_for_export(card)
+    filename, content = services.generate_card_data_for_export(card)
 
     response = HttpResponse(content_type='text/plain')
     response['Content-Disposition'] = (

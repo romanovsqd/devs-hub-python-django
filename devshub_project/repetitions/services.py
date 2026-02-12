@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from .models import DeckProgress
-from decks import deck_services
+from decks import services as deck_services
 
 
 def get_user_deck_progress(deck, user):

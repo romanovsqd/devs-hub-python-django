@@ -1,7 +1,5 @@
 from django import forms
 
-from . import card_services
-
 from .models import Card
 
 

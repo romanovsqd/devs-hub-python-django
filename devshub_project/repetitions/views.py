@@ -4,9 +4,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
-from decks import deck_services
-
-from . import deckprogress_services
+from decks import services as deck_services
+from . import services
 
 
 @login_required
@@ -16,7 +15,7 @@ def deck_toggle_study(request, deck_id):
         deck_id, request.user
     )
 
-    is_studying = deckprogress_services.toggle_deck_study_for_user(
+    is_studying = services.toggle_deck_study_for_user(
         deck, request.user
     )
 
@@ -40,7 +39,7 @@ def review(request):
 
 @login_required
 def next_card(request):
-    card_data = deckprogress_services.get_next_card_for_review(request.user)
+    card_data = services.get_next_card_for_review(request.user)
 
     if card_data:
         return JsonResponse(card_data)
@@ -55,14 +54,14 @@ def submit(request, deck_id, card_id):
     quality = int(data.get('quality', 0))
 
     card_progress = (
-        deckprogress_services.get_deck_card_progress_for_user(
+        services.get_deck_card_progress_for_user(
             deck_id=deck_id,
             card_id=card_id,
             user=request.user,
         )
     )
 
-    progress = deckprogress_services.apply_sm2(card_progress, quality)
+    progress = services.apply_sm2(card_progress, quality)
 
     return JsonResponse({
         'deck_id': deck_id,

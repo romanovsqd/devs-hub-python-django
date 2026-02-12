@@ -1,6 +1,6 @@
 from django import forms
 
-from cards.card_services import get_all_user_created_or_saved_cards
+from cards.services import get_all_user_created_or_saved_cards
 
 from .models import Deck
 
