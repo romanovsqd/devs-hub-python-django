@@ -3,11 +3,11 @@
 {% load card_tags %}
 
 
-{% block title %}{{ cardset.title }}{% endblock title %}
+{% block title %}{{ deck.title }}{% endblock title %}
 
 {% block content %}
 
-  <h1>{{ cardset.title }}</h1>
+  <h1>{{ deck.title }}</h1>
 
   <div>
     <ul>
@@ -24,8 +24,8 @@
   </div>
 
   <div>
-    {% if not cardset.author == request.user %}
-      <form action="{% url "cardset_toggle_save" cardset.id %}" method="post" data-js-toggle-save-form>
+    {% if not deck.author == request.user %}
+      <form action="{% url "deck_toggle_save" deck.id %}" method="post" data-js-toggle-save-form>
         {% csrf_token %}
         <button type="submit" data-js-toggle-button>
           {% if not is_saved %}
@@ -41,12 +41,12 @@
   </div>
 
   <div>
-    <p>Дата создания: <span>{{ cardset.created_at }}</span></p>
-    <p>Последнее обновление: <span>{{ cardset.updated_at }}</span></p>
+    <p>Дата создания: <span>{{ deck.created_at }}</span></p>
+    <p>Последнее обновление: <span>{{ deck.updated_at }}</span></p>
   </div>
 
 {% endblock content %}
 
 {% block scripts %}
-  <script src="{% static "cards/js/form_toggles.js" %}"></script>
+  <script src="{% static "js/toggle_form_state.js" %}"></script>
 {% endblock scripts %}

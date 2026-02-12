@@ -2,9 +2,7 @@ const toggleSaveForms = document.querySelectorAll('[data-js-toggle-save-form]');
 
 if (toggleSaveForms) {
   toggleSaveForms.forEach((form) => {
-    const toggleButton = form.querySelector(
-      '[data-js-toggle-button]',
-    );
+    const toggleButton = form.querySelector('[data-js-toggle-button]');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();

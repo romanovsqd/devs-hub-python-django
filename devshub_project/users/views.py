@@ -14,8 +14,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 
 from cards import card_services
-from decks import cardset_services
-from repetitions import cardsetprogress_services
+from decks import deck_services
+from repetitions import deckprogress_services
 from projects import project_services
 from .decorators import redirect_authenticated
 from . import user_services, codewars_services
@@ -84,7 +84,7 @@ def user_list(request):
         'query': query,
         'sort_by': sort_by,
     }
-    return render(request, 'users/users/user_list.html', context)
+    return render(request, 'users/user_list.html', context)
 
 
 @login_required
@@ -93,7 +93,7 @@ def user_detail(request, user_id):
 
     cards_stats = card_services.get_user_cards_stats(user)
 
-    cardsets_stats = cardset_services.get_user_cardsets_stats(user)
+    decks_stats = deck_services.get_user_decks_stats(user)
 
     projects_stats = project_services.get_user_project_stats(user)
 
@@ -104,13 +104,13 @@ def user_detail(request, user_id):
     context = {
         'user': user,
         'cards_stats': cards_stats,
-        'cardsets_stats': cardsets_stats,
+        'decks_stats': decks_stats,
         'projects_stats': projects_stats,
         'codewars_stats': codewars_stats,
         'is_owner': is_owner,
     }
 
-    return render(request, 'users/users/user_detail.html', context)
+    return render(request, 'users/user_detail.html', context)
 
 
 @login_required
@@ -139,23 +139,23 @@ def user_cards(request, user_id):
         'sort_by': sort_by,
         'is_owner': is_owner,
     }
-    return render(request, 'users/users/user_cards.html', context)
+    return render(request, 'users/user_cards.html', context)
 
 
 @login_required
-def user_cardsets(request, user_id):
+def user_decks(request, user_id):
     user = user_services.get_user_by_id(user_id)
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
     page_number = request.GET.get('page', 1)
-    studying_cardsets_ids = []
+    studying_decks_ids = []
 
-    user_cardsets = (
-        cardset_services.get_all_user_created_or_saved_cardsets(user)
+    user_decks = (
+        deck_services.get_all_user_created_or_saved_decks(user)
     )
 
-    user_cardsets = cardset_services.filter_sort_paginate_cardsets(
-        user_cardsets,
+    user_decks = deck_services.filter_sort_paginate_decks(
+        user_decks,
         query=query,
         sort_by=sort_by,
         page_number=page_number,
@@ -165,20 +165,20 @@ def user_cardsets(request, user_id):
     is_owner = user == request.user
 
     if is_owner:
-        studying_cardsets_ids = (
-            cardsetprogress_services.get_user_studying_cardsets_ids(user)
+        studying_decks_ids = (
+            deckprogress_services.get_user_studying_decks_ids(user)
         )
 
     context = {
         'user': user,
-        'user_cardsets': user_cardsets,
-        'studying_cardsets_ids': studying_cardsets_ids,
+        'user_decks': user_decks,
+        'studying_decks_ids': studying_decks_ids,
         'query': query,
         'sort_by': sort_by,
         'is_owner': is_owner
     }
 
-    return render(request, 'users/users/user_cardsets.html', context)
+    return render(request, 'users/user_decks.html', context)
 
 
 @login_required
@@ -207,7 +207,7 @@ def user_projects(request, user_id):
         'is_owner': is_owner,
     }
 
-    return render(request, 'users/users/user_projects.html', context)
+    return render(request, 'users/user_projects.html', context)
 
 
 @login_required
@@ -253,7 +253,7 @@ def user_update(request, user_id):
             update_session_auth_hash(request, user)
             return redirect('user_update', user_id=user.pk)
 
-    return render(request, 'users/users/user_form.html', {
+    return render(request, 'users/user_form.html', {
         'user_form': user_form,
         'password_form': password_form,
     })

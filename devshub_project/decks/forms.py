@@ -2,12 +2,12 @@ from django import forms
 
 from cards.card_services import get_all_user_created_or_saved_cards
 
-from .models import CardSet
+from .models import Deck
 
 
-class CardSetForm(forms.ModelForm):
+class DeckForm(forms.ModelForm):
     class Meta:
-        model = CardSet
+        model = Deck
         fields = ['title', 'cards']
 
     def __init__(self, *args, user=None, **kwargs):

@@ -4,27 +4,27 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
-from decks import cardset_services
+from decks import deck_services
 
-from . import cardsetprogress_services
+from . import deckprogress_services
 
 
 @login_required
 @require_POST
-def cardset_toggle_study(request, cardset_id):
-    cardset = cardset_services.get_user_created_or_saved_cardset_by_id(
-        cardset_id, request.user
+def deck_toggle_study(request, deck_id):
+    deck = deck_services.get_user_created_or_saved_deck_by_id(
+        deck_id, request.user
     )
 
-    is_studying = cardsetprogress_services.toggle_cardset_study_for_user(
-        cardset, request.user
+    is_studying = deckprogress_services.toggle_deck_study_for_user(
+        deck, request.user
     )
 
     if is_studying:
-        message = f'Теперь вы изучаете колоду {cardset.title}'
+        message = f'Теперь вы изучаете колоду {deck.title}'
         button_text = 'Удалить из изучаемых'
     else:
-        message = f'Вы больше не изучаете колоду {cardset.title}'
+        message = f'Вы больше не изучаете колоду {deck.title}'
         button_text = 'Добавить в изучаемые'
 
     return JsonResponse({
@@ -40,7 +40,7 @@ def review(request):
 
 @login_required
 def next_card(request):
-    card_data = cardsetprogress_services.get_next_card_for_review(request.user)
+    card_data = deckprogress_services.get_next_card_for_review(request.user)
 
     if card_data:
         return JsonResponse(card_data)
@@ -50,22 +50,22 @@ def next_card(request):
 
 @login_required
 @require_POST
-def submit(request, cardset_id, card_id):
+def submit(request, deck_id, card_id):
     data = json.loads(request.body)
     quality = int(data.get('quality', 0))
 
     card_progress = (
-        cardsetprogress_services.get_cardset_card_progress_for_user(
-            cardset_id=cardset_id,
+        deckprogress_services.get_deck_card_progress_for_user(
+            deck_id=deck_id,
             card_id=card_id,
             user=request.user,
         )
     )
 
-    progress = cardsetprogress_services.apply_sm2(card_progress, quality)
+    progress = deckprogress_services.apply_sm2(card_progress, quality)
 
     return JsonResponse({
-        'cardset_id': cardset_id,
+        'deck_id': deck_id,
         'card_id': card_id,
         'next_review_date': progress.next_review_date.isoformat(),
         'interval': progress.interval,

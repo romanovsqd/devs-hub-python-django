@@ -8,7 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
     path('cards/', include('cards.urls')),
-    path('cardsets/', include('decks.urls')),
+    path('decks/', include('decks.urls')),
     path('study/', include('repetitions.urls')),
     path('projects/', include('projects.urls')),
 ] + debug_toolbar_urls()

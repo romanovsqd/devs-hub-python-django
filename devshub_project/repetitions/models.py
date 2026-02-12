@@ -3,20 +3,20 @@ from django.db import models
 from django.utils import timezone
 
 
-class CardSetProgress(models.Model):
+class DeckProgress(models.Model):
     learner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='cardset_progresses',
+        related_name='deck_progresses',
         on_delete=models.CASCADE
     )
-    cardset = models.ForeignKey(
-        'decks.CardSet',
+    deck = models.ForeignKey(
+        'decks.Deck',
         related_name='progresses',
         on_delete=models.CASCADE
     )
     card = models.ForeignKey(
         'cards.Card',
-        related_name='cardset_progresses',
+        related_name='deck_progresses',
         on_delete=models.CASCADE
     )
     repetitions = models.PositiveIntegerField(default=0)
@@ -28,7 +28,7 @@ class CardSetProgress(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['learner', 'cardset', 'card']
+        unique_together = ['learner', 'deck', 'card']
         ordering = ['next_review_date']
         indexes = [
             models.Index(fields=['learner']),

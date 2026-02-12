@@ -4,7 +4,7 @@
     {% if request.user.is_authenticated %}
       <ul style="display: flex; gap: 10px; list-style: none; padding: 0;">
         <li><a href="{% url "card_list" %}">Список карточек</a></li>
-        <li><a href="{% url "cardset_list" %}">Список наборов карточек</a></li>
+        <li><a href="{% url "deck_list" %}">Список наборов карточек</a></li>
         <li><a href="{% url "project_list" %}">Список проектов</a></li>
         <li><a href="{% url "user_list" %}">Список пользователей</a></li>
       </ul>

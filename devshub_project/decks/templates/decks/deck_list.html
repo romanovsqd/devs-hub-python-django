@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cardset_tags %}
+{% load deck_tags %}
 
 {% block title %}Список наборов карточек{% endblock title %}
 
@@ -19,9 +19,9 @@
   </div>
 
   <ul>
-    {% for cardset in cardsets %}
+    {% for deck in decks %}
       <li>
-        {% render_cardset cardset %}
+        {% render_deck deck %}
       </li>
     {% empty %}
       <li>
@@ -31,16 +31,16 @@
   </ul>
 
 <div>
-  {% if cardsets.has_previous %}
-    <a href="?page={{ cardsets.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
+  {% if decks.has_previous %}
+    <a href="?page={{ decks.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
   {% endif %}
 
   <span>
-    Страница {{ cardsets.number }} из {{ cardsets.paginator.num_pages }}
+    Страница {{ decks.number }} из {{ decks.paginator.num_pages }}
   </span>
 
-  {% if cardsets.has_next %}
-    <a href="?page={{ cardsets.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
+  {% if decks.has_next %}
+    <a href="?page={{ decks.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
   {% endif %}
 </div>
 

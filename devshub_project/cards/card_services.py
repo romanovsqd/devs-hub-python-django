@@ -115,7 +115,7 @@ def get_user_cards_stats(user):
         ),
         in_study=Count(
             'id',
-            filter=Q(cardset_progresses__learner=user),
+            filter=Q(deck_progresses__learner=user),
             distinct=True
         )
     )

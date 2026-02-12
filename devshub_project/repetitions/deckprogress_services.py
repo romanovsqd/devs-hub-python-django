@@ -2,63 +2,63 @@ from datetime import timedelta
 
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from .models import CardSetProgress
-from decks import cardset_services
+from .models import DeckProgress
+from decks import deck_services
 
 
-def get_user_cardset_progress(cardset, user):
+def get_user_deck_progress(deck, user):
     """Возвращает прогресс по набору карточек для пользователя."""
-    return CardSetProgress.objects.filter(
+    return DeckProgress.objects.filter(
         learner=user,
-        cardset=cardset
+        deck=deck
     )
 
 
-def get_cardset_card_progress_for_user(cardset_id, card_id, user):
+def get_deck_card_progress_for_user(deck_id, card_id, user):
     """
     Возвращает прогресс по карточке
     в конкретном наборе карточек для пользователя.
     """
     return get_object_or_404(
-        CardSetProgress,
+        DeckProgress,
         learner=user,
-        cardset_id=cardset_id,
+        deck_id=deck_id,
         card_id=card_id,
     )
 
 
-def is_user_studying_cardset(cardset, user):
+def is_user_studying_deck(deck, user):
     """проверяет изучает ли пользователь набор карточек"""
-    cardset_progress = get_user_cardset_progress(cardset, user)
-    return cardset_progress.exists()
+    deck_progress = get_user_deck_progress(deck, user)
+    return deck_progress.exists()
 
 
-def create_cardset_progress_for_user(cardset, user):
+def create_deck_progress_for_user(deck, user):
     """
     Инизиализиует прогресс изучения всех карточек в наборе для пользователя.
     """
-    cardset_cards = cardset_services.get_cardset_cards(cardset)
+    deck_cards = deck_services.get_deck_cards(deck)
 
     progress = [
-        CardSetProgress(learner=user, card=card, cardset=cardset)
-        for card in cardset_cards
+        DeckProgress(learner=user, card=card, deck=deck)
+        for card in deck_cards
     ]
 
-    CardSetProgress.objects.bulk_create(
+    DeckProgress.objects.bulk_create(
         progress,
         ignore_conflicts=True
     )
 
 
-def toggle_cardset_study_for_user(cardset, user):
+def toggle_deck_study_for_user(deck, user):
     """Переключает состояние изучения набора карточек пользователем."""
-    is_studying = is_user_studying_cardset(cardset, user)
+    is_studying = is_user_studying_deck(deck, user)
 
     if is_studying:
-        get_user_cardset_progress(cardset, user).delete()
+        get_user_deck_progress(deck, user).delete()
         return False
     else:
-        create_cardset_progress_for_user(cardset, user)
+        create_deck_progress_for_user(deck, user)
         return True
 
 
@@ -67,7 +67,7 @@ def get_next_card_for_review(user):
     today = timezone.localdate()
 
     progress = (
-        CardSetProgress.objects
+        DeckProgress.objects
         .filter(
             learner=user,
             next_review_date__date__lte=today
@@ -82,7 +82,7 @@ def get_next_card_for_review(user):
 
     card_data = {
         'card_id': progress.card_id,
-        'cardset_id': progress.cardset_id,
+        'deck_id': progress.deck_id,
         'question': progress.card.question,
         'answer': progress.card.answer,
     }
@@ -121,8 +121,8 @@ def apply_sm2(progress, quality):
     return progress
 
 
-def get_user_studying_cardsets_ids(user):
+def get_user_studying_decks_ids(user):
     """Возращает id изучаемых пользователем наборов карточек."""
-    return CardSetProgress.objects.filter(
+    return DeckProgress.objects.filter(
         learner=user,
-    ).values_list('cardset_id', flat=True)
+    ).values_list('deck_id', flat=True)

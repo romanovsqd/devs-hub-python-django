@@ -3,21 +3,21 @@ from django.db import models
 from django.urls import reverse
 
 
-class CardSet(models.Model):
+class Deck(models.Model):
     title = models.CharField(max_length=255)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='created_cardsets',
+        related_name='created_decks',
         on_delete=models.CASCADE
     )
     cards = models.ManyToManyField(
         'cards.Card',
-        related_name='cardsets',
+        related_name='decks',
         blank=True
     )
     saved_by = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='saved_cardsets',
+        related_name='saved_decks',
         blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,5 +35,5 @@ class CardSet(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            'cardset_detail', kwargs={'cardset_id': self.pk}
+            'deck_detail', kwargs={'deck_id': self.pk}
         )

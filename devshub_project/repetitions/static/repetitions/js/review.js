@@ -15,7 +15,7 @@ if (reviewContainer) {
   const qualityButtons = document.querySelector('[data-js-quality-buttons]');
 
   let currentCardId = null;
-  let currentCardsetId = null;
+  let currentDeckId = null;
 
   back.style.display = 'none';
 
@@ -26,13 +26,13 @@ if (reviewContainer) {
 
   qualityButtons.addEventListener('click', async (e) => {
     const button = e.target.closest('button');
-    if (!button || !currentCardId || !currentCardsetId) {
+    if (!button || !currentCardId || !currentDeckId) {
       return;
     }
 
     const submitUrl = submitUrlTemplate.replace(
       /0\/0/,
-      `${currentCardsetId}/${currentCardId}`,
+      `${currentDeckId}/${currentCardId}`,
     );
     const csrftoken = Cookies.get('csrftoken');
     const quality = button.dataset.quality;
@@ -75,7 +75,7 @@ if (reviewContainer) {
       }
 
       currentCardId = data.card_id;
-      currentCardsetId = data.cardset_id;
+      currentDeckId = data.deck_id;
       questionElement.textContent = data.question;
       answerElement.textContent = data.answer;
 

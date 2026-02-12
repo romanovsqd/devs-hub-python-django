@@ -4,20 +4,20 @@ from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import CardSetForm
-from . import cardset_services
+from .forms import DeckForm
+from . import deck_services
 
 
 @login_required
-def cardset_list(request):
+def deck_list(request):
     query = request.GET.get('query', '')
     sort_by = request.GET.get('sort_by', '')
     page_number = request.GET.get('page', 1)
 
-    cardsets = cardset_services.get_all_cardsets()
+    decks = deck_services.get_all_decks()
 
-    cardsets = cardset_services.filter_sort_paginate_cardsets(
-        cardsets,
+    decks = deck_services.filter_sort_paginate_decks(
+        decks,
         query=query,
         sort_by=sort_by,
         page_number=page_number,
@@ -25,93 +25,93 @@ def cardset_list(request):
     )
 
     context = {
-        'cardsets': cardsets,
+        'decks': decks,
         'query': query,
         'sort_by': sort_by,
     }
-    return render(request, 'cards/cardsets/cardset_list.html', context)
+    return render(request, 'decks/deck_list.html', context)
 
 
 @login_required
-def cardset_detail(request, cardset_id):
-    cardset = cardset_services.get_cardset_by_id(cardset_id)
-    cards = cardset_services.get_cardset_cards(cardset)
+def deck_detail(request, deck_id):
+    deck = deck_services.get_deck_by_id(deck_id)
+    cards = deck_services.get_deck_cards(deck)
 
-    is_saved = cardset_services.is_cardset_saved_by_user(cardset, request.user)
+    is_saved = deck_services.is_deck_saved_by_user(deck, request.user)
 
     context = {
-        'cardset': cardset,
+        'deck': deck,
         'cards': cards,
         'is_saved': is_saved,
     }
-    return render(request, 'cards/cardsets/cardset_detail.html', context)
+    return render(request, 'decks/deck_detail.html', context)
 
 
 @login_required
-def cardset_create(request):
-    form = CardSetForm(request.POST or None, user=request.user)
+def deck_create(request):
+    form = DeckForm(request.POST or None, user=request.user)
 
     if form.is_valid():
-        cardset = form.save(commit=False)
-        cardset.author = request.user
-        cardset.save()
+        deck = form.save(commit=False)
+        deck.author = request.user
+        deck.save()
         form.save_m2m()
-        return redirect(cardset.get_absolute_url())
+        return redirect(deck.get_absolute_url())
 
     context = {
         'form': form,
     }
-    return render(request, 'cards/cardsets/cardset_form.html', context)
+    return render(request, 'decks/deck_form.html', context)
 
 
 @login_required
-def cardset_update(request, cardset_id):
-    cardset = cardset_services.get_user_created_cardset_by_id(
-        cardset_id, request.user
+def deck_update(request, deck_id):
+    deck = deck_services.get_user_created_deck_by_id(
+        deck_id, request.user
     )
 
-    form = CardSetForm(
-        request.POST or None, instance=cardset, user=request.user
+    form = DeckForm(
+        request.POST or None, instance=deck, user=request.user
     )
 
     if form.is_valid():
-        cardset = form.save()
-        return redirect(cardset.get_absolute_url())
+        deck = form.save()
+        return redirect(deck.get_absolute_url())
 
     context = {
         'form': form,
     }
-    return render(request, 'cards/cardsets/cardset_form.html', context)
+    return render(request, 'decks/deck_form.html', context)
 
 
 @login_required
-def cardset_delete(request, cardset_id):
-    cardset = cardset_services.get_user_created_cardset_by_id(
-        cardset_id, request.user
+def deck_delete(request, deck_id):
+    deck = deck_services.get_user_created_deck_by_id(
+        deck_id, request.user
     )
 
     if request.method == 'POST':
-        cardset.delete()
-        return redirect('cardset_list')
+        deck.delete()
+        return redirect('deck_list')
 
     context = {
-        'cardset': cardset
+        'deck': deck
     }
     return render(
-        request, 'cards/cardsets/cardset_confirm_delete.html', context
+        request, 'decks/deck_confirm_delete.html', context
     )
 
 
 @login_required
 @require_POST
-def cardset_toggle_save(request, cardset_id):
-    cardset = cardset_services.get_cardset_by_id(cardset_id)
+def deck_toggle_save(request, deck_id):
+    deck = deck_services.get_deck_by_id(deck_id)
 
-    is_cardset_saved = cardset_services.toggle_cardset_save_by_user(
-        cardset, request.user
+    is_deck_saved = deck_services.toggle_deck_save_by_user(
+        deck, request.user
     )
 
-    if is_cardset_saved:
+    if is_deck_saved:
         message = 'Набор карточек сохранен в ваш профиль'
         button_text = 'Удалить из моего профиля'
     else:
@@ -125,13 +125,13 @@ def cardset_toggle_save(request, cardset_id):
 
 
 @login_required
-def cardset_export(request, cardset_id):
-    cardset = cardset_services.get_user_created_or_saved_cardset_by_id(
-        cardset_id, request.user
+def deck_export(request, deck_id):
+    deck = deck_services.get_user_created_or_saved_deck_by_id(
+        deck_id, request.user
     )
 
-    filename, cards_generator = cardset_services.prepare_cardset_for_export(
-        cardset
+    filename, cards_generator = deck_services.prepare_deck_for_export(
+        deck
     )
 
     response = StreamingHttpResponse(

@@ -29,7 +29,7 @@ def card_list(request):
         'query': query,
         'sort_by': sort_by,
     }
-    return render(request, 'cards/cards/card_list.html', context)
+    return render(request, 'cards/card_list.html', context)
 
 
 @login_required
@@ -42,7 +42,7 @@ def card_detail(request, card_id):
         'card': card,
         'is_saved': is_saved,
     }
-    return render(request, 'cards/cards/card_detail.html', context)
+    return render(request, 'cards/card_detail.html', context)
 
 
 @login_required
@@ -58,7 +58,7 @@ def card_create(request):
     context = {
         'form': form,
     }
-    return render(request, 'cards/cards/card_form.html', context)
+    return render(request, 'cards/card_form.html', context)
 
 
 @login_required
@@ -74,7 +74,7 @@ def card_update(request, card_id):
     context = {
         'form': form,
     }
-    return render(request, 'cards/cards/card_form.html', context)
+    return render(request, 'cards/card_form.html', context)
 
 
 @login_required
@@ -88,7 +88,7 @@ def card_delete(request, card_id):
     context = {
         'card': card
     }
-    return render(request, 'cards/cards/card_confirm_delete.html', context)
+    return render(request, 'cards/card_confirm_delete.html', context)
 
 
 @login_required

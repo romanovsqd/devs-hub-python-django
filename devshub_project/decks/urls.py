@@ -3,21 +3,21 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.cardset_list, name='cardset_list'),
-    path('<int:cardset_id>/', views.cardset_detail, name='cardset_detail'),
-    path('create/', views.cardset_create, name='cardset_create'),
+    path('', views.deck_list, name='deck_list'),
+    path('<int:deck_id>/', views.deck_detail, name='deck_detail'),
+    path('create/', views.deck_create, name='deck_create'),
     path(
-        '<int:cardset_id>/edit/', views.cardset_update, name='cardset_update'
+        '<int:deck_id>/edit/', views.deck_update, name='deck_update'
     ),
     path(
-        '<int:cardset_id>/delete/', views.cardset_delete, name='cardset_delete'
+        '<int:deck_id>/delete/', views.deck_delete, name='deck_delete'
     ),
     path(
-        '<int:cardset_id>/toggle-save/',
-        views.cardset_toggle_save, name='cardset_toggle_save'
+        '<int:deck_id>/toggle-save/',
+        views.deck_toggle_save, name='deck_toggle_save'
     ),
     path(
-        '<int:cardset_id>/export/',
-        views.cardset_export, name='cardset_export'
+        '<int:deck_id>/export/',
+        views.deck_export, name='deck_export'
     ),
 ]

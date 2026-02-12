@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load cardset_tags %}
+{% load deck_tags %}
 
 
 {% block title %}
@@ -26,14 +26,14 @@
 
 
   <ul>
-    {% for cardset in user_cardsets %}
+    {% for deck in user_decks %}
       <li>
-        {% render_cardset cardset %}
+        {% render_deck deck %}
         {% if is_owner %}
-          <form action="{% url "cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
+          <form action="{% url "deck_toggle_study" deck.id %}" method="post" data-js-toggle-save-form>
             {% csrf_token %}
             <button type="submit" data-js-toggle-button>
-              {% if cardset.id not in studying_cardsets_ids %}
+              {% if deck.id not in studying_decks_ids %}
                 Добавить в изучаемые
               {% else %}
                 Удалить из изучаемых
@@ -50,21 +50,21 @@
   </ul>
 
 <div>
-  {% if user_cardsets.has_previous %}
-    <a href="?page={{ user_cardsets.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
+  {% if user_decks.has_previous %}
+    <a href="?page={{ user_decks.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
   {% endif %}
 
   <span>
-    Страница {{ user_cardsets.number }} из {{ user_cardsets.paginator.num_pages }}
+    Страница {{ user_decks.number }} из {{ user_decks.paginator.num_pages }}
   </span>
 
-  {% if user_cardsets.has_next %}
-    <a href="?page={{ user_cardsets.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
+  {% if user_decks.has_next %}
+    <a href="?page={{ user_decks.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
   {% endif %}
 </div>
 
 {% endblock content %}
 
 {% block scripts %}
-  <script src="{% static "cards/js/form_toggles.js" %}"></script>
+  <script src="{% static "js/toggle_form_state.js" %}"></script>
 {% endblock scripts %}

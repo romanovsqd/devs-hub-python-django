@@ -36,7 +36,7 @@ urlpatterns = [
     path('users/<int:user_id>/cards/', views.user_cards, name='user_cards'),
     path(
         'users/<int:user_id>/card-sets/',
-        views.user_cardsets, name='user_cardsets'
+        views.user_decks, name='user_decks'
     ),
     path(
         'users/<int:user_id>/projects/',
