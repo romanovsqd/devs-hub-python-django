@@ -11,10 +11,12 @@ def project_list(request):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    projects = services.get_all_projects()
-
     projects = services.filter_sort_paginate_projects(
-        projects, query=query, sort_by=sort_by, page_number=page_number, per_page=20
+        projects=services.get_all_projects(),
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20,
     )
 
     context = {
@@ -28,7 +30,7 @@ def project_list(request):
 
 @login_required
 def project_detail(request, project_id):
-    project = services.get_project_by_id(project_id)
+    project = services.get_project_by_id(project_id=project_id)
 
     context = {
         "project": project,
@@ -47,7 +49,7 @@ def project_create(request):
         project.save()
 
         services.create_images_for_project(
-            project=project, images=form.cleaned_data.get("images", None)
+            project=project, images=form.cleaned_data.get("images")
         )
 
         return redirect(project.get_absolute_url())
@@ -61,12 +63,14 @@ def project_create(request):
 
 @login_required
 def project_update(request, project_id):
-    project = services.get_user_created_project_by_id(project_id, request.user)
+    project = services.get_user_created_project_by_id(
+        project_id=project_id, user=request.user
+    )
 
     form = ProjectForm(request.POST or None, request.FILES or None, instance=project)
 
     if form.is_valid():
-        new_images = form.cleaned_data.get("images", None)
+        new_images = form.cleaned_data.get("images")
         project = form.save()
 
         services.update_project_images(project=project, new_images=new_images)
@@ -82,7 +86,9 @@ def project_update(request, project_id):
 
 @login_required
 def project_delete(request, project_id):
-    project = services.get_user_created_project_by_id(project_id, request.user)
+    project = services.get_user_created_project_by_id(
+        project_id=project_id, user=request.user
+    )
 
     if request.method == "POST":
         project.delete()

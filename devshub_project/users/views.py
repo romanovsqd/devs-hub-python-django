@@ -64,9 +64,12 @@ def user_list(request):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    users = user_services.get_all_users()
     users = user_services.filter_sort_paginate_users(
-        users, query=query, sort_by=sort_by, page_number=page_number, per_page=20
+        users=user_services.get_all_users(),
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20,
     )
 
     context = {
@@ -80,12 +83,11 @@ def user_list(request):
 
 @login_required
 def user_detail(request, user_id):
-    user = user_services.get_user_by_id(user_id)
-
-    cards_stats = card_services.get_user_cards_stats(user)
-    decks_stats = deck_services.get_user_decks_stats(user)
-    projects_stats = project_services.get_user_project_stats(user)
-    codewars_stats = codewars_services.get_user_codewars_stats(user)
+    user = user_services.get_user_by_id(user_id=user_id)
+    cards_stats = card_services.get_user_cards_stats(user=user)
+    decks_stats = deck_services.get_user_decks_stats(user=user)
+    projects_stats = project_services.get_user_project_stats(user=user)
+    codewars_stats = codewars_services.get_user_codewars_stats(user=user)
     is_owner = user == request.user
 
     context = {
@@ -102,14 +104,17 @@ def user_detail(request, user_id):
 
 @login_required
 def user_cards(request, user_id):
-    user = user_services.get_user_by_id(user_id)
+    user = user_services.get_user_by_id(user_id=user_id)
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    user_cards = card_services.get_all_user_created_or_saved_cards(user)
     user_cards = card_services.filter_sort_paginate_cards(
-        user_cards, query=query, sort_by=sort_by, page_number=page_number, per_page=20
+        cards=card_services.get_all_user_created_or_saved_cards(user=user),
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20,
     )
 
     is_owner = user == request.user
@@ -127,21 +132,24 @@ def user_cards(request, user_id):
 
 @login_required
 def user_decks(request, user_id):
-    user = user_services.get_user_by_id(user_id)
+    user = user_services.get_user_by_id(user_id=user_id)
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
-    studying_decks_ids = []
 
-    user_decks = deck_services.get_all_user_created_or_saved_decks(user)
     user_decks = deck_services.filter_sort_paginate_decks(
-        user_decks, query=query, sort_by=sort_by, page_number=page_number, per_page=20
+        decks=deck_services.get_all_user_created_or_saved_decks(user=user),
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20,
     )
 
     is_owner = user == request.user
 
-    if is_owner:
-        studying_decks_ids = deckprogress_services.get_user_studying_decks_ids(user)
+    studying_decks_ids = (
+        deckprogress_services.get_user_studying_decks_ids(user=user) if is_owner else []
+    )
 
     context = {
         "user": user,
@@ -157,14 +165,13 @@ def user_decks(request, user_id):
 
 @login_required
 def user_projects(request, user_id):
-    user = user_services.get_user_by_id(user_id)
+    user = user_services.get_user_by_id(user_id=user_id)
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    user_projects = project_services.get_all_user_created_projects(user)
     user_projects = project_services.filter_sort_paginate_projects(
-        user_projects,
+        projects=project_services.get_all_user_created_projects(user=user),
         query=query,
         sort_by=sort_by,
         page_number=page_number,
@@ -186,7 +193,7 @@ def user_projects(request, user_id):
 
 @login_required
 def user_update(request, user_id):
-    user = user_services.get_user_by_id(user_id)
+    user = user_services.get_user_by_id(user_id=user_id)
 
     if user != request.user:
         return redirect(user.get_absolute_url())
@@ -200,8 +207,8 @@ def user_update(request, user_id):
 
         if user_form.is_valid():
             cleaned_data = user_form.cleaned_data
-            email = cleaned_data.get("email", None)
-            codewars_username = cleaned_data.get("codewars_username", None)
+            email = cleaned_data.get("email")
+            codewars_username = cleaned_data.get("codewars_username")
 
             user_services.update_user_email(
                 base_url=request.build_absolute_uri("/"),

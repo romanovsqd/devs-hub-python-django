@@ -15,10 +15,12 @@ def deck_list(request):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    decks = services.get_all_decks()
-
     decks = services.filter_sort_paginate_decks(
-        decks, query=query, sort_by=sort_by, page_number=page_number, per_page=20
+        decks=services.get_all_decks(),
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20,
     )
 
     context = {
@@ -32,10 +34,10 @@ def deck_list(request):
 
 @login_required
 def deck_detail(request, deck_id):
-    deck = services.get_deck_by_id(deck_id)
-    cards = services.get_deck_cards(deck)
+    deck = services.get_deck_by_id(deck_id=deck_id)
+    is_saved = services.is_deck_saved_by_user(deck=deck, user=request.user)
 
-    is_saved = services.is_deck_saved_by_user(deck, request.user)
+    cards = services.get_deck_cards(deck=deck)
 
     context = {
         "deck": deck,
@@ -66,7 +68,7 @@ def deck_create(request):
 
 @login_required
 def deck_update(request, deck_id):
-    deck = services.get_user_created_deck_by_id(deck_id, request.user)
+    deck = services.get_user_created_deck_by_id(deck_id=deck_id, user=request.user)
 
     form = DeckForm(request.POST or None, instance=deck, user=request.user)
 
@@ -83,7 +85,7 @@ def deck_update(request, deck_id):
 
 @login_required
 def deck_delete(request, deck_id):
-    deck = services.get_user_created_deck_by_id(deck_id, request.user)
+    deck = services.get_user_created_deck_by_id(deck_id=deck_id, user=request.user)
 
     if request.method == "POST":
         deck.delete()
@@ -99,9 +101,8 @@ def deck_delete(request, deck_id):
 @login_required
 @require_POST
 def deck_toggle_save(request, deck_id):
-    deck = services.get_deck_by_id(deck_id)
-
-    is_deck_saved = services.toggle_deck_save_by_user(deck, request.user)
+    deck = services.get_deck_by_id(deck_id=deck_id)
+    is_deck_saved = services.toggle_deck_save_by_user(deck=deck, user=request.user)
 
     if is_deck_saved:
         message = "Набор карточек сохранен в ваш профиль"
@@ -120,9 +121,10 @@ def deck_toggle_save(request, deck_id):
 
 @login_required
 def deck_export(request, deck_id):
-    deck = services.get_user_created_or_saved_deck_by_id(deck_id, request.user)
-
-    filename, cards_generator = services.prepare_deck_for_export(deck)
+    deck = services.get_user_created_or_saved_deck_by_id(
+        deck_id=deck_id, user=request.user
+    )
+    filename, cards_generator = services.prepare_deck_for_export(deck=deck)
 
     response = StreamingHttpResponse(
         cards_generator, content_type="text/plain; charset=utf-8"

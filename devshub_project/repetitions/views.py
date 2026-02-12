@@ -13,9 +13,11 @@ from . import services
 @login_required
 @require_POST
 def deck_toggle_study(request, deck_id):
-    deck = deck_services.get_user_created_or_saved_deck_by_id(deck_id, request.user)
+    deck = deck_services.get_user_created_or_saved_deck_by_id(
+        deck_id=deck_id, user=request.user
+    )
 
-    is_studying = services.toggle_deck_study_for_user(deck, request.user)
+    is_studying = services.toggle_deck_study_for_user(deck=deck, user=request.user)
 
     if is_studying:
         message = f"Теперь вы изучаете колоду {deck.title}"
@@ -39,7 +41,7 @@ def review(request):
 
 @login_required
 def next_card(request):
-    card_data = services.get_next_card_for_review(request.user)
+    card_data = services.get_next_card_for_review(user=request.user)
 
     if card_data:
         return JsonResponse(card_data)
@@ -59,7 +61,7 @@ def submit(request, deck_id, card_id):
         user=request.user,
     )
 
-    progress = services.apply_sm2(card_progress, quality)
+    progress = services.apply_sm2(progress=card_progress, quality=quality)
 
     return JsonResponse(
         {
