@@ -13,11 +13,11 @@ from django.contrib.auth.views import (
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 
-from cards import card_services, cardset_services
+from cards import card_services
+from decks import cardset_services
 from repetitions import cardsetprogress_services
-from .decorators import redirect_authenticated
 from projects import project_services
-
+from .decorators import redirect_authenticated
 from . import user_services, codewars_services
 from .forms import LoginForm, RegisterForm, UserForm
 

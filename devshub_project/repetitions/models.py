@@ -10,7 +10,7 @@ class CardSetProgress(models.Model):
         on_delete=models.CASCADE
     )
     cardset = models.ForeignKey(
-        'cards.CardSet',
+        'decks.CardSet',
         related_name='progresses',
         on_delete=models.CASCADE
     )
