@@ -35,7 +35,7 @@ def register(request):
         )
         login(request, user)
 
-        return redirect('users:user_detail', user_id=request.user.pk)
+        return redirect('user_detail', user_id=request.user.pk)
 
     context = {
         'form': form
@@ -48,7 +48,7 @@ class LoginUserView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        return reverse('users:user_detail', kwargs={
+        return reverse('user_detail', kwargs={
             'user_id': self.request.user.pk
             }
         )
@@ -56,11 +56,11 @@ class LoginUserView(LoginView):
 
 class UserPasswordResetView(PasswordResetView):
     # TODO: сделать асинхронную отправку пиьсма
-    success_url = reverse_lazy('users:password_reset_done')
+    success_url = reverse_lazy('password_reset_done')
 
 
 class UserPasswordResetConfirmView(PasswordResetConfirmView):
-    success_url = reverse_lazy('users:password_reset_complete')
+    success_url = reverse_lazy('password_reset_complete')
 
 
 @login_required
@@ -245,13 +245,13 @@ def user_update(request, user_id):
             )
 
             user_form.save()
-            return redirect('users:user_update', user_id=user.pk)
+            return redirect('user_update', user_id=user.pk)
 
     elif 'change_password' in request.POST:
         if password_form.is_valid():
             user = password_form.save()
             update_session_auth_hash(request, user)
-            return redirect('users:user_update', user_id=user.pk)
+            return redirect('user_update', user_id=user.pk)
 
     return render(request, 'users/users/user_form.html', {
         'user_form': user_form,
@@ -264,4 +264,4 @@ def confirm_email(request, uidb64, token):
         uidb64=uidb64,
         token=token
     )
-    return redirect('users:user_update', user_id=request.user.pk)
+    return redirect('user_update', user_id=request.user.pk)

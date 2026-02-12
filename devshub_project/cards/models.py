@@ -31,7 +31,7 @@ class Card(models.Model):
         return self.question
 
     def get_absolute_url(self):
-        return reverse('cards:card_detail', kwargs={'card_id': self.pk})
+        return reverse('card_detail', kwargs={'card_id': self.pk})
 
 
 class CardSet(models.Model):
@@ -66,7 +66,7 @@ class CardSet(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            'cardsets:cardset_detail', kwargs={'cardset_id': self.pk}
+            'cardset_detail', kwargs={'cardset_id': self.pk}
         )
 
 

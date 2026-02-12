@@ -25,7 +25,7 @@
 
   <div>
     {% if not cardset.author == request.user %}
-      <form action="{% url "cardsets:cardset_toggle_save" cardset.id %}" method="post" data-js-toggle-save-form>
+      <form action="{% url "cardset_toggle_save" cardset.id %}" method="post" data-js-toggle-save-form>
         {% csrf_token %}
         <button type="submit" data-js-toggle-button>
           {% if not is_saved %}

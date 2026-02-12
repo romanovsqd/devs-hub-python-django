@@ -2,8 +2,6 @@ from django.urls import path
 
 from . import views
 
-app_name = 'cardsets'
-
 urlpatterns = [
     path('', views.cardset_list, name='cardset_list'),
     path('<int:cardset_id>/', views.cardset_detail, name='cardset_detail'),

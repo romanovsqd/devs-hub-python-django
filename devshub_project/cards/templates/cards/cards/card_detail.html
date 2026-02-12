@@ -14,7 +14,7 @@
 
   <div>
     {% if not card.author == request.user %}
-      <form action="{% url "cards:card_toggle_save" card.id %}" method="post" data-js-toggle-save-form>
+      <form action="{% url "card_toggle_save" card.id %}" method="post" data-js-toggle-save-form>
         {% csrf_token %}
         <button type="submit" data-js-toggle-button>
           {% if not is_saved %}

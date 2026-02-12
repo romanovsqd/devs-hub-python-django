@@ -89,7 +89,7 @@ def card_delete(request, card_id):
 
     if request.method == 'POST':
         card.delete()
-        return redirect('cards:card_list')
+        return redirect('card_list')
 
     context = {
         'card': card
@@ -219,7 +219,7 @@ def cardset_delete(request, cardset_id):
 
     if request.method == 'POST':
         cardset.delete()
-        return redirect('cardsets:cardset_list')
+        return redirect('cardset_list')
 
     context = {
         'cardset': cardset

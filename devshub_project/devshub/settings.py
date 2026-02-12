@@ -139,10 +139,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 # Auth urls
-LOGIN_URL = 'users:login'
-LOGIN_REDIRECT_URL = 'cards:card_list'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'card_list'
 
-LOGOUT_REDIRECT_URL = 'users:login'
+LOGOUT_REDIRECT_URL = 'login'
 
 # Auth backends
 AUTHENTICATION_BACKENDS = [

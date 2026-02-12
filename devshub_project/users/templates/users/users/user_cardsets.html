@@ -30,7 +30,7 @@
       <li>
         {% render_cardset cardset %}
         {% if is_owner %}
-          <form action="{% url "cardsets:cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
+          <form action="{% url "cardset_toggle_study" cardset.id %}" method="post" data-js-toggle-save-form>
             {% csrf_token %}
             <button type="submit" data-js-toggle-button>
               {% if cardset.id not in studying_cardsets_ids %}

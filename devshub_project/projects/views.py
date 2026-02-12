@@ -97,7 +97,7 @@ def project_delete(request, project_id):
 
     if request.method == 'POST':
         project.delete()
-        return redirect('projects:project_list')
+        return redirect('project_list')
 
     context = {
         'project': project

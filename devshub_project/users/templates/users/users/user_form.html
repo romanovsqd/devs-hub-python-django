@@ -6,7 +6,7 @@
 
 <h1>Редактировать профиль</h1>
 <div>
-  <form action="{% url "users:user_update" user.pk %}" method="post" enctype="multipart/form-data" novalidate>
+  <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     {{ user_form.as_p }}
     <button type="submit" name="update_user">Сохранить профиль</button>
@@ -15,7 +15,7 @@
 
 <h2>Изменить пароль</h2>
 <div>
-  <form action="{% url "users:user_update" user.pk %}" method="post" novalidate>
+  <form action="{% url "user_update" user.pk %}" method="post" novalidate>
     {% csrf_token %}
     {{ password_form.as_p }}
     <button type="submit" name="change_password">Изменить пароль</button>

@@ -3,22 +3,22 @@
 
     {% if request.user.is_authenticated %}
       <ul style="display: flex; gap: 10px; list-style: none; padding: 0;">
-        <li><a href="{% url "cards:card_list" %}">Список карточек</a></li>
-        <li><a href="{% url "cardsets:cardset_list" %}">Список наборов карточек</a></li>
-        <li><a href="{% url "projects:project_list" %}">Список проектов</a></li>
-        <li><a href="{% url "users:user_list" %}">Список пользователей</a></li>
+        <li><a href="{% url "card_list" %}">Список карточек</a></li>
+        <li><a href="{% url "cardset_list" %}">Список наборов карточек</a></li>
+        <li><a href="{% url "project_list" %}">Список проектов</a></li>
+        <li><a href="{% url "user_list" %}">Список пользователей</a></li>
       </ul>
     {% endif %}
 
     <ul style="display: flex; gap: 10px; list-style: none; margin-left: auto; padding: 0;">
       {% if not request.user.is_authenticated %}
-        <li><a href="{% url "users:register" %}">Регистрация</a></li>
-        <li><a href="{% url "users:login" %}">Войти</a></li>
+        <li><a href="{% url "register" %}">Регистрация</a></li>
+        <li><a href="{% url "login" %}">Войти</a></li>
       {% else %}
-        <li><a href="{% url "users:user_detail" request.user.pk %}">Мой профиль</a></li>
-        <li><a href="{% url "users:user_update" request.user.pk %}">Редактировать профиль</a></li>
+        <li><a href="{% url "user_detail" request.user.pk %}">Мой профиль</a></li>
+        <li><a href="{% url "user_update" request.user.pk %}">Редактировать профиль</a></li>
         <li>
-          <form action="{% url "users:logout" %}" method="post">
+          <form action="{% url "logout" %}" method="post">
             {% csrf_token %}
             <button type="submit">Выйти</button>
           </form>
