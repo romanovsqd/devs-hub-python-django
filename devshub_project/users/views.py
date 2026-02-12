@@ -45,11 +45,7 @@ def register(request):
 
 class LoginUserView(LoginView):
     authentication_form = LoginForm
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('users:user_detail', user_id=request.user.pk)
-        return super().dispatch(request, *args, **kwargs)
+    redirect_authenticated_user = True
 
     def get_success_url(self):
         return reverse('users:user_detail', kwargs={
@@ -59,28 +55,12 @@ class LoginUserView(LoginView):
 
 
 class UserPasswordResetView(PasswordResetView):
+    # TODO: сделать асинхронную отправку пиьсма
     success_url = reverse_lazy('users:password_reset_done')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('users:user_detail', user_id=request.user.pk)
-        return super().dispatch(request, *args, **kwargs)
-
-
-class UserPasswordResetDoneView(PasswordResetDoneView):
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('users:user_detail', user_id=request.user.pk)
-        return super().dispatch(request, *args, **kwargs)
 
 
 class UserPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy('users:password_reset_complete')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('users:user_detail', user_id=request.user.pk)
-        return super().dispatch(request, *args, **kwargs)
 
 
 @login_required
