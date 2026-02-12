@@ -17,10 +17,6 @@ urlpatterns = [
         views.cardset_toggle_save, name='cardset_toggle_save'
     ),
     path(
-        '<int:cardset_id>/toggle-study/',
-        views.cardset_toggle_study, name='cardset_toggle_study'
-    ),
-    path(
         '<int:cardset_id>/export/',
         views.cardset_export, name='cardset_export'
     ),

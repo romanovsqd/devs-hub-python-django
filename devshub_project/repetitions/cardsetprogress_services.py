@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from . import cardset_services
 from .models import CardSetProgress
+from cards import cardset_services
 
 
 def get_user_cardset_progress(cardset, user):

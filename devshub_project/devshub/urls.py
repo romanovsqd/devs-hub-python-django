@@ -9,7 +9,7 @@ urlpatterns = [
     path('', include('users.urls')),
     path('cards/', include('cards.urls')),
     path('cardsets/', include('cards.urls_cardsets')),
-    path('study/', include('cards.study_urls')),
+    path('study/', include('repetitions.urls')),
     path('projects/', include('projects.urls')),
 ] + debug_toolbar_urls()
 

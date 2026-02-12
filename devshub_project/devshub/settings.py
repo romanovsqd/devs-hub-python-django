@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'cards.apps.CardsConfig',
+    'repetitions.apps.RepetitionsConfig',
     'projects.apps.ProjectsConfig',
 ]
 

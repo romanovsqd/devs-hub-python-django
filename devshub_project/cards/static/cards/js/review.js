@@ -71,7 +71,7 @@ if (reviewContainer) {
         front.style.display = 'none';
         back.style.display = 'none';
         empty.style.display = 'block';
-        return
+        return;
       }
 
       currentCardId = data.card_id;
