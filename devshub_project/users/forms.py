@@ -31,6 +31,14 @@ class RegisterForm(UserCreationForm):
         help_text=''
     )
 
+    def clean_username(self):
+        username = super().clean_username()
+
+        if User.objects.filter(email=username).exists():
+            raise forms.ValidationError("Логин уже занят")
+
+        return username
+
 
 class LoginForm(AuthenticationForm):
     class Mega:
