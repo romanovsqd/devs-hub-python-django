@@ -30,10 +30,12 @@ class CodewarsProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="codewars_profile",
     )
-    honor = models.PositiveIntegerField(default=0)
-    leaderboard_position = models.PositiveIntegerField(default=0)
-    languages = models.JSONField(default=list)
-    total_completed_katas = models.PositiveIntegerField(default=0)
+    honor = models.PositiveIntegerField(default=0, blank=True, null=True)
+    leaderboard_position = models.PositiveIntegerField(default=0, blank=True, null=True)
+    languages = models.JSONField(default=list, blank=True, null=True)
+    total_completed_katas = models.PositiveIntegerField(
+        default=0, blank=True, null=True
+    )
 
     class Meta:
         indexes = [

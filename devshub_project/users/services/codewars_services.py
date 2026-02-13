@@ -1,11 +1,12 @@
 import requests
+
 from users.models import CodewarsProfile
 
 
 def get_user_codewars_stats(user):
     """Возвращает статистику codewars профиля."""
     if user.codewars_username:
-        return user.codewars_profile
+        return CodewarsProfile.objects.filter(user=user).first()
     return None
 
 
@@ -39,7 +40,8 @@ def create_or_update_user_codears_profile(
 ):
     """Создает или обновляет данные codewars профиля."""
     if not codewars_username:
-        return None
+        CodewarsProfile.objects.filter(user=user).delete()
+        return
 
     if old_codewars_username == codewars_username:
         return None
