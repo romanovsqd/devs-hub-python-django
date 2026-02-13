@@ -8,7 +8,7 @@ from django.contrib.auth.forms import (
 )
 from django.template.loader import render_to_string
 
-from .tasks import send_reset_email
+from .tasks import send_reset_email_task
 
 User = get_user_model()
 
@@ -95,7 +95,7 @@ class UserPasswordResetForm(PasswordResetForm):
 
         message = render_to_string(email_template_name, context)
 
-        send_reset_email.delay(
+        send_reset_email_task.delay(
             subject=subject,
             message=message,
             email=to_email,

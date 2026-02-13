@@ -17,6 +17,7 @@ from repetitions import services as deckprogress_services
 from .decorators import redirect_authenticated
 from .forms import LoginForm, RegisterForm, UserForm, UserPasswordResetForm
 from .services import codewars_services, user_services
+from .tasks import create_or_update_user_codewars_profile_task
 
 
 @redirect_authenticated
@@ -217,8 +218,8 @@ def user_update(request, user_id):
                 user=user,
             )
 
-            codewars_services.create_or_update_user_codears_profile(
-                user=user,
+            create_or_update_user_codewars_profile_task.delay(
+                user_id=user.id,
                 codewars_username=codewars_username,
                 old_codewars_username=old_codewars_username,
             )
