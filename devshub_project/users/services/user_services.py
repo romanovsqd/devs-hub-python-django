@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode
+
+from users.tasks import send_confirmation_email_task
 
 User = get_user_model()
 
@@ -51,24 +50,7 @@ def update_user_email(base_url, old_email, new_email, user):
     if new_email != old_email:
         user.email_verified = False
         user.save()
-        _send_confirmation_email(base_url, user)
-
-
-def _send_confirmation_email(base_url, user):
-    """
-    Генерирует ссылку с токеном и отправляет письмо для подтверждение почты.
-    """
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = default_token_generator.make_token(user)
-    confirm_url = reverse("confirm_email", kwargs={"uidb64": uid, "token": token})
-    confirm_link = f"{base_url[:-1]}{confirm_url}"
-
-    send_mail(
-        "Подтверждение почты",
-        f"Перейдите по ссылке:\n{confirm_link}",
-        "devs-hub@mail.com",
-        [user.email],
-    )
+        send_confirmation_email_task.delay(base_url=base_url, user_id=user.id)
 
 
 def confirm_user_email(uidb64, token):
