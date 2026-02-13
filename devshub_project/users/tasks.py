@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import requests
 from celery import shared_task
 from django.conf import settings
@@ -6,6 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
@@ -49,7 +52,7 @@ def send_reset_email_task(subject, message, email):
 
 @shared_task
 def create_or_update_user_codewars_profile_task(
-    user_id, codewars_username, old_codewars_username
+    user_id, codewars_username, old_codewars_username=None
 ):
     user = User.objects.get(id=user_id)
 
@@ -85,3 +88,18 @@ def create_or_update_user_codewars_profile_task(
     }
 
     CodewarsProfile.objects.update_or_create(user=user, defaults=codewars_data)
+
+
+@shared_task
+def update_codewars_profiles_task():
+    threshold = timezone.now() - timedelta(hours=24)
+
+    profiles = CodewarsProfile.objects.filter(
+        updated_at__lt=threshold,
+    ).select_related("user")
+
+    for profile in profiles:
+        create_or_update_user_codewars_profile_task.delay(
+            user_id=profile.user_id,
+            codewars_username=profile.user.codewars_username,
+        )

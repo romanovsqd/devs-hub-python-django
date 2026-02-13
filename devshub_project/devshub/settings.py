@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -160,3 +162,10 @@ INTERNAL_IPS = [
 # email
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "devshub@mail.com"
+
+CELERY_BEAT_SCHEDULE = {
+    "update_codewars_profiles": {
+        "task": "users.tasks.update_codewars_profiles_task",
+        "schedule": crontab(hour=3, minute=0),
+    },
+}
