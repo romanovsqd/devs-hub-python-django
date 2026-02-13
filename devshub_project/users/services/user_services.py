@@ -47,10 +47,19 @@ def update_user_email(base_url, old_email, new_email, user):
     if not new_email:
         return
 
-    if new_email != old_email:
+    if not user.email_verified:
+        send_confirmation_email_task.delay(
+            base_url=base_url, user_id=user.id, new_email=new_email
+        )
+        return
+
+    if user.email_verified and new_email != old_email:
         user.email_verified = False
         user.save()
-        send_confirmation_email_task.delay(base_url=base_url, user_id=user.id)
+        send_confirmation_email_task.delay(
+            base_url=base_url, user_id=user.id, new_email=new_email
+        )
+        return
 
 
 def confirm_user_email(uidb64, token):
