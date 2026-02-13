@@ -15,7 +15,7 @@ from projects import services as project_services
 from repetitions import services as deckprogress_services
 
 from .decorators import redirect_authenticated
-from .forms import LoginForm, RegisterForm, UserForm
+from .forms import LoginForm, RegisterForm, UserForm, UserPasswordResetForm
 from .services import codewars_services, user_services
 
 
@@ -50,8 +50,8 @@ class LoginUserView(LoginView):
 
 
 class UserPasswordResetView(PasswordResetView):
-    # TODO: сделать асинхронную отправку пиьсма
     success_url = reverse_lazy("password_reset_done")
+    form_class = UserPasswordResetForm
 
 
 class UserPasswordResetConfirmView(PasswordResetConfirmView):

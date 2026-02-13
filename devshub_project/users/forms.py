@@ -2,9 +2,13 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (
     AuthenticationForm,
+    PasswordResetForm,
     UserChangeForm,
     UserCreationForm,
 )
+from django.template.loader import render_to_string
+
+from .tasks import send_reset_email
 
 User = get_user_model()
 
@@ -73,3 +77,26 @@ class UserForm(UserChangeForm):
                 raise forms.ValidationError("Пользователь с таким email уже существует")
 
         return email
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    def send_mail(
+        self,
+        subject_template_name,
+        email_template_name,
+        context,
+        from_email=None,
+        to_email=None,
+        html_email_template_name=None,
+    ):
+
+        subject = render_to_string(subject_template_name, context)
+        subject = "".join(subject.splitlines())
+
+        message = render_to_string(email_template_name, context)
+
+        send_reset_email.delay(
+            subject=subject,
+            message=message,
+            email=to_email,
+        )

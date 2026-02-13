@@ -159,3 +159,4 @@ INTERNAL_IPS = [
 
 # email
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "devshub@mail.com"
