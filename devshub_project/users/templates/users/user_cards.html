@@ -7,43 +7,83 @@
 
 {% block content %}
 
-  <h1>{% if is_owner %}Мои Карточки{% else %}Карточки {{ user.username }}{% endif %}</h1>
+  <div class="py-8">
 
-  <div>
-    <form method="get">
-      <input type="text" name="query" placeholder="Что такое итератор?" value={{ request.GET.query|default:'' }}>
-      <select name="sort_by">
-        <option value="newest" {% if request.GET.sort_by == 'newest' %}selected{% endif %}>Сначала новые</option>
-        <option value="oldest" {% if request.GET.sort_by == 'oldest' %}selected{% endif %}>Сначала старые</option>
-      </select>
-      <button type="submit">Поиск</button>
-    </form>
+    <div class="container mx-auto px-4">
+
+      <div class="mb-8">
+        <h1 class="text-2xl font-semibold text-center">{% if is_owner %}Мои Карточки{% else %}Карточки {{ user.username }}{% endif %}</h1>
+      </div>
+
+      <div class="max-w-1/2 mx-auto mb-8">
+        <form method="get" class="flex gap-4 font-medium">
+          <input
+            type="text"
+            name="query"
+            placeholder="Что такое итератор?"
+            value="{{ request.GET.query|default:'' }}"
+            class="border-gray-300 rounded-md flex-6 shadow"
+          />
+          <select name="sort_by" class="border-gray-300 rounded-md flex-2 shadow">
+            <option value="newest" {% if request.GET.sort_by == "newest" %}selected{% endif %}>Сначала новые</option>
+            <option value="oldest" {% if request.GET.sort_by == "oldest" %}selected{% endif %}>Сначала старые</option>
+          </select>
+          <button type="submit" class="py-2 px-4 border border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer flex-1 shadow">Найти</button>
+        </form>
+      </div>
+
+      <div class="mb-4">
+        <div class="flex gap-4 py-2 px-2 text-gray-500">
+          <p class="flex-2">Вопрос</p>
+          <p class="flex-1">Автор</p>
+          <p class="flex-1 text-right">Статус</p>
+        </div>
+        <ul class="divide-y divide-gray-300">
+          {% for card in user_cards %}
+            <li>
+              {% render_card card=card user=request.user %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="flex gap-4 justify-center items-center font-medium">
+        {% if user_cards.paginator.num_pages > 1 %}
+
+          {% if user_cards.has_previous %}
+            <a href="?page={{ user_cards.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">
+              Назад
+            </a>
+          {% endif %}
+
+          {% for page_num in user_cards.paginator.page_range %}
+            {% if page_num >= user_cards.number|add:-2 and page_num <= user_cards.number|add:2 %}
+
+              {% if page_num == user_cards.number %}
+                <span class="font-semibold text-blue-600">
+                  {{ page_num }}
+                </span>
+              {% else %}
+                <a
+                  href="?page={{ page_num }}&query={{ query }}&sort_by={{ sort_by }}"
+                  class="hover:text-blue-600"
+                >
+                  {{ page_num }}
+                </a>
+              {% endif %}
+
+            {% endif %}
+          {% endfor %}
+
+          {% if user_cards.has_next %}
+            <a href="?page={{ user_cards.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">
+              Вперёд
+            </a>
+          {% endif %}
+
+        {% endif %}
+      </div>
+    </div>
   </div>
-
-  <ul>
-    {% for card in user_cards %}
-      <li>
-        {% render_card card %}
-      </li>
-    {% empty %}
-      <li>
-        Карточек нету
-      </li>
-    {% endfor %}
-  </ul>
-
-<div>
-  {% if user_cards.has_previous %}
-    <a href="?page={{ user_cards.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Назад</a>
-  {% endif %}
-
-  <span>
-    Страница {{ user_cards.number }} из {{ user_cards.paginator.num_pages }}
-  </span>
-
-  {% if user_cards.has_next %}
-    <a href="?page={{ user_cards.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">Вперёд</a>
-  {% endif %}
-</div>
 
 {% endblock content %}
