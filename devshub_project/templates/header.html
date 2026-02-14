@@ -1,29 +1,32 @@
 <header class="py-4 bg-gray-100">
   <div class="container mx-auto px-4">
-    <nav class="flex justify-between text-lg font-medium text-gray-700">
+    <nav class="flex justify-between text-md font-medium text-gray-700">
+
       <ul class="flex gap-x-5">
-        <li><a href="{% url "card_list" %}" class="hover:text-black transition-colors">Карточки</a></li>
-        <li><a href="{% url "deck_list" %}" class="hover:text-black transition-colors">Колоды</a></li>
-        <li><a href="{% url "project_list" %}" class="hover:text-black transition-colors">Проекты</a></li>
-        <li><a href="{% url "user_list" %}" class="hover:text-black transition-colors">Пользователи</a></li>
+        <li><a href="{% url "card_list" %}" class="hover:text-blue-600 transition-colors">Карточки</a></li>
+        <li><a href="{% url "deck_list" %}" class="hover:text-blue-600 transition-colors">Колоды</a></li>
+        <li><a href="{% url "project_list" %}" class="hover:text-blue-600 transition-colors">Проекты</a></li>
+        <li><a href="{% url "user_list" %}" class="hover:text-blue-600 transition-colors">Пользователи</a></li>
       </ul>
-    {% if request.user.is_authenticated %}
-      <ul class="flex gap-x-5">
-        <li><a href="{% url "user_detail" request.user.pk %}" class="hover:text-black transition-colors">Мой профиль</a></li>
-        <li><a href="{% url "user_update" request.user.pk %}" class="hover:text-black transition-colors">Редактировать профиль</a></li>
-        <li>
-          <form action="{% url "logout" %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="hover:cursor-pointer hover:text-black transition-colors">Выйти</button>
-          </form>
-        </li>
-      </ul>
-    {% else %}
-      <ul class="flex gap-x-5">
-        <li><a href="{% url "register" %}" class="hover:text-black transition-colors">Регистрация</a></li>
-        <li><a href="{% url "login" %}" class="hover:text-black transition-colors">Войти</a></li>
-      </ul>
-    {% endif %}
+
+      {% if request.user.is_authenticated %}
+        <ul class="flex gap-x-5">
+          <li><a href="{% url "user_detail" request.user.pk %}" class="hover:text-blue-600 transition-colors">Мой профиль</a></li>
+          <li><a href="{% url "user_update" request.user.pk %}" class="hover:text-blue-600 transition-colors">Редактировать профиль</a></li>
+          <li>
+            <form action="{% url "logout" %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="hover:cursor-pointer hover:text-blue-600 transition-colors">Выйти</button>
+            </form>
+          </li>
+        </ul>
+      {% else %}
+        <ul class="flex gap-x-5">
+          <li><a href="{% url "register" %}" class="hover:text-blue-600 transition-colors">Регистрация</a></li>
+          <li><a href="{% url "login" %}" class="hover:text-blue-600 transition-colors">Войти</a></li>
+        </ul>
+      {% endif %}
+
     </nav>
   </div>
 </header>
