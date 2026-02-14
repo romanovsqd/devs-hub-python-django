@@ -1,0 +1,14 @@
+{% load card_tags %}
+
+<div class="flex gap-4 py-2 px-2 text-gray-500">
+  <p class="flex-2">Вопрос</p>
+  <p class="flex-1">Автор</p>
+  <p class="flex-1 text-right">Статус</p>
+</div>
+<ul class="divide-y divide-gray-300">
+  {% for card in cards %}
+    <li>
+      {% render_card card=card user=user %}
+    </li>
+  {% endfor %}
+</ul>

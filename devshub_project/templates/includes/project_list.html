@@ -1,0 +1,17 @@
+{% load project_tags %}
+
+<div class="flex gap-4 py-2 px-2 text-gray-500">
+  <p class="flex-2">Обложка</p>
+  <p class="flex-2">Название</p>
+  <p class="flex-1">Репозиторий</p>
+  <p class="flex-1">URL</p>
+  <p class="flex-1">Автор</p>
+  <p class="flex-1 text-right">Статус</p>
+</div>
+<ul class="divide-y divide-gray-300">
+  {% for project in projects %}
+    <li>
+      {% render_project project=project user=request.user %}
+    </li>
+  {% endfor %}
+</ul>

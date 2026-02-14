@@ -1,90 +1,33 @@
 {% extends "base.html" %}
-{% load project_tags %}
 
 {% block title %}
   {% if is_owner %}Мои проекты{% else %}Проекты {{ user.username }}{% endif %}
 {% endblock title %}
 
 {% block content %}
-
   <div class="py-8">
-
     <div class="container mx-auto px-4">
 
       <div class="mb-8">
-        <h1 class="text-2xl font-semibold text-center">Проекты</h1>
+        {% if is_owner %}
+            {% include "includes/title.html" with title="Мои проекты" %}
+        {% else %}
+            {% include "includes/title.html" with title="Проекты "|add:user.username %}
+        {% endif %}
       </div>
+
       <div class="max-w-1/2 mx-auto mb-8">
-        <form method="get" class="flex gap-4 font-medium">
-          <input
-            type="text"
-            name="query"
-            placeholder="Сервис сокращения ссылок на FastAPI"
-            value="{{ request.GET.query|default:'' }}"
-            class="border-gray-300 rounded-md flex-6 shadow"
-          />
-          <select name="sort_by" class="border-gray-300 rounded-md flex-2 shadow">
-            <option value="newest" {% if request.GET.sort_by == "newest" %}selected{% endif %}>Сначала новые</option>
-            <option value="oldest" {% if request.GET.sort_by == "oldest" %}selected{% endif %}>Сначала старые</option>
-          </select>
-          <button type="submit" class="py-2 px-4 border border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer flex-1 shadow">Найти</button>
-        </form>
+        {% include "includes/search_form.html" with placeholder="Сервис сокращения ссылок на FastAPI" %}
       </div>
 
       <div class="mb-4">
-        <div class="flex gap-4 py-2 px-2 text-gray-500">
-          <p class="flex-2">Обложка</p>
-          <p class="flex-2">Название</p>
-          <p class="flex-1">Репозиторий</p>
-          <p class="flex-1">URL</p>
-          <p class="flex-1">Автор</p>
-          <p class="flex-1 text-right">Статус</p>
-        </div>
-        <ul class="divide-y divide-gray-300">
-          {% for project in user_projects %}
-            <li>
-              {% render_project project=project user=request.user %}
-            </li>
-          {% endfor %}
-        </ul>
+        {% include "includes/project_list.html" with projects=user_projects user=request.user %}
       </div>
 
-      <div class="flex gap-4 justify-center items-center font-medium">
-        {% if user_projects.paginator.num_pages > 1 %}
-
-          {% if user_projects.has_previous %}
-            <a href="?page={{ user_projects.previous_page_number }}&query={{ query }}&sort_by={{ sort_by }}">
-              Назад
-            </a>
-          {% endif %}
-
-          {% for page_num in user_projects.paginator.page_range %}
-            {% if page_num >= user_projects.number|add:-2 and page_num <= user_projects.number|add:2 %}
-
-              {% if page_num == user_projects.number %}
-                <span class="font-semibold text-blue-600">
-                  {{ page_num }}
-                </span>
-              {% else %}
-                <a
-                  href="?page={{ page_num }}&query={{ query }}&sort_by={{ sort_by }}"
-                  class="hover:text-blue-600"
-                >
-                  {{ page_num }}
-                </a>
-              {% endif %}
-
-            {% endif %}
-          {% endfor %}
-
-          {% if user_projects.has_next %}
-            <a href="?page={{ user_projects.next_page_number }}&query={{ query }}&sort_by={{ sort_by }}">
-              Вперёд
-            </a>
-          {% endif %}
-
-        {% endif %}
+      <div>
+        {% include "includes/pagination.html" with page_obj=user_projects %}
       </div>
+
     </div>
   </div>
 

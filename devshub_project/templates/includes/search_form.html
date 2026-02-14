@@ -1,0 +1,19 @@
+<form method="get" class="flex gap-4 font-medium">
+  <input
+    type="text"
+    name="query"
+    placeholder="{{ placeholder }}"
+    value="{{ request.GET.query|default:'' }}"
+    class="border-gray-300 rounded-md flex-6 shadow"
+  />
+  <select name="sort_by" class="border-gray-300 rounded-md flex-2 shadow">
+    <option value="newest" {% if request.GET.sort_by == "newest" %}selected{% endif %}>Сначала новые</option>
+    <option value="oldest" {% if request.GET.sort_by == "oldest" %}selected{% endif %}>Сначала старые</option>
+  </select>
+  <button
+    type="submit"
+    class="py-2 px-4 border border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer flex-1 shadow"
+  >
+    Найти
+  </button>
+</form>
