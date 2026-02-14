@@ -1,7 +1,43 @@
-<div>
-  <h4>
-    <a href="{{ deck.get_absolute_url }}">
-      {{ deck.title }}
+<div class="flex justify-between items-center gap-4 py-2 px-4 hover:bg-gray-100 text-gray-800 font-medium">
+
+  <div class="flex-2">
+    <a href="{{ deck.get_absolute_url }}" class="hover:text-blue-600 transition-colors">
+      {{ deck.title|truncatechars:76 }}
     </a>
-  </h4>
+  </div>
+
+  <div class="flex-1">
+    <a href="{{ deck.author.get_absolute_url }}" class="hover:text-blue-600 transition-colors">
+      {{ deck.author }}
+    </a>
+  </div>
+
+  <div class="text-right flex-1">
+
+    {% if is_owner %}
+      <form action="{% url "deck_toggle_study" deck.id %}" method="post" data-js-toggle-save-form>
+        {% csrf_token %}
+        <button type="submit" data-js-toggle-button>
+          {% if deck.id not in studying_decks_ids %}
+            Добавить в изучаемые
+          {% else %}
+            Удалить из изучаемых
+          {% endif %}
+        </button>
+      </form>
+    {% endif %}
+
+    {% if not is_owner %}
+      {% if is_author %}
+        <span>Вы автор</span>
+      {% elif is_saved%}
+        <span>Сохранена</span>
+      {% else %}
+        <span>Новая</span>
+      {% endif %}
+    {% endif %}
+
+
+  </div>
+
 </div>
