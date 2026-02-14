@@ -13,7 +13,7 @@
     <ul>
       {% for card in cards %}
         <li>
-          {% render_card card %}
+          {% render_card card=card user=request.user %}
         </li>
       {% empty %}
         <li>

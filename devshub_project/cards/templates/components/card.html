@@ -1,7 +1,25 @@
-<div>
-  <h4>
-    <a href="{{ card.get_absolute_url }}">
-      {{ card.question }}
+<div class="flex justify-between items-center gap-4 py-2 px-4 hover:bg-gray-100 text-gray-800 font-medium">
+
+  <div class="flex-2">
+    <a href="{{ card.get_absolute_url }}" class="hover:text-blue-600 transition-colors">
+      {{ card.question|truncatechars:76 }}
     </a>
-  </h4>
+  </div>
+
+  <div class="flex-1">
+    <a href="{{ card.author.get_absolute_url }}" class="hover:text-blue-600 transition-colors">
+      {{ card.author }}
+    </a>
+  </div>
+
+  <div class="text-right flex-1">
+    {% if is_author %}
+      <span>Вы автор</span>
+    {% elif is_saved%}
+      <span>Сохранена</span>
+    {% else %}
+      <span>Новая</span>
+    {% endif %}
+  </div>
+
 </div>
