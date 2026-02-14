@@ -7,7 +7,7 @@ from .models import Card
 
 def get_all_cards():
     """Возврващет queryset всех карточек."""
-    return Card.objects.all()
+    return Card.objects.all().select_related("author").prefetch_related("saved_by")
 
 
 def get_card_by_id(card_id):
@@ -37,9 +37,14 @@ def get_all_user_created_or_saved_cards(user):
     возвращает queryset всех карточек,
     которые пользователь создал или сохранил.
     """
-    return Card.objects.filter(
-        Q(author=user) | Q(saved_by=user),
-    ).distinct()
+    return (
+        Card.objects.filter(
+            Q(author=user) | Q(saved_by=user),
+        )
+        .select_related("author")
+        .prefetch_related("saved_by")
+        .distinct()
+    )
 
 
 def filter_sort_paginate_cards(cards, query, sort_by, page_number, per_page=20):
@@ -60,7 +65,7 @@ def filter_sort_paginate_cards(cards, query, sort_by, page_number, per_page=20):
 
 def is_card_saved_by_user(card, user):
     """Проверяет сохранена ли карточка пользователем."""
-    return card.saved_by.filter(pk=user.pk).exists()
+    return user in card.saved_by.all()
 
 
 def toggle_card_save_by_user(card, user):

@@ -21,7 +21,7 @@ class User(AbstractUser):
         return reverse("user_detail", kwargs={"user_id": self.pk})
 
     def __str__(self):
-        return f"{self.username} ({self.specialization})"
+        return f"{self.username}"
 
 
 class CodewarsProfile(models.Model):

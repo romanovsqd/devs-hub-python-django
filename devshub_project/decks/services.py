@@ -7,7 +7,7 @@ from .models import Deck
 
 def get_all_decks():
     """Возврващет queryset всех наборов карточек."""
-    return Deck.objects.all()
+    return Deck.objects.all().select_related("author").prefetch_related("saved_by")
 
 
 def get_deck_by_id(deck_id):
@@ -17,7 +17,7 @@ def get_deck_by_id(deck_id):
 
 def get_deck_cards(deck):
     """Возращает все карточки из набора карточек."""
-    return deck.cards.all()
+    return deck.cards.all().select_related("author").prefetch_related("saved_by")
 
 
 def get_user_created_deck_by_id(deck_id, user):
@@ -44,9 +44,14 @@ def get_all_user_created_or_saved_decks(user):
     возвращает queryset всех наборов карточек,
     которые пользователь создал или сохранил.
     """
-    return Deck.objects.filter(
-        Q(author=user) | Q(saved_by=user),
-    ).distinct()
+    return (
+        Deck.objects.filter(
+            Q(author=user) | Q(saved_by=user),
+        )
+        .select_related("author")
+        .prefetch_related("saved_by")
+        .distinct()
+    )
 
 
 def filter_sort_paginate_decks(decks, query, sort_by, page_number, per_page=20):
@@ -69,7 +74,7 @@ def filter_sort_paginate_decks(decks, query, sort_by, page_number, per_page=20):
 
 def is_deck_saved_by_user(deck, user):
     """Проверяет сохранен ли набор карточек пользователем."""
-    return deck.saved_by.filter(pk=user.pk).exists()
+    return user in deck.saved_by.all()
 
 
 def toggle_deck_save_by_user(deck, user):

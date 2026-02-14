@@ -7,7 +7,7 @@ from .models import Project, ProjectImage
 
 def get_all_projects():
     """Возврващет queryset всех проектов."""
-    return Project.objects.all()
+    return Project.objects.all().select_related("user")
 
 
 def get_project_by_id(project_id):
@@ -25,7 +25,7 @@ def get_all_user_created_projects(user):
     возвращает queryset всех проектов,
     которые пользователь создал.
     """
-    return Project.objects.filter(user=user)
+    return Project.objects.filter(user=user).select_related("user")
 
 
 def filter_sort_paginate_projects(projects, query, sort_by, page_number, per_page=20):

@@ -176,7 +176,7 @@ def user_projects(request, user_id):
         query=query,
         sort_by=sort_by,
         page_number=page_number,
-        per_page=20,
+        per_page=5,
     )
 
     is_owner = user == request.user
