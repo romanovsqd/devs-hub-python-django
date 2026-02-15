@@ -5,11 +5,13 @@ from django.urls import reverse
 
 
 class User(AbstractUser):
-    specialization = models.CharField(max_length=50, blank=True)
-    primary_skill = models.CharField(max_length=50, blank=True)
-    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    specialization = models.CharField(max_length=100, blank=True)
+    skills = models.CharField(max_length=100, blank=True)
     email_verified = models.BooleanField(default=False)
     codewars_username = models.CharField(max_length=50, blank=True)
+    avatar = models.ImageField(
+        upload_to="avatars/", max_length=255, blank=True, null=True
+    )
 
     class Meta:
         ordering = ["-date_joined"]
@@ -41,8 +43,7 @@ class CodewarsProfile(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["honor"]),
-            models.Index(fields=["leaderboard_position"]),
+            models.Index(fields=["updated_at"]),
         ]
 
     def __str__(self):

@@ -8,7 +8,7 @@ class Deck(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="created_decks", on_delete=models.CASCADE
     )
-    cards = models.ManyToManyField("cards.Card", related_name="decks", blank=True)
+    cards = models.ManyToManyField("cards.Card", related_name="decks")
     saved_by = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="saved_decks", blank=True
     )

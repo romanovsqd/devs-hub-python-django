@@ -7,7 +7,7 @@ from .models import Project, ProjectImage
 
 def get_all_projects():
     """Возврващет queryset всех проектов."""
-    return Project.objects.all().select_related("user")
+    return Project.objects.all().select_related("author")
 
 
 def get_project_by_id(project_id):
@@ -17,7 +17,7 @@ def get_project_by_id(project_id):
 
 def get_user_created_project_by_id(project_id, user):
     """Возвращает проект по id, если он создан пользователем, иначе 404."""
-    return get_object_or_404(Project, pk=project_id, user=user)
+    return get_object_or_404(Project, pk=project_id, author=user)
 
 
 def get_all_user_created_projects(user):
@@ -25,7 +25,7 @@ def get_all_user_created_projects(user):
     возвращает queryset всех проектов,
     которые пользователь создал.
     """
-    return Project.objects.filter(user=user).select_related("user")
+    return Project.objects.filter(author=user).select_related("author")
 
 
 def filter_sort_paginate_projects(projects, query, sort_by, page_number, per_page=20):
@@ -51,7 +51,7 @@ def get_user_project_stats(user):
     projects_stats = projects.aggregate(
         total=Count(
             "id",
-            filter=Q(user=user),
+            filter=Q(author=user),
         ),
     )
 
@@ -62,15 +62,15 @@ def create_images_for_project(project, images):
     """Создает изображения проекта."""
     if images:
         ProjectImage.objects.bulk_create(
-            [ProjectImage(project=project, image=image) for image in images]
+            [ProjectImage(project=project, file=image) for image in images]
         )
 
 
 def update_project_images(project, new_images):
     """Удаляет старые изображения для проекта и создает новые"""
     if new_images:
-        for img in project.images.all():
-            img.image.delete()
+        for image in project.images.all():
+            image.file.delete()
         project.images.all().delete()
 
         create_images_for_project(project=project, images=new_images)

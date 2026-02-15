@@ -5,12 +5,14 @@ from django.urls import reverse
 
 class Project(models.Model):
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField()
     repository_url = models.URLField(max_length=255, blank=True)
     live_url = models.URLField(max_length=255, blank=True)
-    cover_image = models.ImageField(upload_to="projects/covers/", blank=True, null=True)
-    user = models.ForeignKey(
+    author = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="projects", on_delete=models.CASCADE
+    )
+    cover_image = models.ImageField(
+        upload_to="projects/covers/", max_length=255, blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -33,7 +35,7 @@ class ProjectImage(models.Model):
     project = models.ForeignKey(
         "Project", related_name="images", on_delete=models.CASCADE
     )
-    image = models.ImageField(upload_to="projects/images/")
+    file = models.ImageField(upload_to="projects/images/", max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

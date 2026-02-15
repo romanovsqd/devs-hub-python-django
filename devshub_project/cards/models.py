@@ -23,7 +23,7 @@ class Card(models.Model):
         ]
 
     def __str__(self):
-        return self.question
+        return f"{self.author.username} — {self.question}"
 
     def get_absolute_url(self):
         return reverse("card_detail", kwargs={"card_id": self.pk})

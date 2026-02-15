@@ -47,7 +47,7 @@
               <option value="" disabled>Выберите карточки</option>
               {% for value, label in form.cards.field.choices %}
                 <option value="{{ value }}" {% if value in form.cards.value %}selected{% endif %} class="hover:bg-gray-100 py-1 hover:text-blue-600 font-medium">
-                    {{ label }}
+                  {{ label|truncatechars:80 }}
                 </option>
               {% endfor %}
             </select>

@@ -45,7 +45,7 @@ def project_create(request):
 
     if form.is_valid():
         project = form.save(commit=False)
-        project.user = request.user
+        project.author = request.user
         project.save()
 
         services.create_images_for_project(

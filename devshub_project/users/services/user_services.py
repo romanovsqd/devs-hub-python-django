@@ -25,7 +25,7 @@ def filter_sort_paginate_users(users, query, sort_by, page_number, per_page=20):
     if query:
         users = users.filter(
             Q(username__icontains=query)
-            | Q(primary_skill__icontains=query)
+            | Q(skills__icontains=query)
             | Q(specialization__icontains=query)
         )
 
