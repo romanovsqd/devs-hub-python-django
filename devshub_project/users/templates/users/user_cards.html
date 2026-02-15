@@ -5,8 +5,8 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="py-8">
-    <div class="container mx-auto px-4">
+  <div class="flex flex-col flex-1 py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1">
 
       <div class="mb-8">
         {% if is_owner %}
@@ -16,15 +16,15 @@
         {% endif %}
       </div>
 
-      <div class="max-w-1/2 mx-auto mb-8">
+      <div class="max-w-1/2 w-full mx-auto mb-8">
         {% include "includes/search_form.html" with placeholder="Что такое итератор?" %}
       </div>
 
-      <div class="mb-4">
+      <div class="mb-auto">
         {% include "includes/card_list.html" with cards=user_cards user=request.user %}
       </div>
 
-      <div>
+      <div class="pt-8">
         {% include "includes/pagination.html" with page_obj=user_cards %}
       </div>
 

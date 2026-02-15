@@ -4,12 +4,12 @@
   <div class="flex-2">
     {% if project.cover_image %}
       {% thumbnail project.cover_image "320x160" crop="center" as im %}
-      <div class="rounded-lg overflow-hidden max-w-80 max-h-40">
+      <div class="rounded-lg overflow-hidden max-w-80 max-h-40 shadow-md shadow-gray-400">
         <a href="{{ project.get_absolute_url }}">
           <img
             src="{{ im.url }}"
             alt="Обложка {{ project.title }}|truncatechars:40"
-            class="w-full h-full rounded-lg object-cover object-center duration-500 transition-transform hover:scale-150"
+            class="w-full h-full rounded-lg object-cover object-center duration-500 transition-transform hover:scale-110"
           >
         </a>
       </div>
