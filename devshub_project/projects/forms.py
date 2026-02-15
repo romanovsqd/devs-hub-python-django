@@ -23,7 +23,16 @@ class MultipleImageField(forms.ImageField):
 
 
 class ProjectForm(forms.ModelForm):
-    images = MultipleImageField(required=False)
+    required_css_class = "required"
+    images = MultipleImageField(
+        required=False,
+        label="Изображения проекта",
+        widget=MultipleFileInput(
+            attrs={
+                "class": "ml-2 rounded-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer cursor-pointer",
+            }
+        ),
+    )
 
     class Meta:
         model = Project
@@ -34,3 +43,46 @@ class ProjectForm(forms.ModelForm):
             "live_url",
             "cover_image",
         ]
+        labels = {
+            "title": "Название проекта",
+            "description": "Описание проекта",
+            "repository_url": "Ссылка на репозиторий",
+            "live_url": "Ссылка на проект",
+            "cover_image": "Обложка проекта",
+        }
+        widgets = {
+            "title": forms.TextInput(
+                attrs={
+                    "class": "w-full border-gray-300 rounded-md shadow",
+                    "placeholder": "Чат на FastAPI + WebSocket",
+                },
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "class": "w-full border-gray-300 rounded-md shadow min-h-64",
+                    "placeholder": (
+                        "Realtime чат с комнатами и историей сообщений на FastAPI "
+                        "с использованием WebSocket..."
+                    ),
+                    "cols": 0,
+                    "rows": 0,
+                }
+            ),
+            "repository_url": forms.URLInput(
+                attrs={
+                    "class": "w-full border-gray-300 rounded-md shadow",
+                    "placeholder": "Ссылка на GitHub репозиторий",
+                },
+            ),
+            "live_url": forms.URLInput(
+                attrs={
+                    "class": "w-full border-gray-300 rounded-md shadow",
+                    "placeholder": "Ссылка на Ваш проект",
+                },
+            ),
+            "cover_image": forms.FileInput(
+                attrs={
+                    "class": "ml-2 rounded-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer cursor-pointer",
+                },
+            ),
+        }

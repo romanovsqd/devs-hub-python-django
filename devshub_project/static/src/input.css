@@ -1,2 +1,12 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
+
+@layer components {
+  label.required::after {
+    content: " *";
+    color: #ef4444;
+  }
+  .errorlist {
+    color: #ce3c3c;
+  }
+}

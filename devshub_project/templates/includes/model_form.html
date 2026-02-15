@@ -1,0 +1,17 @@
+<form method="post" class="flex flex-col gap-5">
+
+  {% csrf_token %}
+
+  {{ form }}
+
+  <div>
+    <button type="submit" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+      {% if not form.instance.pk %}
+        Создать
+      {% else %}
+        Сохранить
+      {% endif %}
+    </button>
+  </div>
+
+</form>

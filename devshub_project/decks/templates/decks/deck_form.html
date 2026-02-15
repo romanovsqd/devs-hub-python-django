@@ -1,15 +1,71 @@
 {% extends "base.html" %}
 
-{% block title %}Форма набора карточек{% endblock title %}
+{% block title %}
+  {% if not form.instance.pk %}
+    Создать колоду
+  {% else %}
+    Редактировать колоду {{ form.instance.title }}
+  {% endif %}
+{% endblock title %}
 
 {% block content %}
+  <div class="flex flex-col flex-1 py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1 justify-center items-center">
 
-<h1>Форма набора карточек</h1>
+      <div class="mb-8">
+        {% if not form.instance.pk %}
+          {% include "includes/title.html" with title="Создать колоду" %}
+        {% else %}
+          {% include "includes/title.html" with title="Редактировать колоду" %}
+        {% endif %}
+      </div>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить</button>
-  </form>
+      <div class="max-w-1/2 w-full mx-auto font-medium">
+        <form method="post" class="flex flex-col gap-5">
+          {% csrf_token %}
 
+          {% if form.non_field_errors %}
+            <ul class="errorlist">
+              {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          <div>
+            {{ form.title.label_tag }}
+            {{ form.title }}
+            {% for error in form.title.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div>
+            {{ form.cards.label_tag }}
+
+            <select name="{{ form.cards.name }}" id="{{ form.cards.id_for_label }}" multiple class="w-full border-gray-300 rounded-md shadow min-h-64 resize-y">
+              <option value="" disabled>Выберите карточки</option>
+              {% for value, label in form.cards.field.choices %}
+                <option value="{{ value }}" {% if value in form.cards.value %}selected{% endif %} class="hover:bg-gray-100 py-1 hover:text-blue-600 font-medium">
+                    {{ label }}
+                </option>
+              {% endfor %}
+            </select>
+
+            {% for error in form.cards.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div>
+            <button type="submit" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+              {% if not form.instance.pk %}Создать{% else %}Сохранить{% endif %}
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+  </div>
+</div>
 {% endblock content %}

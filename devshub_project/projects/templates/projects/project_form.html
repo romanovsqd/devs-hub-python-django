@@ -1,15 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Форма проекта{% endblock title %}
+{% block title %}
+  {% if not form.instance.pk %}
+    Добавить проект
+  {% else %}
+    Редактировать проект {{ form.instance.title }}
+  {% endif %}
+{% endblock title %}
 
 {% block content %}
+  <div class="flex flex-col flex-1 py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1 justify-center items-center">
 
-<h1>Форма проекта</h1>
+      <div class="mb-8">
+        {% if not form.instance.pk %}
+          {% include "includes/title.html" with title="Добавить проект" %}
+        {% else %}
+          {% include "includes/title.html" with title="Редактировать проект" %}
+        {% endif %}
+      </div>
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить</button>
-  </form>
+      <div class="max-w-1/2 w-full mx-auto font-medium">
+        {% include "includes/model_form.html" with form=form %}
+      </div>
+
+  </div>
+</div>
 
 {% endblock content %}
