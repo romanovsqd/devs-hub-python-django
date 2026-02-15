@@ -10,14 +10,29 @@
       </ul>
 
       {% if request.user.is_authenticated %}
-        <ul class="flex gap-x-5">
-          <li><a href="{% url "user_detail" request.user.pk %}" class="hover:text-blue-600 transition-colors">Мой профиль</a></li>
-          <li><a href="{% url "user_update" request.user.pk %}" class="hover:text-blue-600 transition-colors">Редактировать профиль</a></li>
-          <li>
-            <form action="{% url "logout" %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="hover:cursor-pointer hover:text-blue-600 transition-colors">Выйти</button>
-            </form>
+        <ul class="flex gap-x-5 relative">
+          <li class="relative group cursor-pointer">
+              {{ request.user }}
+            <ul class="absolute border border-gray-300 rounded-md left-0 mt-2 w-48 bg-white  shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <li>
+                <a href="{% url "user_detail" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100">
+                  Мой профиль
+                </a>
+              </li>
+              <li>
+                <a href="{% url "user_update" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100">
+                  Редактировать профиль
+                </a>
+              </li>
+              <li>
+                <form action="{% url "logout" %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="w-full text-left px-4 py-2 text-red-600 cursor-pointer hover:text-red-800 hover:bg-gray-100">
+                    Выйти
+                  </button>
+                </form>
+              </li>
+            </ul>
           </li>
         </ul>
       {% else %}
