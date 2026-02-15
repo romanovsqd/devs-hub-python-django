@@ -7,6 +7,7 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-500: oklch(63.7% 0.237 25.331);
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-red-800: oklch(44.4% 0.177 26.899);
     --color-blue-50: oklch(97% 0.014 254.604);
@@ -249,6 +250,12 @@
   .flex {
     display: flex;
   }
+  .inline-block {
+    display: inline-block;
+  }
+  .inline-flex {
+    display: inline-flex;
+  }
   .table {
     display: table;
   }
@@ -270,6 +277,9 @@
   .min-h-screen {
     min-height: 100vh;
   }
+  .w-32 {
+    width: calc(var(--spacing) * 32);
+  }
   .w-48 {
     width: calc(var(--spacing) * 48);
   }
@@ -285,11 +295,29 @@
   .max-w-3 {
     max-width: calc(var(--spacing) * 3);
   }
+  .max-w-4 {
+    max-width: calc(var(--spacing) * 4);
+  }
+  .max-w-7 {
+    max-width: calc(var(--spacing) * 7);
+  }
   .max-w-10 {
     max-width: calc(var(--spacing) * 10);
   }
+  .max-w-16 {
+    max-width: calc(var(--spacing) * 16);
+  }
   .max-w-20 {
     max-width: calc(var(--spacing) * 20);
+  }
+  .max-w-24 {
+    max-width: calc(var(--spacing) * 24);
+  }
+  .max-w-28 {
+    max-width: calc(var(--spacing) * 28);
+  }
+  .max-w-32 {
+    max-width: calc(var(--spacing) * 32);
   }
   .max-w-80 {
     max-width: calc(var(--spacing) * 80);
@@ -376,6 +404,9 @@
   .bg-gray-100 {
     background-color: var(--color-gray-100);
   }
+  .bg-red-500 {
+    background-color: var(--color-red-500);
+  }
   .bg-white {
     background-color: var(--color-white);
   }
@@ -402,6 +433,15 @@
   }
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
+  }
+  .py-20 {
+    padding-block: calc(var(--spacing) * 20);
+  }
+  .py-28 {
+    padding-block: calc(var(--spacing) * 28);
+  }
+  .py-52 {
+    padding-block: calc(var(--spacing) * 52);
   }
   .pt-8 {
     padding-top: calc(var(--spacing) * 8);
@@ -565,6 +605,13 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-gray-100);
+      }
+    }
+  }
+  .hover\:bg-red-600 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-600);
       }
     }
   }

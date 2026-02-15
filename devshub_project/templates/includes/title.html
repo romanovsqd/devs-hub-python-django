@@ -1,1 +1,12 @@
-<h1 class="text-2xl font-semibold text-center">{{ title }}</h1>
+<h1 class="text-2xl font-semibold text-center">
+  {% if card %}
+    Вы уверены, что хотите удалить карточку "{{ card.question|truncatechars:30 }}" ?
+  {% elif deck %}
+    Вы уверены, что хотите удалить колоду "{{ deck.title|truncatechars:30 }}" ?
+  {% elif project %}
+    Вы уверены, что хотите удалить проект "{{ project.title|truncatechars:30 }}" ?
+  {% else %}
+    {{ title }}
+  {% endif %}
+</h1>
+

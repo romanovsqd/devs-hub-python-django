@@ -3,13 +3,17 @@
 {% block title %}Удалить {{ project.title }}{% endblock title %}
 
 {% block content %}
+  <div class="flex flex-col flex-1 py-28">
+    <div class="container mx-auto px-4 flex flex-col">
 
-  <h1>Уверены что хотите удалить проект "{{ project.title }}"?</h1>
+      <div class="mb-8">
+        {% include "includes/title.html" with project=project %}
+      </div>
 
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit">Да</button>
-    <a href="{{ project.get_absolute_url }}">Нет</a>
-  </form>
+      <div>
+        {% include "includes/confirm_delete_form.html" with obj=project %}
+      </div>
 
+    </div>
+  </div>
 {% endblock content %}
