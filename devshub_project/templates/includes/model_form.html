@@ -1,5 +1,4 @@
-<form method="post" class="flex flex-col gap-5">
-
+<form method="post" {% if has_file_field %}enctype="multipart/form-data"{% endif %} class="flex flex-col gap-5">
   {% csrf_token %}
 
   {{ form }}
