@@ -1,0 +1,53 @@
+{% load thumbnail %}
+
+<div class="flex justify-between items-center gap-4 py-2 px-4 hover:bg-gray-100 text-gray-800 font-medium">
+
+  <div class="flex-1">
+    {% if user.avatar %}
+      {% thumbnail user.avatar "80x80" crop="center" as im %}
+      <div class="rounded-full overflow-hidden max-w-20 max-h-20 shadow-md shadow-gray-400">
+        <a href="{{ user.get_absolute_url }}">
+          <img
+            src="{{ im.url }}"
+            alt="Аватар {{ user.username }}"
+            class="w-full h-full rounded-full object-cover object-center duration-500 transition-transform hover:scale-110"
+          >
+        </a>
+      </div>
+    {% else %}
+      <p>Без аватарки</p>
+    {% endif %}
+  </div>
+
+  <div class="flex-1">
+    <a href="{{ user.get_absolute_url }}" class="hover:text-blue-600 transition-colors">
+      {{ user.username }}
+    </a>
+  </div>
+
+  <div class="flex-1">
+    {% if user.specialization %}
+      <span>{{ user.specialization }}</span>
+    {% else %}
+      <span>Не указано</span>
+    {% endif %}
+  </div>
+
+  <div class="flex-1">
+    {% if user.primary_skill %}
+      <span>{{ user.primary_skill }}</span>
+    {% else %}
+      <span>Не указаны</span>
+    {% endif %}
+  </div>
+
+  <div class="flex-1">
+    {% if user.codewars_username %}
+      <a href="https://www.codewars.com/users/{{user.codewars_username}}" target="_blank" class="hover:text-blue-600 transition-colors">
+        {{ user.codewars_username }}
+      </a>
+    {% else %}
+      <span>Не указан</span>
+    {% endif %}
+  </div>
+</div>

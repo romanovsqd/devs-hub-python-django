@@ -1,0 +1,20 @@
+{% load user_tags %}
+
+<div class="flex gap-4 py-2 px-2 text-gray-500">
+  <p class="flex-1">Аватар</p>
+  <p class="flex-1">Имя</p>
+  <p class="flex-1">Направление</p>
+  <p class="flex-1">Навыки</p>
+  <p class="flex-1">Профиль codewars</p>
+</div>
+<ul class="divide-y divide-gray-300">
+  {% for user in users %}
+    <li>
+      {% render_user user=user %}
+    </li>
+  {% endfor %}
+</ul>
+
+
+
+

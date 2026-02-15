@@ -12,7 +12,7 @@ User = get_user_model()
 
 def get_all_users():
     """Возврващет queryset всех пользователей."""
-    return User.objects.all()
+    return User.objects.all().select_related("codewars_profile")
 
 
 def get_user_by_id(user_id):
