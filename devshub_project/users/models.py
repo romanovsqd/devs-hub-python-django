@@ -12,9 +12,9 @@ class User(AbstractUser):
     codewars_username = models.CharField(max_length=50, blank=True)
 
     class Meta:
-        ordering = ["username"]
+        ordering = ["-date_joined"]
         indexes = [
-            models.Index(fields=["username"]),
+            models.Index(fields=["-date_joined"]),
         ]
 
     def get_absolute_url(self):

@@ -29,10 +29,10 @@ def filter_sort_paginate_users(users, query, sort_by, page_number, per_page=20):
             | Q(specialization__icontains=query)
         )
 
-    if sort_by == "username_asc":
-        users = users.order_by("username")
-    elif sort_by == "username_desc":
-        users = users.order_by("-username")
+    if sort_by == "newest":
+        users = users.order_by("-date_joined")
+    elif sort_by == "oldest":
+        users = users.order_by("date_joined")
 
     paginator = Paginator(users, per_page)
     page_obj = paginator.get_page(page_number)
