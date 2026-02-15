@@ -16,7 +16,7 @@
         {% if not form.instance.pk %}
           {% include "includes/title.html" with title="Создать карточку" %}
         {% else %}
-          {% include "includes/title.html" with title="Редактировать карточку" %}
+          {% include "includes/title.html" with title="Редактировать карточку" card=form.instance %}
         {% endif %}
       </div>
 

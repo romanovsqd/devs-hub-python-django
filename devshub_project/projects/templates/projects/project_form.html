@@ -14,9 +14,9 @@
 
       <div class="mb-8">
         {% if not form.instance.pk %}
-          {% include "includes/title.html" with title="Добавить проект" %}
+          {% include "includes/title.html" with title="Создать проект" %}
         {% else %}
-          {% include "includes/title.html" with title="Редактировать проект" %}
+          {% include "includes/title.html" with title="Редактировать проект" project=form.instance %}
         {% endif %}
       </div>
 
