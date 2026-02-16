@@ -50,9 +50,11 @@ def card_create(request):
     form = CardForm(request.POST or None)
 
     if form.is_valid():
-        card = form.save(commit=False)
-        card.author = request.user
-        card.save()
+        card = services.create_card(
+            question=form.cleaned_data["question"],
+            answer=form.cleaned_data["answer"],
+            author=request.user,
+        )
         return redirect(card.get_absolute_url())
 
     context = {
@@ -69,7 +71,11 @@ def card_update(request, card_id):
     form = CardForm(request.POST or None, instance=card)
 
     if form.is_valid():
-        card = form.save()
+        services.update_card(
+            card=card,
+            question=form.cleaned_data["question"],
+            answer=form.cleaned_data["answer"],
+        )
         return redirect(card.get_absolute_url())
 
     context = {
@@ -84,7 +90,7 @@ def card_delete(request, card_id):
     card = services.get_user_created_card_by_id(card_id=card_id, user=request.user)
 
     if request.method == "POST":
-        card.delete()
+        services.delete_card(card=card)
         return redirect("card_list")
 
     context = {
@@ -109,6 +115,7 @@ def card_toggle_save(request, card_id):
 
     return JsonResponse(
         {
+            "success": is_card_saved,
             "message": message,
             "button_text": button_text,
         }

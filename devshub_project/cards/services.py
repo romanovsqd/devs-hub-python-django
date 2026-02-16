@@ -2,6 +2,8 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 
+from core.utils import clean_html
+
 from .models import Card
 
 
@@ -121,3 +123,24 @@ def get_user_cards_stats(user):
     )
 
     return cards_stats
+
+
+def create_card(question, answer, author):
+    """Создает карточку с указанным автором"""
+    card = Card.objects.create(
+        question=clean_html(question), answer=clean_html(answer), author=author
+    )
+    return card
+
+
+def update_card(card, question, answer):
+    """Обновляет данные карточки"""
+    card.question = clean_html(question)
+    card.answer = clean_html(answer)
+    card.save()
+    return card
+
+
+def delete_card(card):
+    """Удаляет карточку из базы данных."""
+    card.delete()
