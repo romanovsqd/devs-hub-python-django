@@ -17,11 +17,14 @@
     {% if is_owner %}
       <form action="{% url "deck_toggle_study" deck.id %}" method="post" data-js-toggle-save-form>
         {% csrf_token %}
-        <button type="submit" data-js-toggle-button>
-          {% if deck.id not in studying_decks_ids %}
+        {% if deck.id not in studying_decks_ids %}
+          <button type="submit" data-js-toggle-button class="rounded-full py-2 px-4 primary transition-colors cursor-pointer">
             Добавить в изучаемые
+          </button>
           {% else %}
-            Удалить из изучаемых
+            <button type="submit" data-js-toggle-button class="rounded-full py-2 px-4 danger transition-colors cursor-pointer">
+              Удалить из изучаемых
+            </button>
           {% endif %}
         </button>
       </form>
