@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "debug_toolbar",
     "easy_thumbnails",
+    "tinymce",
     "core.apps.CoreConfig",
     "cards.apps.CardsConfig",
     "decks.apps.DecksConfig",
@@ -170,4 +171,14 @@ CELERY_BEAT_SCHEDULE = {
         "task": "users.tasks.update_codewars_profiles_task",
         "schedule": crontab(hour=3, minute=0),
     },
+}
+
+TINYMCE_DEFAULT_CONFIG = {
+    "menubar": True,
+    "plugins": "codesample code link lists table",
+    "toolbar": (
+        "undo redo | formatselect | bold italic | alignleft aligncenter alignright "
+        "| bullist numlist | codesample "
+    ),
+    "height": 500,
 }

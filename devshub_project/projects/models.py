@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from tinymce.models import HTMLField
 
 
 class Project(models.Model):
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = HTMLField()
     repository_url = models.URLField(max_length=255, blank=True)
     live_url = models.URLField(max_length=255, blank=True)
     author = models.ForeignKey(

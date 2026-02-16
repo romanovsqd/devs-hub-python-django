@@ -1,4 +1,5 @@
 from django import forms
+from tinymce.widgets import TinyMCE
 
 from .models import Card
 
@@ -20,15 +21,13 @@ class CardForm(forms.ModelForm):
                     "placeholder": "Что такое интерпретатор?",
                 },
             ),
-            "answer": forms.Textarea(
+            "answer": TinyMCE(
                 attrs={
                     "class": "w-full border-gray-300 rounded-md shadow min-h-64",
                     "placeholder": (
                         "Интерпретатор — это программа, которая читает "
                         "и выполняет код построчно."
                     ),
-                    "cols": 0,
-                    "rows": 0,
                 }
             ),
         }

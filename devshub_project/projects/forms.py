@@ -1,4 +1,5 @@
 from django import forms
+from tinymce.widgets import TinyMCE
 
 from .models import Project
 
@@ -63,15 +64,13 @@ class ProjectForm(forms.ModelForm):
                     "placeholder": "Чат на FastAPI + WebSocket",
                 },
             ),
-            "description": forms.Textarea(
+            "description": TinyMCE(
                 attrs={
                     "class": "w-full border-gray-300 rounded-md shadow min-h-64",
                     "placeholder": (
                         "Realtime чат с комнатами и историей сообщений на FastAPI "
                         "с использованием WebSocket..."
                     ),
-                    "cols": 0,
-                    "rows": 0,
                 }
             ),
             "repository_url": forms.URLInput(
