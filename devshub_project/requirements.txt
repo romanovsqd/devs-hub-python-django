@@ -1,6 +1,7 @@
 amqp==5.3.1
 asgiref==3.11.0
 billiard==4.2.4
+bleach==6.3.0
 celery==5.6.2
 certifi==2026.1.4
 charset-normalizer==3.4.4
@@ -10,6 +11,7 @@ click-plugins==1.1.1.2
 click-repl==0.3.0
 Django==5.2.8
 django-debug-toolbar==6.1.0
+django-tinymce==5.0.0
 easy-thumbnails==2.10.1
 idna==3.11
 kombu==5.6.2
@@ -32,3 +34,4 @@ tzlocal==5.3.1
 urllib3==2.6.3
 vine==5.1.0
 wcwidth==0.5.3
+webencodings==0.5.1
