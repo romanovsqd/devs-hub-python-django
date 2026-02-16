@@ -13,13 +13,7 @@
   </div>
 
   <div class="text-right flex-1">
-    {% if is_author %}
-      <span>Вы автор</span>
-    {% elif is_saved%}
-      <span>Сохранена</span>
-    {% else %}
-      <span>Новая</span>
-    {% endif %}
+    {% include "includes/saved_status.html" %}
   </div>
 
 </div>

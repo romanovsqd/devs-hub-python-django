@@ -31,13 +31,7 @@
     {% endif %}
 
     {% if not is_owner %}
-      {% if is_author %}
-        <span>Вы автор</span>
-      {% elif is_saved%}
-        <span>Сохранена</span>
-      {% else %}
-        <span>Новая</span>
-      {% endif %}
+      {% include "includes/saved_status.html" %}
     {% endif %}
 
 

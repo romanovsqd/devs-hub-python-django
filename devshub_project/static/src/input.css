@@ -44,4 +44,15 @@
     }
   }
 
+  .orange {
+  background-color: var(--color-orange-50);
+  color: var(--color-orange-700);
+  border-color: var(--color-orange-300);
+
+  &:hover {
+    @media (hover: hover) {
+      background-color: var(--color-orange-100);
+      }
+    }
+  }
 }
