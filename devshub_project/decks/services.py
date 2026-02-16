@@ -79,6 +79,9 @@ def is_deck_saved_by_user(deck, user):
 
 def toggle_deck_save_by_user(deck, user):
     """Переключает состояние сохранения карточки пользователем."""
+    if deck.author == user:
+        return
+
     is_saved = is_deck_saved_by_user(deck, user)
 
     if is_saved:

@@ -5,6 +5,8 @@ from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
+from cards import services as card_services
+
 from . import services
 from .forms import DeckForm
 
@@ -34,14 +36,26 @@ def deck_list(request):
 
 @login_required
 def deck_detail(request, deck_id):
+    query = request.GET.get("query", "")
+    sort_by = request.GET.get("sort_by", "")
+    page_number = request.GET.get("page", 1)
+
     deck = services.get_deck_by_id(deck_id=deck_id)
     is_saved = services.is_deck_saved_by_user(deck=deck, user=request.user)
 
-    cards = services.get_deck_cards(deck=deck)
+    cards = card_services.filter_sort_paginate_cards(
+        cards=services.get_deck_cards(deck=deck),
+        query=query,
+        sort_by=sort_by,
+        page_number=page_number,
+        per_page=20,
+    )
 
     context = {
         "deck": deck,
         "cards": cards,
+        "query": query,
+        "sort_by": sort_by,
         "is_saved": is_saved,
     }
 
@@ -105,14 +119,15 @@ def deck_toggle_save(request, deck_id):
     is_deck_saved = services.toggle_deck_save_by_user(deck=deck, user=request.user)
 
     if is_deck_saved:
-        message = "Набор карточек сохранен в ваш профиль"
-        button_text = "Удалить из моего профиля"
+        message = "Колода сохранена в ваш профиль"
+        button_text = "Удалить колоду из моего профиля"
     else:
-        message = "Набор карточек удален из вашего профиля"
-        button_text = "Сохранить в мой профиль"
+        message = "Колода удалена из вашего профиля"
+        button_text = "Сохранить колоду в мой профиль"
 
     return JsonResponse(
         {
+            "success": is_deck_saved,
             "message": message,
             "button_text": button_text,
         }

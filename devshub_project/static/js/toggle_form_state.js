@@ -24,8 +24,13 @@ if (toggleSaveForms) {
 
         const data = await response.json();
 
+        const isPrimary = toggleButton.classList.contains("primary");
+
+        toggleButton.classList.toggle("danger", isPrimary);
+        toggleButton.classList.toggle("primary", !isPrimary);
         toggleButton.textContent = data.button_text;
-        showNotification(data.message);
+
+        showNotification(data.message, data.success);
       } catch (error) {
         console.error(error);
         showNotification("Произошла ошибка. Попробуйте снова.");
@@ -34,10 +39,27 @@ if (toggleSaveForms) {
   });
 }
 
-function showNotification(message) {
-  const notification = document.createElement("div");
-  notification.textContent = message;
+function showNotification(message, success = false) {
+  const container = document.getElementById("notifications");
 
-  document.body.appendChild(notification);
-  setTimeout(() => notification.remove(), 3000);
+  const notification = document.createElement("div");
+  notification.className = `
+    w-full rounded-md py-2 px-4 text-md font-medium border transition-all duration-300
+    ${success ? "success" : "danger"}
+    opacity-0 translate-x-4
+  `;
+
+  notification.textContent = message;
+  container.appendChild(notification);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      notification.classList.remove("opacity-0", "translate-x-4");
+    });
+  });
+
+  setTimeout(() => {
+    notification.classList.add("opacity-0", "translate-x-4");
+    setTimeout(() => notification.remove(), 3000);
+  }, 30000);
 }
