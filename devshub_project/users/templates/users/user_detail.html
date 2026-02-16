@@ -12,7 +12,7 @@
 
   <div>
     <a href="{% url "user_cards" user.id %}">Карточки</a>
-    <a href="{% url "user_decks" user.id %}">Наборы карточек</a>
+    <a href="{% url "user_decks" user.id %}">Колоды</a>
     <a href="{% url "user_projects" user.id %}">Проекты</a>
   </div>
 
@@ -26,9 +26,9 @@
       <span>В изучении: {{ cards_stats.in_study }}</span>
     </div>
     <div>
-      <span>Всего наборов: {{ decks_stats.total }}</span>
-      <span>Создано наборов: {{ decks_stats.created }}</span>
-      <span>Сохранено наборов: {{ decks_stats.saved }}</span>
+      <span>Всего колод: {{ decks_stats.total }}</span>
+      <span>Создано колод: {{ decks_stats.created }}</span>
+      <span>Сохранено колод: {{ decks_stats.saved }}</span>
       <span>В изучении: {{ decks_stats.in_study }}</span>
     </div>
     <div>
