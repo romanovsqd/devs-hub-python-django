@@ -45,7 +45,7 @@
     }
   }
 
-  .orange {
+  .warning {
   background-color: var(--color-orange-50);
   color: var(--color-orange-700);
   border-color: var(--color-orange-300);
