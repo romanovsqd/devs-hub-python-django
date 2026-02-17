@@ -26,7 +26,7 @@ class DeckForm(forms.ModelForm):
                 attrs={
                     "class": (
                         "w-full border-gray-300 rounded-md"
-                        "flex-6 shadow min-h-64 resize-y"
+                        "flex-6 shadow min-h-96 resize-y"
                     ),
                 }
             ),

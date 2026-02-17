@@ -2,7 +2,7 @@
 
   <div class="flex-2">
     <a href="{{ card.get_absolute_url }}" class="hover:text-blue-600 transition-colors">
-      {{ card.question|truncatechars:76 }}
+      {{ card.question|truncatechars:76|striptags }}
     </a>
   </div>
 
