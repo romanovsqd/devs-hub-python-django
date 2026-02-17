@@ -2,6 +2,10 @@
   <div class="container mx-auto px-4">
     <nav class="flex justify-between text-md font-medium text-gray-700">
 
+      <div class="font-bold text-lg hover:text-blue-600 transition-colors">
+        <a href="{% url "home" %}">DevsHub</a>
+      </div>
+
       <ul class="flex gap-x-5">
         <li><a href="{% url "card_list" %}" class="hover:text-blue-600 transition-colors">Карточки</a></li>
         <li><a href="{% url "deck_list" %}" class="hover:text-blue-600 transition-colors">Колоды</a></li>
