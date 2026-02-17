@@ -28,16 +28,12 @@
   <div class="flex-1">
     {% if user.specialization %}
       <span>{{ user.specialization }}</span>
-    {% else %}
-      <span>Не указано</span>
     {% endif %}
   </div>
 
   <div class="flex-1">
     {% if user.skills %}
       <span>{{ user.skills }}</span>
-    {% else %}
-      <span>Не указаны</span>
     {% endif %}
   </div>
 
@@ -46,8 +42,6 @@
       <a href="https://www.codewars.com/users/{{user.codewars_username}}" target="_blank" class="hover:text-blue-600 transition-colors">
         {{ user.codewars_username }}
       </a>
-    {% else %}
-      <span>Не указан</span>
     {% endif %}
   </div>
 </div>

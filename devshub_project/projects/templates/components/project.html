@@ -14,7 +14,7 @@
         </a>
       </div>
     {% else %}
-      <p>Без обложки</p>
+      <span>Без обложки</span>
     {% endif %}
   </div>
 
@@ -29,8 +29,6 @@
       <a href="{{ project.repository_url }}" target="_blank" class="hover:text-blue-600 transition-colors">
         перейти
       </a>
-    {% else %}
-      <span>Не указан</span>
     {% endif %}
   </div>
 
@@ -39,8 +37,6 @@
       <a href="{{ project.live_url }}" target="_blank" class="hover:text-blue-600 transition-colors">
         перейти
       </a>
-    {% else %}
-      <span>Не указан</span>
     {% endif %}
   </div>
 

@@ -11,14 +11,6 @@
   <div class="flex flex-col flex-1 py-8">
     <div class="container mx-auto px-4 flex flex-col flex-1">
 
-      <div class="mb-8">
-        {% include "includes/title.html" with title="Список карточек" %}
-      </div>
-
-      <div class="max-w-1/2 w-full mx-auto mb-8">
-        {% include "includes/search_form.html" with placeholder="Что такое итератор?" %}
-      </div>
-
       <div class="mb-10">
         {% if deck.author == request.user %}
           <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
@@ -44,6 +36,14 @@
             </div>
           </form>
         {% endif %}
+      </div>
+
+      <div class="mb-8">
+        {% include "includes/title.html" with title="Список карточек" %}
+      </div>
+
+      <div class="max-w-1/2 w-full mx-auto mb-8">
+        {% include "includes/search_form.html" with placeholder="Что такое итератор?" %}
       </div>
 
       <div class="mb-auto">
