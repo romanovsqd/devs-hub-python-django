@@ -1,25 +1,89 @@
 {% extends "base.html" %}
+{% load static %}
+{% load thumbnail %}
 
-{% block title %}{{ project.title }}{% endblock title %}
+
+{% block title %}
+  Проект {{ project.title|striptags }}
+{% endblock title %}
+
+{% block head %}
+  <link href="{% static "css/swiper-bundle.min.css" %}" rel="stylesheet">
+{% endblock head %}
 
 {% block content %}
+  <div class="flex flex-col flex-1 py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1">
 
-  <h1>{{ project.title }}</h1>
+      {% if project.live_url or project.repository_url %}
+        <div>
+          <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
+            {% if project.live_url %}
+              <a href="{{ project.live_url }}" target="_blank" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success mb-2">Смотреть онлайн</a>
+            {% endif %}
+            {% if project.repository_url %}
+            <a href="{{ project.repository_url }}" target="_blank" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium warning mb-2">Репозиторий проекта</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+      {% if project.author == request.user %}
+        <div>
+          <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
+            <a href="{% url "project_update" project.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary mb-2">Редактировать проект</a>
+            <a href="{% url "project_delete" project.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium danger mb-2">Удалить проект</a>
+          </div>
+        </div>
+      {% endif %}
 
-  <div>
-    <p>
-      {{ project.description }}
-    </p>
-  </div>
+      <div class="my-8">
+        {% include "includes/title.html" with title="Проект" %}
+      </div>
 
-  <div>
-    <a href="{{ project.live_url }}" target="_blank">Смотреть онлайн</a>
-    <a href="{{ project.repository_url }}" target="_blank">Репозиторий проекта</a>
-  </div>
+      {% if project.cover_image or project.images.all %}
+      <div class="mb-8">
+        <div class="swiper max-w-7xl max-h-180 mx-auto rounded-lg shadow-md shadow-gray-400">
+          <div class="swiper-wrapper">
+            {% if project.cover_image %}
+              <div class="swiper-slide">
+                {% thumbnail project.cover_image "1280x720" crop="center" as im %}
+                <div class="max-w-7xl max-h-180 overflow-hidden ">
+                  <img src="{{ im.url }}" alt="Обложка {{ project.title }}" class="w-full h-full object-cover">
+                </div>
+              </div>
+            {% endif %}
+            {% for image in project.images.all %}
+              <div class="swiper-slide">
+                {% thumbnail image.file "1280x720" crop="center" as im %}
+                <div class="max-w-7xl max-h-180 overflow-hidden">
+                  <img src="{{ im.url }}" alt="Изображение {{ project.title }}" class=" w-full h-full object-cover">
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-scrollbar"></div>
+        </div>
+      </div>
+      {% endif %}
 
-  <div>
-    <p>Дата создания: <span>{{ project.created_at }}</span></p>
-    <p>Последнее обновление: <span>{{ project.updated_at }}</span></p>
-  </div>
+      <div class="prose max-w-5xl w-full mx-auto text-lg mb-auto">
+        <div class="font-medium">
+          {{ project.description|safe }}
+        </div>
+      </div>
+
+      <div class="text-center text-lg font-medium">
+        <a href="{{ card.author.get_absolute_url }}" class="group">
+          Автор: <span class="group-hover:text-blue-600 transition-colors">{{ project.author }}</span>
+        </a>
+      </div>
 
 {% endblock content %}
+
+{% block scripts %}
+  <script src="{% static "js/swiper-bundle.min.js" %}"></script>
+  <script src="{% static "js/project_images_slider.js" %}"></script>
+{% endblock scripts %}
