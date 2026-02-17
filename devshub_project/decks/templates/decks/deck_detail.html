@@ -4,7 +4,7 @@
 
 
 {% block title %}
-  {{ deck.title }}
+  {{ deck.title|striptags }}
 {% endblock title %}
 
 {% block content %}
@@ -19,22 +19,30 @@
         {% include "includes/search_form.html" with placeholder="Что такое итератор?" %}
       </div>
 
-      <div class="mb-6">
-        {% if not deck.author == request.user %}
+      <div class="mb-10">
+        {% if deck.author == request.user %}
+          <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
+            <a href="{% url "deck_update" deck.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary mb-2">Редактировать колоду</a>
+            <a href="{% url "deck_export" deck.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success mb-2">Экспортировать колоду</a>
+            <a href="{% url "deck_delete" deck.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium danger mb-2">Удалить колоду</a>
+          </div>
+        {% else %}
           <form action="{% url "deck_toggle_save" deck.id %}" method="post" data-js-toggle-save-form>
             {% csrf_token %}
-            {% if not is_saved %}
-              <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium primary transition-colors cursor-pointer">
-                Сохранить в мой профиль
-              </button>
-            {% else %}
-              <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium danger transition-colors cursor-pointer">
-                Удалить из моего профиля
-              </button>
-            {% endif %}
+            <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
+              {% if not is_saved %}
+                <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium primary transition-colors cursor-pointer">
+                  Сохранить колоду в мой профиль
+                </button>
+                <a href="{% url "deck_export" deck.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success inactive mb-2">Экспортировать колоду</a>
+              {% else %}
+                <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium danger transition-colors cursor-pointer">
+                  Удалить колоду из моего профиля
+                </button>
+                <a href="{% url "deck_export" deck.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success mb-2">Экспортировать колоду</a>
+              {% endif %}
+            </div>
           </form>
-        {% else %}
-          <span class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium text-green-700 bg-green-100 border-green-300">Вы автор этой колоды</span>
         {% endif %}
       </div>
 

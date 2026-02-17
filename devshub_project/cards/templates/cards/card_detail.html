@@ -1,33 +1,58 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ card.question }}{% endblock title %}
+{% block title %}
+  {{ card.question|striptags }}
+{% endblock title %}
 
 {% block content %}
+  <div class="flex flex-col flex-1 py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1">
 
-  <h1>{{ card.question }}</h1>
+      <div class="mb-10">
+        {% if card.author == request.user %}
+          <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
+            <a href="{% url "card_update" card.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary mb-2">Редактировать карточку</a>
+            <a href="{% url "card_export" card.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success mb-2">Экспортировать карточку</a>
+            <a href="{% url "card_delete" card.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium danger mb-2">Удалить карточку</a>
+          </div>
+        {% else %}
+          <form action="{% url "card_toggle_save" card.id %}" method="post" data-js-toggle-save-form>
+            {% csrf_token %}
+            <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
+              {% if not is_saved %}
+                <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium primary transition-colors cursor-pointer">
+                  Сохранить карточку в мой профиль
+                </button>
+                <a href="{% url "card_export" card.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success inactive mb-2">Экспортировать карточку</a>
+              {% else %}
+                <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium danger transition-colors cursor-pointer">
+                  Удалить карточку из моего профиля
+                </button>
+                <a href="{% url "card_export" card.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success mb-2">Экспортировать карточку</a>
+              {% endif %}
+            </div>
+          </form>
+        {% endif %}
+      </div>
 
-  <div>
-    <p>Дата создания: <span>{{ card.created_at }}</span></p>
-    <p>Последнее обновление: <span>{{ card.updated_at }}</span></p>
+      <div class="prose mx-auto text-lg mb-auto">
+        <div class="mb-8 font-medium">
+          {{ card.question|safe }}
+        </div>
+        <div>
+          {{ card.answer|safe }}
+        </div>
+      </div>
+
+      <div class="text-center text-lg font-medium">
+        <a href="{{ card.author.get_absolute_url }}" class="group">
+          Автор: <span class="group-hover:text-blue-600 transition-colors">{{ card.author }}</span>
+        </a>
+      </div>
+
   </div>
-
-  <div>
-    {% if not card.author == request.user %}
-      <form action="{% url "card_toggle_save" card.id %}" method="post" data-js-toggle-save-form>
-        {% csrf_token %}
-        <button type="submit" data-js-toggle-button>
-          {% if not is_saved %}
-            Сохранить в мой профиль
-          {% else %}
-            Удалить из моего профиля
-          {% endif %}
-        </button>
-      </form>
-    {% else %}
-      <p>Вы автор этой колоды</p>
-    {% endif %}
-  </div>
+</div>
 
 {% endblock content %}
 

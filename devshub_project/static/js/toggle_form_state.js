@@ -3,6 +3,7 @@ const toggleSaveForms = document.querySelectorAll("[data-js-toggle-save-form]");
 if (toggleSaveForms) {
   toggleSaveForms.forEach((form) => {
     const toggleButton = form.querySelector("[data-js-toggle-button]");
+    const exportButton = form.querySelector("[data-js-export-button]");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -28,6 +29,7 @@ if (toggleSaveForms) {
 
         toggleButton.classList.toggle("danger", isPrimary);
         toggleButton.classList.toggle("primary", !isPrimary);
+        exportButton.classList.toggle("inactive");
         toggleButton.textContent = data.button_text;
 
         showNotification(data.message, data.success);
@@ -61,5 +63,5 @@ function showNotification(message, success = false) {
   setTimeout(() => {
     notification.classList.add("opacity-0", "translate-x-4");
     setTimeout(() => notification.remove(), 3000);
-  }, 30000);
+  }, 3000);
 }
