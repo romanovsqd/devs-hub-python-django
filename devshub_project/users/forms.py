@@ -38,7 +38,7 @@ class RegisterForm(UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    class Mega:
+    class Meta:
         model = User
         fields = ["username", "password"]
 
