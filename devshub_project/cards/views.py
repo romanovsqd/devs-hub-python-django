@@ -125,9 +125,9 @@ def card_toggle_save(request, card_id):
 @login_required
 def card_export(request, card_id):
     card = services.get_user_created_or_saved_card_by_id(
-        card=card_id, user=request.user
+        card_id=card_id, user=request.user
     )
-    filename, content = services.generate_card_data_for_export(card)
+    filename, content = services.generate_card_data_for_export(card=card)
 
     response = HttpResponse(content_type="text/plain")
     response["Content-Disposition"] = (
