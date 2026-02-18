@@ -32,14 +32,20 @@
             </ul>
           {% endif %}
 
+          <!-- Title -->
           <div>
             {{ form.title.label_tag }}
             {{ form.title }}
-            {% for error in form.title.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
+            {% if form.title.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in form.title.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
           </div>
 
+          <!-- Cards -->
           <div>
             {{ form.cards.label_tag }}
 
@@ -52,19 +58,24 @@
               {% endfor %}
             </select>
 
-            {% for error in form.cards.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
+
+            {% if form.cards.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in form.cards.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
 
           <div>
-            <button type="submit" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
-              {% if not form.instance.pk %}Создать{% else %}Сохранить{% endif %}
-            </button>
-          </div>
 
-        </form>
-      </div>
+          <button type="submit" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+            {% if not form.instance.pk %}Создать{% else %}Сохранить{% endif %}
+          </button>
+        </div>
+
+      </form>
+    </div>
 
   </div>
 </div>
