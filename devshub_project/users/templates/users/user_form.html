@@ -1,25 +1,176 @@
 {% extends "base.html" %}
 
-{% block title %}Редактировать профиль{% endblock title %}
+{% block title %}Редактирование профиля{% endblock title %}
 
 {% block content %}
 
-<h1>Редактировать профиль</h1>
-<div>
-  <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" novalidate>
-    {% csrf_token %}
-    {{ user_form.as_p }}
-    <button type="submit" name="update_user">Сохранить профиль</button>
-  </form>
+  <div class="flex flex-col flex-1 py-8">
+    <div class="container mx-auto px-4 flex flex-col">
+
+    <div>
+      {% include "includes/title.html" with title="Данные профиля" %}
+    </div>
+
+    <div class="max-w-1/2 w-full mx-auto font-medium mb-10">
+      <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" novalidate class="flex flex-col gap-5">
+        {% csrf_token %}
+
+        {% if user_form.non_field_errors %}
+          <ul class="errorlist">
+            {% for error in user_form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <!-- Username -->
+        <div>
+          {{ user_form.username.label_tag }}
+          {{ user_form.username }}
+          <span class="inline-block w-full text-sm text-gray-500">
+            {{ user_form.username.help_text }}
+          </span>
+          {% if user_form.username.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in user_form.username.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div>
+          {{ user_form.email.label_tag }}
+          {{ user_form.email}}
+          {% if user_form.email.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in user_form.email.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Specialization -->
+        <div>
+          {{ user_form.specialization.label_tag }}
+          {{ user_form.specialization}}
+          {% if user_form.specialization.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in user_form.specialization.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Skills -->
+        <div>
+          {{ user_form.skills.label_tag }}
+          {{ user_form.skills}}
+          {% if user_form.skills.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in user_form.skills.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Codewars username -->
+        <div>
+          {{ user_form.codewars_username.label_tag }}
+          {{ user_form.codewars_username}}
+          {% if user_form.codewars_username.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in user_form.codewars_username.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Avatar -->
+        <div>
+          {{ user_form.avatar.label_tag }}
+          {{ user_form.avatar}}
+          {% if user_form.vata.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in user_form.vata.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <div>
+          <button type="submit" name="update_user" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+            Сохранить профиль
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="max-w-1/2 w-full mx-auto font-medium">
+      <form action="{% url "user_update" user.pk %}" method="post" novalidate class="flex flex-col gap-5">
+        {% csrf_token %}
+
+        {% if password_form.non_field_errors %}
+          <ul class="errorlist">
+            {% for error in password_form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <!-- Old password -->
+        <div>
+          {{ password_form.old_password.label_tag }}
+          {{ password_form.old_password }}
+          {% for error in password_form.old_password.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- New password1 -->
+        <div>
+          {{ password_form.new_password1.label_tag }}
+          {{ password_form.new_password1}}
+          <span class="mt-1 inline-block w-full text-sm text-gray-500">
+            {{ password_form.new_password1.help_text }}
+          </span>
+          {% for error in password_form.new_password1.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- New password2 -->
+        <div>
+          {{ password_form.new_password2.label_tag }}
+          {{ password_form.new_password2}}
+          <span class="inline-block w-full text-sm text-gray-500">
+            {{ password_form.new_password2.help_text }}
+          </span>
+          {% for error in password_form.new_password2.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div>
+          <button type="submit" name="change_password" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+            Изменить пароль
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
 </div>
 
-<h2>Изменить пароль</h2>
-<div>
-  <form action="{% url "user_update" user.pk %}" method="post" novalidate>
-    {% csrf_token %}
-    {{ password_form.as_p }}
-    <button type="submit" name="change_password">Изменить пароль</button>
-  </form>
-</div>
+
+
 
 {% endblock content %}

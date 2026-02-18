@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import (
     LoginView,
     PasswordResetConfirmView,
@@ -15,7 +14,13 @@ from projects import services as project_services
 from repetitions import services as deckprogress_services
 
 from .decorators import redirect_authenticated
-from .forms import LoginForm, RegisterForm, UserForm, UserPasswordResetForm
+from .forms import (
+    LoginForm,
+    RegisterForm,
+    UserForm,
+    UserPasswordChangeForm,
+    UserPasswordResetForm,
+)
 from .services import codewars_services, user_services
 from .tasks import create_or_update_user_codewars_profile_task
 
@@ -199,41 +204,46 @@ def user_update(request, user_id):
     if user != request.user:
         return redirect(user.get_absolute_url())
 
-    user_form = UserForm(request.POST or None, request.FILES or None, instance=user)
-    password_form = PasswordChangeForm(user, request.POST or None)
+    if request.method == "POST":
+        if "update_user" in request.POST:
+            user_form = UserForm(request.POST, request.FILES, instance=user)
+            password_form = UserPasswordChangeForm(user)
 
-    if "update_user" in request.POST:
-        old_email = user.email
-        old_codewars_username = user.codewars_username
+            old_email = user.email
+            old_codewars_username = user.codewars_username
 
-        if user_form.is_valid():
-            cleaned_data = user_form.cleaned_data
-            email = cleaned_data.get("email")
-            codewars_username = cleaned_data.get("codewars_username")
+            if user_form.is_valid():
+                cleaned_data = user_form.cleaned_data
+                email = cleaned_data.get("email")
+                codewars_username = cleaned_data.get("codewars_username")
 
-            user_services.update_user_email(
-                base_url=request.build_absolute_uri("/"),
-                old_email=old_email,
-                new_email=email,
-                user=user,
-            )
+                user_services.update_user_email(
+                    base_url=request.build_absolute_uri("/"),
+                    old_email=old_email,
+                    new_email=email,
+                    user=user,
+                )
 
-            create_or_update_user_codewars_profile_task.delay(
-                user_id=user.id,
-                codewars_username=codewars_username,
-                old_codewars_username=old_codewars_username,
-            )
+                create_or_update_user_codewars_profile_task.delay(
+                    user_id=user.id,
+                    codewars_username=codewars_username,
+                    old_codewars_username=old_codewars_username,
+                )
 
-            user_form.save()
+                user_form.save()
 
-            return redirect("user_update", user_id=user.pk)
+                return redirect("user_update", user_id=user.pk)
+        elif "change_password" in request.POST:
+            user_form = UserForm(instance=user)
+            password_form = UserPasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
 
-    elif "change_password" in request.POST:
-        if password_form.is_valid():
-            user = password_form.save()
-            update_session_auth_hash(request, user)
-
-            return redirect("user_update", user_id=user.pk)
+                return redirect("user_update", user_id=user.pk)
+    else:
+        user_form = UserForm(instance=user)
+        password_form = UserPasswordChangeForm(user)
 
     context = {
         "user_form": user_form,
