@@ -14,9 +14,9 @@
 
       <div class="mb-8">
         {% if not form.instance.pk %}
-          {% include "includes/title.html" with title="Создать колоду" %}
+          {% include "includes/title.html" with text="Создать колоду" only %}
         {% else %}
-          {% include "includes/title.html" with title="Редактировать колоду" deck=form.instance %}
+          {% include "includes/title.html" with text="Редактировать колоду" title=form.instance.title only %}
         {% endif %}
       </div>
 

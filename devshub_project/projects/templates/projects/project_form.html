@@ -14,14 +14,14 @@
 
       <div class="mb-8">
         {% if not form.instance.pk %}
-          {% include "includes/title.html" with title="Создать проект" %}
+          {% include "includes/title.html" with text="Создать проект" only %}
         {% else %}
-          {% include "includes/title.html" with title="Редактировать проект" project=form.instance %}
+          {% include "includes/title.html" with text="Редактировать проект" title=form.instance.title only %}
         {% endif %}
       </div>
 
       <div class="max-w-1/2 w-full mx-auto font-medium">
-        {% include "includes/model_form.html" with form=form has_file_field=True %}
+        {% include "includes/model_form.html" with form=form has_file_field=True only %}
       </div>
 
   </div>

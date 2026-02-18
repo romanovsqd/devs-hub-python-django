@@ -14,14 +14,14 @@
 
       <div class="mb-8">
         {% if not form.instance.pk %}
-          {% include "includes/title.html" with title="Создать карточку" %}
+          {% include "includes/title.html" with text="Создать карточку" only %}
         {% else %}
-          {% include "includes/title.html" with title="Редактировать карточку" card=form.instance %}
+          {% include "includes/title.html" with text="Редактировать карточку" title=form.instance.question only %}
         {% endif %}
       </div>
 
       <div class="max-w-1/2 w-full mx-auto font-medium">
-        {% include "includes/model_form.html" with form=form %}
+        {% include "includes/model_form.html" with form=form only %}
       </div>
 
   </div>

@@ -7,11 +7,11 @@
     <div class="container mx-auto px-4 flex flex-col">
 
       <div class="mb-8">
-        {% include "includes/title.html" with title="Вы собиратесь удалить проект" project=project %}
+        {% include "includes/title.html" with text="Вы собиратесь удалить проект" title=project.title only %}
       </div>
 
       <div>
-        {% include "includes/confirm_delete_form.html" with obj=project %}
+        {% include "includes/confirm_delete_form.html" with obj=project only %}
       </div>
 
     </div>

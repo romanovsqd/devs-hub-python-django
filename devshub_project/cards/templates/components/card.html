@@ -13,7 +13,7 @@
   </div>
 
   <div class="text-right flex-1">
-    {% include "includes/saved_status.html" %}
+    {% include "includes/saved_status.html" with is_author=is_author is_saved=is_saved only %}
   </div>
 
 </div>

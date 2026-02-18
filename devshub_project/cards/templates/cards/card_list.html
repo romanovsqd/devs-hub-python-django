@@ -7,19 +7,19 @@
     <div class="container mx-auto px-4 flex flex-col flex-1">
 
       <div class="mb-8">
-        {% include "includes/title.html" with title="Список карточек" %}
+        {% include "includes/title.html" with text="Список карточек" only %}
       </div>
 
       <div class="max-w-1/2 w-full mx-auto mb-8">
-        {% include "includes/search_form.html" with placeholder="Что такое итератор?" %}
+        {% include "includes/search_form.html" with placeholder="Что такое итератор?" only %}
       </div>
 
       <div class="mb-auto">
-        {% include "includes/card_list.html" with cards=cards user=request.user %}
+        {% include "includes/card_list.html" with cards=cards user=request.user only %}
       </div>
 
       <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=cards %}
+        {% include "includes/pagination.html" with page_obj=cards only %}
       </div>
 
     </div>

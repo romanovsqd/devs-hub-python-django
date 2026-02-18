@@ -10,19 +10,19 @@
     <div class="container mx-auto px-4 flex flex-col flex-1">
 
       <div class="mb-8">
-        {% include "includes/title.html" with title="Колоды " %}
+        {% include "includes/title.html" with text="Колоды" title=user.username only %}
       </div>
 
       <div class="max-w-1/2 w-full mx-auto mb-8">
-        {% include "includes/search_form.html" with placeholder="Циклы в Python" %}
+        {% include "includes/search_form.html" with placeholder="Циклы в Python" only %}
       </div>
 
       <div class="mb-auto">
-        {% include "includes/deck_list.html" with decks=user_decks user=request.user is_owner=is_owner studying_decks_ids=studying_decks_ids %}
+        {% include "includes/deck_list.html" with decks=user_decks user=request.user is_owner=is_owner studying_decks_ids=studying_decks_ids only %}
       </div>
 
       <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=user_decks %}
+        {% include "includes/pagination.html" with page_obj=user_decks only %}
       </div>
 
     </div>

@@ -26,7 +26,7 @@
                 <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium primary transition-colors cursor-pointer">
                   Сохранить колоду в мой профиль
                 </button>
-                <a href="{% url "deck_export" deck.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success inactive mb-2">Экспортировать колоду</a>
+                <a href="{% url "deck_export" deck.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success inactive">Экспортировать колоду</a>
               {% else %}
                 <button type="submit" data-js-toggle-button class="w-full rounded-full py-4 px-6 text-md font-medium danger transition-colors cursor-pointer">
                   Удалить колоду из моего профиля
@@ -39,19 +39,19 @@
       </div>
 
       <div class="mb-8">
-        {% include "includes/title.html" with title="Список карточек" %}
+        {% include "includes/title.html" with text="Список карточек" title=deck.title only %}
       </div>
 
       <div class="max-w-1/2 w-full mx-auto mb-8">
-        {% include "includes/search_form.html" with placeholder="Что такое итератор?" %}
+        {% include "includes/search_form.html" with placeholder="Что такое итератор?" only %}
       </div>
 
       <div class="mb-auto">
-        {% include "includes/card_list.html" with cards=cards user=request.user %}
+        {% include "includes/card_list.html" with cards=cards user=request.user only %}
       </div>
 
       <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=cards %}
+        {% include "includes/pagination.html" with page_obj=cards only %}
       </div>
 
   </div>

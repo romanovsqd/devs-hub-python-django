@@ -37,7 +37,7 @@
       {% endif %}
 
       <div class="my-8">
-        {% include "includes/title.html" with title="Проект" %}
+        {% include "includes/title.html" with text="Проект" title=project.title only %}
       </div>
 
       {% if project.cover_image or project.images.all %}

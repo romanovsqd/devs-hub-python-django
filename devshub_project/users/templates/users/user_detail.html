@@ -13,7 +13,7 @@
 
       <div class="py-4">
         <div class="mb-2">
-          {% include "includes/title.html" with title="Профиль" %}
+          {% include "includes/title.html" with text="Профиль" title=user.username only %}
         </div>
         {% if user.avatar %}
         {% thumbnail user.avatar "240x240" crop="center" as avatar %}
