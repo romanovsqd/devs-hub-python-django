@@ -9,11 +9,7 @@
     <div class="container mx-auto px-4 flex flex-col flex-1">
 
       <div class="mb-8">
-        {% if is_owner %}
-            {% include "includes/title.html" with title="Мои карточки" %}
-        {% else %}
-            {% include "includes/title.html" with title="Карточки "|add:user.username %}
-        {% endif %}
+        {% include "includes/title.html" with title="Карточки " %}
       </div>
 
       <div class="max-w-1/2 w-full mx-auto mb-8">
