@@ -20,10 +20,10 @@ def deck_toggle_study(request, deck_id):
     is_studying = services.toggle_deck_study_for_user(deck=deck, user=request.user)
 
     if is_studying:
-        message = f"Вы изучаете {deck.title}"
+        message = f"Вы изучаете колоду {deck.title}"
         button_text = "Удалить из изучаемых"
     else:
-        message = f"Вы не изучаете {deck.title}"
+        message = f"Сброшен весь прогресс по колоде {deck.title}"
         button_text = "Добавить в изучаемые"
 
     return JsonResponse(

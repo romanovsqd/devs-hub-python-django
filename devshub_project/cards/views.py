@@ -108,10 +108,10 @@ def card_toggle_save(request, card_id):
 
     if is_card_saved:
         message = "Карточка сохранена в ваш профиль"
-        button_text = "Удалить из моего профиля"
+        button_text = "Удалить карточку из моего профиля"
     else:
         message = "Карточка удалена из вашего профиля"
-        button_text = "Сохранить в мой профиль"
+        button_text = "Сохранить карточку в мой профиль"
 
     return JsonResponse(
         {
