@@ -29,7 +29,10 @@ if (toggleSaveForms) {
 
         toggleButton.classList.toggle("danger", isPrimary);
         toggleButton.classList.toggle("primary", !isPrimary);
-        exportButton.classList.toggle("inactive");
+
+        if (exportButton) {
+          exportButton.classList.toggle("inactive");
+        }
         toggleButton.textContent = data.button_text;
 
         showNotification(data.message, data.success);
