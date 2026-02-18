@@ -145,6 +145,5 @@ def get_user_decks_stats(user):
             distinct=True,
         ),
     )
-    decks_stats = decks.aggregate()
 
     return decks_stats
