@@ -11,7 +11,7 @@
       </div>
 
       <div class="max-w-1/2 w-full mx-auto mb-8">
-        {% include "includes/search_form.html" with placeholder="Сервис сокращения ссылок на FastAPI" only %}
+        {% include "includes/search_form.html" with placeholder="Сервис сокращения ссылок на FastAPI" request=request only %}
       </div>
 
       <div class="mb-auto">
@@ -19,7 +19,7 @@
       </div>
 
       <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=projects only %}
+        {% include "includes/pagination.html" with page_obj=projects query=query sort_by=sort_by only %}
       </div>
 
     </div>

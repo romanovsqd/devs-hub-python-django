@@ -43,7 +43,7 @@
       </div>
 
       <div class="max-w-1/2 w-full mx-auto mb-8">
-        {% include "includes/search_form.html" with placeholder="Что такое итератор?" only %}
+        {% include "includes/search_form.html" with placeholder="Что такое итератор?" request=request only %}
       </div>
 
       <div class="mb-auto">
@@ -51,7 +51,7 @@
       </div>
 
       <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=cards only %}
+        {% include "includes/pagination.html" with page_obj=cards query=query sort_by=sort_by only %}
       </div>
 
   </div>

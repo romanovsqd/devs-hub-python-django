@@ -12,7 +12,7 @@
       </div>
 
       <div class="max-w-1/2 w-full mx-auto mb-8">
-        {% include "includes/search_form.html" with placeholder="Имя пользователя, направление или навык" %}
+        {% include "includes/search_form.html" with placeholder="Имя пользователя, направление или навык" request=request only %}
       </div>
 
       <div>
@@ -20,7 +20,7 @@
       </div>
 
       <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=users only %}
+        {% include "includes/pagination.html" with page_obj=users query=query sort_by=sort_by only %}
       </div>
 
     </div>
