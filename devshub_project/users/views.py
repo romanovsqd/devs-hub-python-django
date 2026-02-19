@@ -20,6 +20,7 @@ from .forms import (
     UserForm,
     UserPasswordChangeForm,
     UserPasswordResetForm,
+    UserSetPasswordForm,
 )
 from .services import codewars_services, user_services
 from .tasks import create_or_update_user_codewars_profile_task
@@ -62,6 +63,7 @@ class UserPasswordResetView(PasswordResetView):
 
 class UserPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy("password_reset_complete")
+    form_class = UserSetPasswordForm
 
 
 @login_required

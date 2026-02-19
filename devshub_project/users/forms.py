@@ -4,6 +4,7 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
     PasswordResetForm,
+    SetPasswordForm,
     UserChangeForm,
     UserCreationForm,
 )
@@ -194,4 +195,31 @@ class UserPasswordResetForm(PasswordResetForm):
             subject=subject,
             message=message,
             email=to_email,
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["email"].widget.attrs.update(
+            {
+                "placeholder": "Ваш email",
+                "class": "w-full border-gray-300 rounded-md shadow",
+            }
+        )
+
+
+class UserSetPasswordForm(SetPasswordForm):
+    required_css_class = "required"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "w-full border-gray-300 rounded-md shadow"
+
+        self.fields["new_password1"].widget.attrs.update(
+            {"placeholder": "Введите новый пароль"}
+        )
+        self.fields["new_password2"].widget.attrs.update(
+            {"placeholder": "Подтвердите новый пароль"}
         )

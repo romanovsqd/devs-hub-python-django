@@ -32,7 +32,7 @@ def send_confirmation_email_task(base_url, user_id, new_email):
 
     send_mail(
         subject="Подтверждение почты",
-        message=f"Перейдите по ссылке:\n{confirm_link}",
+        message=f"Для подтверждения почты перейдите по ссылке:\n{confirm_link}",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[new_email],
         fail_silently=False,
