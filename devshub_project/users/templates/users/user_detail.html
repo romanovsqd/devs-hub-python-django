@@ -43,7 +43,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <div class="max-w-2xl mx-auto">
+          <div class="max-w-xl mx-auto">
             <canvas
               width="500"
               height="500"
@@ -56,20 +56,22 @@
           </div>
         </div>
         <div>
-          <div class="grid grid-cols-4 font-medium text-lg">
-            <div class="flex justify-center">
-              <ul class="flex flex-col gap-y-2">
-                <li>
-                  <a href="https://www.codewars.com/users/{{user.codewars_username}}" target="_blank" class="group">
-                    Codewars аккаунт: <span class="text-blue-600">{{ user.codewars_username }}</span>
-                  </a>
-                </li>
-                <li>Очки (honor): {{ codewars_stats.honor }}</li>
-                <li>Позиция в топе: {{ codewars_stats.leaderboard_position }}</li>
-                <li>Языки: {{ codewars_stats.languages|join:', ' }}</li>
-                <li>Решенных здач: {{ codewars_stats.total_completed_katas }}</li>
-              </ul>
-            </div>
+          <div class="grid {% if user.codewars_username %}grid-cols-4{% else %}grid-cols-3{% endif %} font-medium text-lg">
+            {% if user.codewars_username %}
+              <div class="flex justify-center">
+                <ul class="flex flex-col gap-y-2">
+                  <li>
+                    <a href="https://www.codewars.com/users/{{user.codewars_username}}" target="_blank" class="group">
+                      Codewars аккаунт: <span class="text-blue-600">{{ user.codewars_username }}</span>
+                    </a>
+                  </li>
+                  <li>Очки (honor): {{ codewars_stats.honor }}</li>
+                  <li>Позиция в топе: {{ codewars_stats.leaderboard_position }}</li>
+                  <li>Языки: {{ codewars_stats.languages|join:', ' }}</li>
+                  <li>Решенных здач: {{ codewars_stats.total_completed_katas }}</li>
+                </ul>
+              </div>
+            {% endif %}
             <div class="flex justify-center">
               <ul class="flex flex-col gap-y-2">
                 <li>Всего карточек: {{ cards_stats.total }}</li>

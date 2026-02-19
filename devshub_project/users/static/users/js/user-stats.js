@@ -1,33 +1,44 @@
 const ctx = document.querySelector("[data-js-stats-canvas]");
 
-const totalCompletedKatas = ctx.dataset.jsTotalCompletedKatas;
-const cardsInStudy = ctx.dataset.jsCardsInStudy;
-const decksInStudy = ctx.dataset.jsDecksInStudy;
-const totalProjects = ctx.dataset.jsTotalProjects;
+const data = [
+  Number(ctx.dataset.jsTotalCompletedKatas) || 0,
+  Number(ctx.dataset.jsCardsInStudy) || 0,
+  Number(ctx.dataset.jsDecksInStudy) || 0,
+  Number(ctx.dataset.jsTotalProjects) || 0,
+];
 
-new Chart(ctx, {
-  type: "doughnut",
-  data: {
-    labels: [
-      "Решенные задачи codewars",
-      "Карточки в изучении",
-      "Колоды в изучении",
-      "Проекты",
-    ],
-    datasets: [
-      {
-        data: [totalCompletedKatas, cardsInStudy, decksInStudy, totalProjects],
-        backgroundColor: ["#ff85a0", "#66bdf0", "#66d666", "#ffb84d"],
-        borderWidth: 1,
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "bottom",
+const hasData = data.some((value) => value > 0);
+
+if (!hasData) {
+  const message = document.createElement("p");
+  message.textContent = "Пока нет данных для отображения статистики";
+  message.className = "text-center text-gray-500 py-8";
+  ctx.replaceWith(message);
+} else {
+  new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: [
+        "Решенные задачи Codewars",
+        "Карточки в изучении",
+        "Колоды в изучении",
+        "Проекты",
+      ],
+      datasets: [
+        {
+          data,
+          backgroundColor: ["#ff85a0", "#66bdf0", "#66d666", "#ffb84d"],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom",
+        },
       },
     },
-  },
-});
+  });
+}
