@@ -21,7 +21,7 @@
       </div>
 
       <div class="max-w-1/2 w-full mx-auto font-medium">
-        {% include "includes/model_form.html" with form=form only %}
+        {% include "includes/model_form.html" with form=form csrf_token=csrf_token only %}
       </div>
 
   </div>

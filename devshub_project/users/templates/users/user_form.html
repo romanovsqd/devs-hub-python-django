@@ -12,7 +12,7 @@
     </div>
 
     <div class="max-w-1/2 w-full mx-auto font-medium mb-10">
-      <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" novalidate class="flex flex-col gap-5">
+      <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" class="flex flex-col gap-5">
         {% csrf_token %}
 
         {% if user_form.non_field_errors %}
@@ -114,7 +114,7 @@
     </div>
 
     <div class="max-w-1/2 w-full mx-auto font-medium">
-      <form action="{% url "user_update" user.pk %}" method="post" novalidate class="flex flex-col gap-5">
+      <form action="{% url "user_update" user.pk %}" method="post" class="flex flex-col gap-5">
         {% csrf_token %}
 
         {% if password_form.non_field_errors %}
