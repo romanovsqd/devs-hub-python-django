@@ -1,37 +1,68 @@
-<header class="py-4 bg-gray-100">
-  <div class="container mx-auto px-4">
-    <nav class="flex justify-between text-md font-medium text-gray-700">
+{% load nav_tags %}
 
-      <div class="font-bold text-lg hover:text-blue-600 transition-colors">
-        <a href="{% url "home" %}">DevsHub</a>
+<header class="bg-white shadow-md w-full">
+
+    <!-- Desktop menu -->
+    <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <!-- Logo -->
+      <div>
+        <a href="{% url "home" %}" class="text-xl font-bold text-black active:text-blue-500 md:hover:text-blue-500 transition-colors">
+          DevsHub
+        </a>
       </div>
 
-      <ul class="flex gap-x-5">
-        <li><a href="{% url "card_list" %}" class="hover:text-blue-600 transition-colors">Карточки</a></li>
-        <li><a href="{% url "deck_list" %}" class="hover:text-blue-600 transition-colors">Колоды</a></li>
-        <li><a href="{% url "project_list" %}" class="hover:text-blue-600 transition-colors">Проекты</a></li>
-        <li><a href="{% url "user_list" %}" class="hover:text-blue-600 transition-colors">Пользователи</a></li>
+      <!-- Links -->
+      <ul class="hidden md:flex gap-x-6 text-gray-700">
+        <li><a href="{% url "card_list" %}" class="hover:text-blue-500 {% active_link "card_list" %}">Карточки</a></li>
+        <li><a href="{% url "deck_list" %}" class="hover:text-blue-500 {% active_link "deck_list" %}">Колоды</a></li>
+        <li><a href="{% url "project_list" %}" class="hover:text-blue-500 {% active_link "project_list" %}">Проекты</a></li>
+        <li><a href="{% url "user_list" %}" class="hover:text-blue-500 {% active_link "user_list" %}">Пользователи</a></li>
       </ul>
-
+      <!-- Authenticated links-->
       {% if request.user.is_authenticated %}
-        <ul class="flex gap-x-5 relative">
-          <li class="relative group cursor-pointer">
-              {{ request.user.username }}
-            <ul class="absolute border border-gray-300 rounded-md left-0 mt-2 w-48 bg-white  shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+        <ul class="hidden md:flex gap-x-6 relative">
+          <li class="relative">
+            <button data-js-user-menu-button type="button" class="flex items-center gap-1 cursor-pointer">
+              <span class="font-medium">{{ request.user.username }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <ul data-js-user-menu class="absolute left-0 mt-2 w-52 bg-white border border-gray-300 text-gray-700 rounded-md shadow-lg hidden z-50">
               <li>
-                <a href="{% url "user_detail" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100">
+                <a href="{% url "user_detail" request.user.pk %}" class="block px-4 py-2 font-medium hover:bg-gray-100 hover:text-blue-500">
                   Мой профиль
                 </a>
               </li>
-              <li>
-                <a href="{% url "user_update" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100">
+              <li class="border-b-2 border-b-gray-300">
+                <a href="{% url "user_update" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
                   Редактировать профиль
+                </a>
+              </li>
+              <li>
+                <a href="{% url "review" %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                  Повторять карточки
+                </a>
+              </li>
+              <li>
+                <a href="{% url "user_cards" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                  Мои карточки
+                </a>
+              </li>
+              <li>
+                <a href="{% url "user_decks" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                  Мои колоды
+                </a>
+              </li>
+              <li class="border-b-2 border-b-gray-300">
+                <a href="{% url "user_projects" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                  Мои проекты
                 </a>
               </li>
               <li>
                 <form action="{% url "logout" %}" method="post">
                   {% csrf_token %}
-                  <button type="submit" class="w-full text-left px-4 py-2 text-red-600 cursor-pointer hover:text-red-800 hover:bg-gray-100">
+                  <button type="submit" class="w-full text-left px-4 py-2 font-medium text-red-800 hover:bg-gray-100 hover:text-red-600 cursor-pointer">
                     Выйти
                   </button>
                 </form>
@@ -39,13 +70,82 @@
             </ul>
           </li>
         </ul>
+      <!-- Guest links -->
       {% else %}
-        <ul class="flex gap-x-5">
-          <li><a href="{% url "register" %}" class="hover:text-blue-600 transition-colors">Регистрация</a></li>
-          <li><a href="{% url "login" %}" class="hover:text-blue-600 transition-colors">Войти</a></li>
+        <ul class="hidden md:flex gap-x-6">
+          <li><a href="{% url "register" %}" class="hover:text-blue-600 transition-colors {% active_link "register" %}">Регистрация</a></li>
+          <li><a href="{% url "login" %}" class="hover:text-blue-600 transition-colors {% active_link "login" %}">Войти</a></li>
         </ul>
       {% endif %}
 
+      <!-- Burger -->
+      <div class="md:hidden">
+        <button data-js-burger-button class="text-gray-700 focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+
     </nav>
-  </div>
-</header>
+
+    <!-- Mobile menu -->
+    <nav data-js-mobile-menu class="hidden md:hidden bg-white border-t border-gray-200">
+      <ul class="text-gray-700 border-b-2 border-b-gray-300">
+        <li><a href="{% url "card_list" %}" class="block px-4 py-2 active:text-blue-500 {% active_link "card_list" %}">Карточки</a></li>
+        <li><a href="{% url "deck_list" %}" class="block px-4 py-2 active:text-blue-500 {% active_link "deck_list" %}">Колоды</a></li>
+        <li><a href="{% url "project_list" %}" class="block px-4 py-2 active:text-blue-500 {% active_link "project_list" %}">Проекты</a></li>
+        <li><a href="{% url "user_list" %}" class="block px-4 py-2 active:text-blue-500 {% active_link "user_list" %}">Пользователи</a></li>
+      </ul>
+      <ul class="text-gray-700">
+        {% if request.user.is_authenticated %}
+        <li>
+          <a href="{% url "user_detail" request.user.pk %}" class="block px-4 py-2 font-medium active:text-blue-500">
+            Мой профиль
+          </a>
+        </li>
+        <li class="border-b-2 border-b-gray-300">
+          <a href="{% url "user_update" request.user.pk %}" class="block px-4 py-2 active:text-blue-500">
+            Редактировать профиль
+          </a>
+        </li>
+        <li>
+          <a href="{% url "review" %}" class="block px-4 py-2 active:text-blue-500">
+            Повторять карточки
+          </a>
+        </li>
+        <li>
+          <a href="{% url "user_cards" request.user.pk %}" class="block px-4 py-2 active:text-blue-500">
+            Мои карточки
+          </a>
+        </li>
+        <li>
+          <a href="{% url "user_decks" request.user.pk %}" class="block px-4 py-2 active:text-blue-500">
+            Мои колоды
+          </a>
+        </li>
+        <li class="border-b-2 border-b-gray-300">
+          <a href="{% url "user_projects" request.user.pk %}" class="block px-4 py-2 active:text-blue-500">
+            Мои проекты
+          </a>
+        </li>
+        <li>
+          <form action="{% url "logout" %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="w-full text-left px-4 py-2 text-red-800 active:text-red-600 cursor-pointer">
+              Выйти
+            </button>
+          </form>
+        </li>
+        {% else %}
+          <li>
+            <a href="{% url "register" %}" class="block px-4 py-2 active:text-blue-500 {% active_link "register" %}">Регистрация</a>
+          </li>
+          <li>
+            <a href="{% url "login" %}" class="block px-4 py-2 active:text-blue-500 {% active_link "login" %}">Войти</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
