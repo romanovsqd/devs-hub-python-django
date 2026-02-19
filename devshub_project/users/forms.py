@@ -102,6 +102,7 @@ class UserForm(UserChangeForm):
                 attrs={
                     "class": "w-full border-gray-300 rounded-md shadow",
                     "placeholder": "Ваш username",
+                    "autofocus": True,
                 },
             ),
             "email": forms.EmailInput(
