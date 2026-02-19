@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import (
@@ -234,6 +235,8 @@ def user_update(request, user_id):
 
                 user_form.save()
 
+                messages.success(request, "Данные профиля сохранены!")
+
                 return redirect("user_update", user_id=user.pk)
         elif "change_password" in request.POST:
             user_form = UserForm(instance=user)
@@ -241,6 +244,8 @@ def user_update(request, user_id):
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
+
+                messages.success(request, "Пароль успешно изменен!")
 
                 return redirect("user_update", user_id=user.pk)
     else:
@@ -256,6 +261,10 @@ def user_update(request, user_id):
 
 
 def confirm_email(request, uidb64, token):
-    user_services.confirm_user_email(uidb64=uidb64, token=token)
+    is_email_confirmed, user = user_services.confirm_user_email(
+        uidb64=uidb64, token=token
+    )
 
+    if is_email_confirmed and user == request.user:
+        messages.success(request, "Ваш email успешно подтвержден")
     return redirect("user_update", user_id=request.user.pk)

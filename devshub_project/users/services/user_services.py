@@ -71,7 +71,8 @@ def confirm_user_email(uidb64, token):
         user = None
 
     if user and default_token_generator.check_token(user, token):
-        user.email_verified = True
-        user.save()
-        return True
+        if not user.email_verified:
+            user.email_verified = True
+            user.save()
+            return True, user
     return False

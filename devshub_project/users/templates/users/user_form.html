@@ -15,6 +15,14 @@
       <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" class="flex flex-col gap-5">
         {% csrf_token %}
 
+        {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              <li class="{{ message.tags }} py-2 px-4">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
         {% if user_form.non_field_errors %}
           <ul class="errorlist">
             {% for error in user_form.non_field_errors %}
@@ -129,9 +137,13 @@
         <div>
           {{ password_form.old_password.label_tag }}
           {{ password_form.old_password }}
-          {% for error in password_form.old_password.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
+          {% if password_form.old_password.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in password_form.old_password.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </div>
 
         <!-- New password1 -->
@@ -141,9 +153,13 @@
           <span class="mt-1 inline-block w-full text-sm text-gray-500">
             {{ password_form.new_password1.help_text }}
           </span>
-          {% for error in password_form.new_password1.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
+          {% if password_form.new_password1.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in password_form.new_password1.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </div>
 
         <!-- New password2 -->
@@ -153,9 +169,13 @@
           <span class="inline-block w-full text-sm text-gray-500">
             {{ password_form.new_password2.help_text }}
           </span>
-          {% for error in password_form.new_password2.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
+          {% if password_form.new_password2.errors %}
+            <ul class="errorlist mb-2">
+              {% for error in password_form.new_password2.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </div>
 
         <div>
