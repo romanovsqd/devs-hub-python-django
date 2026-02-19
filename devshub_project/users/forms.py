@@ -15,19 +15,32 @@ User = get_user_model()
 
 
 class RegisterForm(UserCreationForm):
+    required_css_class = "required"
+
     class Meta:
         model = User
         fields = ["username", "password1", "password2"]
+        widgets = {
+            "username": forms.TextInput(
+                attrs={"class": "w-full border-gray-300 rounded-md shadow"}
+            ),
+        }
 
-    username = forms.CharField(
-        max_length=150, required=True, label="Логин", help_text=""
-    )
-    password1 = forms.CharField(
-        widget=forms.PasswordInput, label="пароль", help_text=""
-    )
-    password2 = forms.CharField(
-        widget=forms.PasswordInput, label="Подтвердите пароль", help_text=""
-    )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["password1"].widget.attrs.update(
+            {
+                "placeholder": "Введите новый пароль",
+                "class": "w-full border-gray-300 rounded-md shadow",
+            }
+        )
+        self.fields["password2"].widget.attrs.update(
+            {
+                "placeholder": "Подтвердите новый пароль",
+                "class": "w-full border-gray-300 rounded-md shadow",
+            }
+        )
 
     def clean_username(self):
         username = super().clean_username()
@@ -43,14 +56,21 @@ class LoginForm(AuthenticationForm):
         model = User
         fields = ["username", "password"]
 
-    username = forms.CharField(
-        max_length=150, required=True, label="Логин", help_text=""
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput,
-        label="пароль",
-        help_text="",
-    )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["username"].widget.attrs.update(
+            {
+                "placeholder": "username или email",
+                "class": "w-full border-gray-300 rounded-md shadow mb-2",
+            }
+        )
+        self.fields["password"].widget.attrs.update(
+            {
+                "placeholder": "Пароль",
+                "class": "w-full border-gray-300 rounded-md shadow mb-2",
+            }
+        )
 
 
 class UserForm(UserChangeForm):
@@ -141,7 +161,6 @@ class UserPasswordChangeForm(PasswordChangeForm):
 
         for field_name, field in self.fields.items():
             field.widget.attrs["class"] = "w-full border-gray-300 rounded-md shadow"
-            field.widget.attrs["placeholder"] = "Старый пароль"
 
         self.fields["old_password"].label = "Текущий пароль"
         self.fields["old_password"].widget.attrs.update(
