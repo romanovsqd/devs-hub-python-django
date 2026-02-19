@@ -9,8 +9,8 @@ userMenuButton.addEventListener("click", (e) => {
   userMenu.classList.toggle("hidden");
 });
 
-userMenu.addEventListener("click", (e) => {
-  e.target.classList.add("hidden");
+userMenu.addEventListener("click", () => {
+  userMenu.classList.add("hidden");
 });
 
 burgerButton.addEventListener("click", () => {
