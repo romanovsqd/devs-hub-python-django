@@ -12,6 +12,10 @@
         {% include "includes/title.html" with text="Карточки" title=user.username only %}
       </div>
 
+      <div class="mb-8">
+        <a href="{% url "card_create" %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary mb-2">Добавить карточку</a>
+      </div>
+
       <div class="max-w-1/2 w-full mx-auto mb-8">
         {% include "includes/search_form.html" with placeholder="Что такое итератор?" request=request only %}
       </div>
