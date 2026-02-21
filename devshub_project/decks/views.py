@@ -11,7 +11,6 @@ from . import services
 from .forms import DeckForm
 
 
-@login_required
 def deck_list(request):
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
@@ -34,7 +33,6 @@ def deck_list(request):
     return render(request, "decks/deck_list.html", context)
 
 
-@login_required
 def deck_detail(request, deck_id):
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")

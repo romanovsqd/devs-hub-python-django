@@ -5,7 +5,6 @@ from . import services
 from .forms import ProjectForm
 
 
-@login_required
 def project_list(request):
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
@@ -28,7 +27,6 @@ def project_list(request):
     return render(request, "projects/project_list.html", context)
 
 
-@login_required
 def project_detail(request, project_id):
     project = services.get_project_by_id(project_id=project_id)
 

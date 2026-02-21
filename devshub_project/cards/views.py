@@ -9,7 +9,6 @@ from . import services
 from .forms import CardForm
 
 
-@login_required
 def card_list(request):
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
@@ -32,7 +31,6 @@ def card_list(request):
     return render(request, "cards/card_list.html", context)
 
 
-@login_required
 def card_detail(request, card_id):
     card = services.get_card_by_id(card_id=card_id)
     is_saved = services.is_card_saved_by_user(card=card, user=request.user)

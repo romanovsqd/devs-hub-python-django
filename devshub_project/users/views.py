@@ -67,7 +67,6 @@ class UserPasswordResetConfirmView(PasswordResetConfirmView):
     form_class = UserSetPasswordForm
 
 
-@login_required
 def user_list(request):
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
@@ -90,7 +89,6 @@ def user_list(request):
     return render(request, "users/user_list.html", context)
 
 
-@login_required
 def user_detail(request, user_id):
     user = user_services.get_user_by_id(user_id=user_id)
     cards_stats = card_services.get_user_cards_stats(user=user)
@@ -111,7 +109,6 @@ def user_detail(request, user_id):
     return render(request, "users/user_detail.html", context)
 
 
-@login_required
 def user_cards(request, user_id):
     user = user_services.get_user_by_id(user_id=user_id)
     query = request.GET.get("query", "")
@@ -139,7 +136,6 @@ def user_cards(request, user_id):
     return render(request, "users/user_cards.html", context)
 
 
-@login_required
 def user_decks(request, user_id):
     user = user_services.get_user_by_id(user_id=user_id)
     query = request.GET.get("query", "")
@@ -172,7 +168,6 @@ def user_decks(request, user_id):
     return render(request, "users/user_decks.html", context)
 
 
-@login_required
 def user_projects(request, user_id):
     user = user_services.get_user_by_id(user_id=user_id)
     query = request.GET.get("query", "")
@@ -235,7 +230,7 @@ def user_update(request, user_id):
 
                 user_form.save()
 
-                messages.success(request, "Данные профиля сохранены!")
+                messages.success(request, "Данные профиля сохранены")
 
                 return redirect("user_update", user_id=user.pk)
         elif "change_password" in request.POST:
@@ -245,7 +240,7 @@ def user_update(request, user_id):
                 user = password_form.save()
                 update_session_auth_hash(request, user)
 
-                messages.success(request, "Пароль успешно изменен!")
+                messages.success(request, "Пароль успешно изменен")
 
                 return redirect("user_update", user_id=user.pk)
     else:
