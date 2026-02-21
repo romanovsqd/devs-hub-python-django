@@ -3,25 +3,28 @@
 {% block title %}Список колод{% endblock title %}
 
 {% block content %}
-  <div class="flex flex-col flex-1 py-8">
+  <div class="py-4 lg:py-8 flex flex-1">
     <div class="container mx-auto px-4 flex flex-col flex-1">
 
-      <div class="mb-8">
+      <!-- Title -->
+      <div class="mb-4">
         {% include "includes/title.html" with text="Список колод" only %}
       </div>
 
-      <div class="max-w-1/2 w-full mx-auto mb-8">
+      <!-- Search form -->
+      <div class="w-full lg:max-w-3xl mx-auto mb-4">
         {% include "includes/search_form.html" with placeholder="Циклы в Python" request=request only %}
       </div>
 
+      <!-- Card list -->
       <div class="mb-auto">
         {% include "includes/deck_list.html" with decks=decks user=request.user only %}
       </div>
 
-      <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=decks query=query sort_by=sort_by only %}
-      </div>
+      <!-- Pagination -->
+      {% include "includes/pagination.html" with page_obj=decks query=query sort_by=sort_by only %}
 
     </div>
   </div>
+
 {% endblock content %}

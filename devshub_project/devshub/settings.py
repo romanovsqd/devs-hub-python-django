@@ -181,4 +181,5 @@ TINYMCE_DEFAULT_CONFIG = {
         "| bullist numlist | codesample "
     ),
     "height": 500,
+    "resize": True,
 }

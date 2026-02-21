@@ -34,8 +34,8 @@ class ProjectForm(forms.ModelForm):
                     "ml-2 rounded-full text-sm text-gray-500 file:mr-4 file:py-2 "
                     "file:px-4 file:rounded-full file:border-0 file:text-sm "
                     "file:font-semibold file:bg-blue-50 file:text-blue-700 "
-                    "hover:file:bg-blue-100 file:cursor-pointer cursor-pointer "
-                    "file:transition-colors"
+                    "hover:file:bg-blue-100 active:file:bg-blue-100 file:cursor-pointer "
+                    "cursor-pointer file:transition-colors "
                 )
             }
         ),
@@ -76,13 +76,13 @@ class ProjectForm(forms.ModelForm):
             "repository_url": forms.URLInput(
                 attrs={
                     "class": "w-full border-gray-300 rounded-md shadow",
-                    "placeholder": "Ссылка на GitHub репозиторий",
+                    "placeholder": "Ссылка на Git репозиторий",
                 },
             ),
             "live_url": forms.URLInput(
                 attrs={
                     "class": "w-full border-gray-300 rounded-md shadow",
-                    "placeholder": "Ссылка на Ваш проект",
+                    "placeholder": "https://your-project.com",
                 },
             ),
             "cover_image": forms.FileInput(
@@ -91,8 +91,8 @@ class ProjectForm(forms.ModelForm):
                         "ml-2 rounded-full text-sm text-gray-500 file:mr-4 file:py-2 "
                         "file:px-4 file:rounded-full file:border-0 file:text-sm "
                         "file:font-semibold file:bg-blue-50 file:text-blue-700 "
-                        "hover:file:bg-blue-100 file:cursor-pointer cursor-pointer "
-                        "file:transition-colors"
+                        "hover:file:bg-blue-100 active:file:bg-blue-100 "
+                        "file:cursor-pointer cursor-pointer file:transition-colors "
                     )
                 },
             ),

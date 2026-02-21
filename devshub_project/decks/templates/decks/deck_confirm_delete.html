@@ -4,15 +4,15 @@
 
 {% block content %}
 
-  <div class="flex flex-col flex-1 py-28">
-    <div class="container mx-auto px-4 flex flex-col">
+  <div class="flex flex-1 py-4 lg:py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1 justify-center items-center">
 
       <div class="mb-8">
-        {% include "includes/title.html" with text="Вы собиратесь удалить колоду" title=deck.title only %}
+        {% include "includes/title.html" with text="Вы собиратесь удалить колоду:" title=deck.title only %}
       </div>
 
-      <div>
-        {% include "includes/confirm_delete_form.html" with obj=deck only %}
+      <div class="w-full">
+        {% include "includes/confirm_delete_form.html" with obj=deck csrf_token=csrf_token only %}
       </div>
 
     </div>

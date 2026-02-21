@@ -1,0 +1,62 @@
+{% load thumbnail %}
+
+<div class="p-4 flex flex-col gap-4 text-gray-700 rounded-lg border-2 border-gray-200 justify-center items-center">
+
+  <!-- Card header -->
+  {% if user.avatar %}
+    <div class="flex flex-col justyfy-center gap-2 items-center w-full">
+
+    <!-- User avatar -->
+      {% thumbnail user.avatar "80x80" crop="center" as avatar %}
+      <div class="rounded-full overflow-hidden max-w-20 max-h-20 shadow-md shadow-gray-400">
+        <a href="{{ user.get_absolute_url }}">
+          <img
+            src="{{ avatar.url }}"
+            alt="Аватар {{ user.username }}"
+            class="w-full h-full rounded-full object-cover object-center duration-500 transition-transform hover:scale-110">
+        </a>
+      </div>
+
+    </div>
+  {% endif %}
+
+  <!-- Card body -->
+  <div class="flex flex-col items-center gap-4 w-full">
+
+    <!-- Username -->
+    <div>
+      <a href="{{ user.get_absolute_url }}" class="font-medium hover:text-blue-600 active:text-blue-600 transition-colors">
+        {{ user.username }}
+      </a>
+    </div>
+
+
+    <!-- User specialization -->
+    {% if user.specialization %}
+      <div class="flex flex-col justify-center items-center">
+        <span class="text-gray-500">Направление</span>
+        <span class="text-center">{{ user.specialization }}</span>
+      </div>
+    {% endif %}
+
+    <!-- User skills -->
+    {% if user.skills %}
+      <div class="flex flex-col justify-center items-center">
+        <span class="text-gray-500">Навыки</span>
+        <span class="text-center">{{ user.skills }}</span>
+      </div>
+    {% endif %}
+
+    <!-- User codewars -->
+    {% if user.codewars_username %}
+      <div class="flex flex-col justify-center items-center">
+        <span class="text-gray-500">Профиль codewars</span>
+        <a href="https://www.codewars.com/users/{{user.codewars_username}}" target="_blank" class="text-center font-medium hover:text-blue-600 active:text-blue-600 transition-colors">
+          {{ user.codewars_username }}
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+
+</div>

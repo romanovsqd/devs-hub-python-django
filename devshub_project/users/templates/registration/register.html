@@ -3,17 +3,22 @@
 {% block title %}Регистрация{% endblock title %}
 
 {% block content %}
-  <div class="flex flex-col flex-1 py-8">
-    <div class="container mx-auto px-4 flex flex-col flex-1">
+  <div class="flex flex-col flex-1 py-4 lg:py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1 justify-center items-center">
 
-      <div class="mb-8">
-        {% include "includes/title.html" with text="Регистрация" only %}
-      </div>
+      <!-- Register form container -->
+      <div class="w-full md:max-w-xl mx-auto mb-4 lg:mb-8 p-8 rounded-lg shadow-xl">
 
-      <div class="max-w-1/2 w-full mx-auto font-medium mb-10">
-        <form method="post">
+        <!-- Title -->
+        <div class="mb-4">
+          {% include "includes/title.html" with text="Регистрация" only %}
+        </div>
 
+        <!-- Register form -->
+        <form method="post" class="flex flex-col gap-2 lg:gap-4">
           {% csrf_token %}
+
+          <!-- Non field errors -->
           {% if form.non_field_errors %}
             <ul class="errorlist">
               {% for error in form.non_field_errors %}
@@ -23,12 +28,15 @@
           {% endif %}
 
           <!-- Username -->
-          <div class="mb-2">
+          <div>
+
             {{ form.username.label_tag }}
             {{ form.username }}
-            <span class="inline-block w-full text-sm text-gray-500 mt-2">
+            <span class="inline-block w-full text-xs md:text-sm text-gray-500 mt-2">
               {{ form.username.help_text }}
             </span>
+
+            <!-- Username errors -->
             {% if form.username.errors %}
               <ul class="errorlist">
                 {% for error in form.username.errors %}
@@ -36,15 +44,19 @@
                 {% endfor %}
               </ul>
             {% endif %}
+
           </div>
 
           <!-- Password1 -->
-          <div class="mb-2">
+          <div>
+
             {{ form.password1.label_tag }}
             {{ form.password1 }}
-            <span class="inline-block w-full text-sm text-gray-500 mt-2">
+            <span class="inline-block w-full text-xs md:text-sm text-gray-500 mt-2">
               {{ form.password1.help_text }}
             </span>
+
+            <!-- Password1 errors -->
             {% if form.password1.errors %}
               <ul class="errorlist">
                 {% for error in form.password1.errors %}
@@ -52,15 +64,19 @@
                 {% endfor %}
               </ul>
             {% endif %}
+
           </div>
 
           <!-- Password2 -->
-          <div class="mb-2">
+          <div>
+
             {{ form.password2.label_tag }}
             {{ form.password2 }}
-            <span class="inline-block w-full text-sm text-gray-500 mt-2">
+            <span class="inline-block w-full text-xs md:text-sm text-gray-500 mt-2">
               {{ form.password2.help_text }}
             </span>
+
+            <!-- Password2 errors -->
             {% if form.password2.errors %}
               <ul class="errorlist">
                 {% for error in form.password2.errors %}
@@ -68,22 +84,25 @@
                 {% endfor %}
               </ul>
             {% endif %}
+
           </div>
 
-
-          <div class="text-center text-lg font-medium mb-2">
-            <a href="{% url "login" %}" class="group">
-              Уже есть аккаунт? <span class="text-blue-600 group-hover:text-blue-700 transition-colors">Войти</span>
-            </a>
-          </div>
-
+          <!-- Register button -->
           <div>
-            <button type="submit" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+            <button type="submit" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 active:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
               Зарегистрироваться
             </button>
           </div>
 
+          <!-- LogIn link -->
+          <div class="text-center">
+            <a href="{% url "login" %}" class="group">
+              Уже есть аккаунт? <span class="font-medium text-blue-500 group-hover:text-blue-600 active:text-blue-600 transition-colors">Войти</span>
+            </a>
+          </div>
+
         </form>
+
       </div>
 
     </div>

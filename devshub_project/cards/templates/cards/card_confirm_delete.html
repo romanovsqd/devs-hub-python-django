@@ -3,15 +3,16 @@
 {% block title %}Удалить {{ card.question }}{% endblock title %}
 
 {% block content %}
-  <div class="flex flex-col flex-1 py-28">
-    <div class="container mx-auto px-4 flex flex-col">
+  <div class="flex flex-1 py-4 lg:py-8">
+    <div class="container mx-auto px-4 flex flex-col flex-1 justify-center items-center">
+
 
       <div class="mb-8">
-        {% include "includes/title.html" with text="Вы собиратесь удалить карточку" title=card.question only %}
+        {% include "includes/title.html" with text="Вы собиратесь удалить карточку:" title=card.question only %}
       </div>
 
-      <div>
-        {% include "includes/confirm_delete_form.html" with obj=card only %}
+      <div class="w-full">
+        {% include "includes/confirm_delete_form.html" with obj=card csrf_token=csrf_token only %}
       </div>
 
     </div>

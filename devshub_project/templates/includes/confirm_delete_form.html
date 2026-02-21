@@ -1,9 +1,9 @@
-<form method="post" class="font-medium flex justify-center items-center gap-4">
+<form method="post" class="flex flex-col md:flex-row justify-center items-center gap-4">
   {% csrf_token %}
-  <button type="submit" class="max-w-32 w-full py-2 px-4 border border-gray-300 rounded-md bg-red-500 hover:bg-red-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+  <button type="submit" class="max-w-xs w-full py-2 px-4 border border-gray-300 rounded-md bg-red-500 hover:bg-red-600 active:bg-red-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
     Удалить
   </button>
-  <a href="{{ obj.get_absolute_url }}" class="max-w-32 w-full inline-block text-center py-2 px-4 border border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md shadow">
+  <a href="{{ obj.get_absolute_url }}" class="inline-block max-w-xs w-full text-center py-2 px-4 border border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 active:bg-blue-600 transition-colors text-white text-shadow-md shadow">
     Назад
   </a>
 </form>

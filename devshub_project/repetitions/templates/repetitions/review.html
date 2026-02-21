@@ -4,31 +4,47 @@
 {% block title %}Изучение карточек{% endblock title %}
 
 {% block content %}
-  <div class="flex flex-col flex-1 py-8">
-    <div class="container mx-auto px-4 flex flex-col flex-1">
+  <div class="py-4 lg:py-8">
+    <div class="container mx-auto px-4">
 
-      <div class="mb-8">
+      <!-- Title -->
+      <div class="mb-4 lg:mb-8">
         {% include "includes/title.html" with text="Повторение карточек" only %}
       </div>
 
+      <!-- Review container -->
       <div data-js-review-container data-next-card-url="{% url "next_card" %}" data-submit-url="{% url "submit" 0 0 %}">
         <div data-js-review-body>
+
+          <!-- Card front -->
           <div data-js-card-front class="mb-8">
-            <h3 data-js-card-question class="prose mx-auto text-lg mb-10">Вопрос</h3>
-            <button data-js-flip-card-button class="max-w-xl mx-auto inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary cursor-pointer">Показать ответ</button>
+            <h3 data-js-card-question class="prose mx-auto text-center text-lg mb-10">Вопрос</h3>
+            <button data-js-flip-card-button class="max-w-xl w-full mx-auto text-center rounded-full py-4 px-6 text-md font-medium primary cursor-pointer">
+              Показать ответ
+            </button>
           </div>
+
+          <!-- Card back -->
           <div data-js-card-back>
+
+            <!-- Card answer -->
             <div data-js-card-answer class="prose mx-auto text-lg mb-8"></div>
-            <div data-js-quality-buttons class="max-w-xl mx-auto flex justify-center items-center gap-4">
-              <button data-quality="0" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium danger cursor-pointer">Еще раз</button>
-              <button data-quality="3" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium warning cursor-pointer">Трудно</button>
-              <button data-quality="4" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary cursor-pointer">Хорошо</button>
-              <button data-quality="5" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success cursor-pointer">Легко</button>
+
+            <!-- Card quality buttons -->
+            <div data-js-quality-buttons class="flex flex-wrap sm:flex-nowrap gap-2 lg:gap-4 justify-center items-center max-w-xl lg:max-w-2xl mx-auto">
+              <button data-quality="0" class="w-full text-center rounded-full py-4 px-6 text-md font-medium danger cursor-pointer">Еще раз</button>
+              <button data-quality="3" class="w-full text-center rounded-full py-4 px-6 text-md font-medium warning cursor-pointer">Трудно</button>
+              <button data-quality="4" class="w-full text-center rounded-full py-4 px-6 text-md font-medium primary cursor-pointer">Хорошо</button>
+              <button data-quality="5" class="w-full text-center rounded-full py-4 px-6 text-md font-medium success cursor-pointer">Легко</button>
             </div>
+
           </div>
-          <div style="display: none;" data-js-card-empty class="">
+
+          <!-- No cards to review title -->
+          <div style="display: none;" data-js-card-empty>
             <h4 data-js-card-message class="text-lg text-center font-medium">Вы выучили всё на сегодня! :)</h4>
           </div>
+
         </div>
       </div>
 

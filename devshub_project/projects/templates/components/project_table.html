@@ -1,0 +1,63 @@
+{% load thumbnail %}
+
+<tr class="hover:bg-gray-100 text-gray-800">
+
+  <!-- Project cover -->
+  <td class="text-left py-2 px-4">
+    {% if project.cover_image %}
+      {% thumbnail project.cover_image "320x160" crop="center" as cover %}
+      <div class="relative max-w-80 w-full aspect-video rounded-lg overflow-hidden shadow-md shadow-gray-400">
+        <a href="{{ project.get_absolute_url }}">
+          <img
+            src="{{ cover.url }}"
+            alt="Обложка {{ project.title }}"
+            class="absolute inset-0 w-full h-full object-cover object-center rounded-lg duration-500 transition-transform hover:scale-110">
+        </a>
+      </div>
+    {% else %}
+      <span>Без обложки</span>
+    {% endif %}
+  </td>
+
+  <!-- Project title -->
+  <td class="text-center py-2 px-4">
+    <a href="{{ project.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {{ project.title|truncatechars:30 }}
+    </a>
+  </td>
+
+  <!-- Project repository url -->
+  <td class="text-center py-2 px-4">
+    {% if project.repository_url %}
+      <a href="{{ project.repository_url }}" target="_blank" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+        перейти
+      </a>
+    {% else %}
+      <span>-</span>
+    {% endif %}
+  </td>
+
+  <!-- Project live url -->
+  <td class="text-center py-2 px-4">
+    {% if project.live_url %}
+      <a href="{{ project.live_url }}" target="_blank" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+        перейти
+      </a>
+    {% else %}
+      <span>-</span>
+    {% endif %}
+  </td>
+
+  <!-- Project author -->
+  <td class="text-right py-2 px-4">
+
+    <a href="{{ project.author.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {% if project.author == request.user %}
+        <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 primary transition-colors hover:bg-blue-50">Вы автор</span>
+      {% else %}
+        {{ project.author.username }}
+      {% endif %}
+    </a>
+  </td>
+
+</tr>

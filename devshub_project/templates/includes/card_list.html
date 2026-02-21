@@ -1,14 +1,43 @@
 {% load card_tags %}
 
-<div class="flex gap-4 py-2 px-4 text-gray-500">
-  <p class="flex-2">Вопрос</p>
-  <p class="flex-1 pl-4">Автор</p>
-  <p class="flex-1 text-right pr-4">Статус</p>
+<!-- Card list as table -->
+<div class="hidden sm:table">
+
+  <!-- Card table -->
+  <table class="w-full table-fixed text-gray-500">
+
+    <colgroup>
+      <col class="max-w-2/4 lg:max-w-1/3 w-full">
+      <col class="max-w-1/4 lg:max-w-1/3 w-full">
+      <col class="max-w-1/4 lg:max-w-1/3 w-full">
+    </colgroup>
+
+    <!-- Card table head-->
+    <thead>
+      <tr>
+        <th class="text-left py-2 px-4 font-normal">Вопрос</th>
+        <th class="text-center py-2 px-4 font-normal">Автор</th>
+        <th class="text-right py-2 px-4 font-normal"><span class="pr-9">Статус</span></th>
+      </tr>
+    </thead>
+
+    <!-- Card table body-->
+    <tbody class="divide-y divide-gray-300">
+
+      <!-- Cards -->
+      {% for card in cards %}
+        {% render_card_as_table card=card user=user %}
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
 </div>
-<ul class="divide-y divide-gray-300">
+
+<!-- Card list as cards -->
+<div class="flex flex-col gap-4 sm:hidden">
   {% for card in cards %}
-    <li>
-      {% render_card card=card user=user %}
-    </li>
+    {% render_card card=card user=user %}
   {% endfor %}
-</ul>
+</div>

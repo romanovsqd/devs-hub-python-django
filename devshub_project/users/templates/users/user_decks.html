@@ -6,28 +6,33 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="flex flex-col flex-1 py-8">
+  <div class="py-4 lg:py-8 flex flex-1">
     <div class="container mx-auto px-4 flex flex-col flex-1">
 
-      <div class="mb-8">
+      <!-- Title -->
+      <div class="mb-4">
         {% include "includes/title.html" with text="Колоды" title=user.username only %}
       </div>
 
-      <div class="mb-8">
-        <a href="{% url "card_create" %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success mb-2">Создать колоду</a>
-      </div>
+      <!-- Create deck link -->
+      {% if request.user == user %}
+        <div class="w-full lg:max-w-3xl mx-auto mb-4">
+          <a href="{% url "deck_create" %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success">Создать колоду</a>
+        </div>
+      {% endif %}
 
-      <div class="max-w-1/2 w-full mx-auto mb-8">
+      <!-- Search form -->
+      <div class="w-full lg:max-w-3xl mx-auto mb-4">
         {% include "includes/search_form.html" with placeholder="Циклы в Python" request=request request=request only %}
       </div>
 
+      <!-- Deck list -->
       <div class="mb-auto">
         {% include "includes/deck_list.html" with decks=user_decks user=request.user is_owner=is_owner studying_decks_ids=studying_decks_ids only %}
       </div>
 
-      <div class="pt-8">
-        {% include "includes/pagination.html" with page_obj=user_decks query=query sort_by=sort_by only %}
-      </div>
+      <!-- Pagination -->
+      {% include "includes/pagination.html" with page_obj=user_decks query=query sort_by=sort_by only %}
 
     </div>
   </div>

@@ -4,188 +4,233 @@
 
 {% block content %}
 
-  <div class="flex flex-col flex-1 py-8">
+  <div class="flex flex-col py-4 lg:py-8">
     <div class="container mx-auto px-4 flex flex-col">
 
-    <div>
-      {% include "includes/title.html" with text="Данные профиля" only  %}
-    </div>
+      <!-- Title -->
+      <div class="mb-4 lg:mb-8">
+        {% include "includes/title.html" with text="Данные профиля" only  %}
+      </div>
 
-    <div class="max-w-1/2 w-full mx-auto font-medium mb-10">
-      <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" class="flex flex-col gap-5">
-        {% csrf_token %}
 
-        {% if messages %}
-          <ul class="messages">
-            {% for message in messages %}
-              <li class="{{ message.tags }} py-2 px-4">{{ message }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+      <!-- User form -->
+      <div class="w-full lg:max-w-3xl mx-auto mb-4 lg:mb-8">
+        <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" class="flex flex-col gap-2 lg:gap-4">
+          {% csrf_token %}
 
-        {% if user_form.non_field_errors %}
-          <ul class="errorlist">
-            {% for error in user_form.non_field_errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+          <!-- Messages -->
+          {% if messages %}
+            <ul class="messages">
+              {% for message in messages %}
+                <li class="{{ message.tags }} py-2 px-4">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
 
-        <!-- Username -->
-        <div>
-          {{ user_form.username.label_tag }}
-          {{ user_form.username }}
-          <span class="inline-block w-full text-sm text-gray-500">
-            {{ user_form.username.help_text }}
-          </span>
-          {% if user_form.username.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in user_form.username.errors %}
+          <!-- Non field errors -->
+          {% if user_form.non_field_errors %}
+            <ul class="errorlist">
+              {% for error in user_form.non_field_errors %}
                 <li>{{ error }}</li>
               {% endfor %}
             </ul>
           {% endif %}
-        </div>
 
-        <!-- Email -->
-        <div>
-          {{ user_form.email.label_tag }}
-          {{ user_form.email}}
-          {% if user_form.email.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in user_form.email.errors %}
+          <!-- Username -->
+          <div>
+
+            {{ user_form.username.label_tag }}
+            {{ user_form.username }}
+            <span class="inline-block w-full text-xs md:text-sm text-gray-500">
+              {{ user_form.username.help_text }}
+            </span>
+
+            <!-- Username errors -->
+            {% if user_form.username.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in user_form.username.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+          </div>
+
+          <!-- Email -->
+          <div>
+
+            {{ user_form.email.label_tag }}
+            {{ user_form.email}}
+
+            <!-- Email errors-->
+            {% if user_form.email.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in user_form.email.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+          </div>
+
+          <!-- Specialization -->
+          <div>
+
+            {{ user_form.specialization.label_tag }}
+            {{ user_form.specialization}}
+
+            <!-- Specialization errors -->
+            {% if user_form.specialization.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in user_form.specialization.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+          </div>
+
+          <!-- Skills -->
+          <div>
+
+            {{ user_form.skills.label_tag }}
+            {{ user_form.skills}}
+
+            <!-- Skills errors-->
+            {% if user_form.skills.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in user_form.skills.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+          </div>
+
+          <!-- Codewars username -->
+          <div>
+
+            {{ user_form.codewars_username.label_tag }}
+            {{ user_form.codewars_username}}
+
+            <!-- Codewars username errors -->
+            {% if user_form.codewars_username.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in user_form.codewars_username.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+          </div>
+
+          <!-- Avatar -->
+          <div>
+
+            {{ user_form.avatar.label_tag }}
+            {{ user_form.avatar}}
+
+             <!-- Avatar errors -->
+            {% if user_form.vata.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in user_form.vata.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+          </div>
+
+           <!-- Save button -->
+          <div>
+            <button type="submit" name="update_user" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 active:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+              Сохранить профиль
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Password form -->
+      <div class="w-full lg:max-w-3xl mx-auto">
+        <form action="{% url "user_update" user.pk %}" method="post" class="flex flex-col gap-2 lg:gap-4">
+          {% csrf_token %}
+
+          <!-- Non field form -->
+          {% if password_form.non_field_errors %}
+            <ul class="errorlist">
+              {% for error in password_form.non_field_errors %}
                 <li>{{ error }}</li>
               {% endfor %}
             </ul>
           {% endif %}
-        </div>
 
-        <!-- Specialization -->
-        <div>
-          {{ user_form.specialization.label_tag }}
-          {{ user_form.specialization}}
-          {% if user_form.specialization.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in user_form.specialization.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
+          <!-- Old password -->
+          <div>
 
-        <!-- Skills -->
-        <div>
-          {{ user_form.skills.label_tag }}
-          {{ user_form.skills}}
-          {% if user_form.skills.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in user_form.skills.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
+            {{ password_form.old_password.label_tag }}
+            {{ password_form.old_password }}
 
-        <!-- Codewars username -->
-        <div>
-          {{ user_form.codewars_username.label_tag }}
-          {{ user_form.codewars_username}}
-          {% if user_form.codewars_username.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in user_form.codewars_username.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
+            <!-- Old password errors -->
+            {% if password_form.old_password.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in password_form.old_password.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
 
-        <!-- Avatar -->
-        <div>
-          {{ user_form.avatar.label_tag }}
-          {{ user_form.avatar}}
-          {% if user_form.vata.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in user_form.vata.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
+          </div>
 
-        <div>
-          <button type="submit" name="update_user" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
-            Сохранить профиль
-          </button>
-        </div>
+          <!-- New password1 -->
+          <div>
 
-      </form>
-    </div>
+            {{ password_form.new_password1.label_tag }}
+            {{ password_form.new_password1}}
+            <span class="mt-1 inline-block w-full text-xs md:text-sm text-gray-500">
+              {{ password_form.new_password1.help_text }}
+            </span>
 
-    <div class="max-w-1/2 w-full mx-auto font-medium">
-      <form action="{% url "user_update" user.pk %}" method="post" class="flex flex-col gap-5">
-        {% csrf_token %}
+            <!-- New password1 errors -->
+            {% if password_form.new_password1.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in password_form.new_password1.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
 
-        {% if password_form.non_field_errors %}
-          <ul class="errorlist">
-            {% for error in password_form.non_field_errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+          </div>
 
-        <!-- Old password -->
-        <div>
-          {{ password_form.old_password.label_tag }}
-          {{ password_form.old_password }}
-          {% if password_form.old_password.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in password_form.old_password.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
+          <!-- New password2 -->
+          <div>
 
-        <!-- New password1 -->
-        <div>
-          {{ password_form.new_password1.label_tag }}
-          {{ password_form.new_password1}}
-          <span class="mt-1 inline-block w-full text-sm text-gray-500">
-            {{ password_form.new_password1.help_text }}
-          </span>
-          {% if password_form.new_password1.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in password_form.new_password1.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
+            {{ password_form.new_password2.label_tag }}
+            {{ password_form.new_password2}}
+            <span class="inline-block w-full text-xs md:text-sm text-gray-500">
+              {{ password_form.new_password2.help_text }}
+            </span>
 
-        <!-- New password2 -->
-        <div>
-          {{ password_form.new_password2.label_tag }}
-          {{ password_form.new_password2}}
-          <span class="inline-block w-full text-sm text-gray-500">
-            {{ password_form.new_password2.help_text }}
-          </span>
-          {% if password_form.new_password2.errors %}
-            <ul class="errorlist mb-2">
-              {% for error in password_form.new_password2.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
+            <!-- New password2 -->
+            {% if password_form.new_password2.errors %}
+              <ul class="errorlist mb-2">
+                {% for error in password_form.new_password2.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
 
-        <div>
-          <button type="submit" name="change_password" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
-            Изменить пароль
-          </button>
-        </div>
+          </div>
 
-      </form>
-    </div>
+          <!-- Change password button -->
+          <div>
+            <button type="submit" name="change_password" class="py-2 px-4 border w-full border-gray-300 rounded-md bg-blue-500 hover:bg-blue-600 active:bg-blue-600 transition-colors text-white text-shadow-md cursor-pointer shadow">
+              Изменить пароль
+            </button>
+          </div>
+
+        </form>
+      </div>
 
   </div>
 </div>

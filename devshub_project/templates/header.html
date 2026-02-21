@@ -13,10 +13,10 @@
 
       <!-- Links -->
       <ul class="hidden md:flex gap-x-6 text-gray-700">
-        <li><a href="{% url "card_list" %}" class="hover:text-blue-500 {% active_link "card_list" %}">Карточки</a></li>
-        <li><a href="{% url "deck_list" %}" class="hover:text-blue-500 {% active_link "deck_list" %}">Колоды</a></li>
-        <li><a href="{% url "project_list" %}" class="hover:text-blue-500 {% active_link "project_list" %}">Проекты</a></li>
-        <li><a href="{% url "user_list" %}" class="hover:text-blue-500 {% active_link "user_list" %}">Пользователи</a></li>
+        <li><a href="{% url "card_list" %}" class="hover:text-blue-500 active:text-blue-500  {% active_link "card_list" %}">Карточки</a></li>
+        <li><a href="{% url "deck_list" %}" class="hover:text-blue-500 active:text-blue-500 {% active_link "deck_list" %}">Колоды</a></li>
+        <li><a href="{% url "project_list" %}" class="hover:text-blue-500 active:text-blue-500 {% active_link "project_list" %}">Проекты</a></li>
+        <li><a href="{% url "user_list" %}" class="hover:text-blue-500 active:text-blue-500 {% active_link "user_list" %}">Пользователи</a></li>
       </ul>
       <!-- Authenticated links-->
       {% if request.user.is_authenticated %}
@@ -30,39 +30,39 @@
             </button>
             <ul data-js-user-menu class="absolute left-0 mt-2 w-52 bg-white border border-gray-300 text-gray-700 rounded-md shadow-lg hidden z-50">
               <li>
-                <a href="{% url "user_detail" request.user.pk %}" class="block px-4 py-2 font-medium hover:bg-gray-100 hover:text-blue-500">
+                <a href="{% url "user_detail" request.user.pk %}" class="block px-4 py-2 font-medium hover:bg-gray-100 hover:text-blue-500 active:text-blue-500">
                   Мой профиль
                 </a>
               </li>
               <li class="border-b-2 border-b-gray-300">
-                <a href="{% url "user_update" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                <a href="{% url "user_update" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500 active:text-blue-500">
                   Редактировать профиль
                 </a>
               </li>
               <li>
-                <a href="{% url "review" %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                <a href="{% url "review" %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500 active:text-blue-500">
                   Повторять карточки
                 </a>
               </li>
               <li>
-                <a href="{% url "user_cards" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                <a href="{% url "user_cards" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500 active:text-blue-500">
                   Мои карточки
                 </a>
               </li>
               <li>
-                <a href="{% url "user_decks" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                <a href="{% url "user_decks" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500 active:text-blue-500">
                   Мои колоды
                 </a>
               </li>
               <li class="border-b-2 border-b-gray-300">
-                <a href="{% url "user_projects" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500">
+                <a href="{% url "user_projects" request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500 active:text-blue-500">
                   Мои проекты
                 </a>
               </li>
               <li>
                 <form action="{% url "logout" %}" method="post">
                   {% csrf_token %}
-                  <button type="submit" class="w-full text-left px-4 py-2 font-medium text-red-800 hover:bg-gray-100 hover:text-red-600 cursor-pointer">
+                  <button type="submit" class="w-full text-left px-4 py-2 font-medium text-red-800 hover:bg-gray-100 hover:text-red-600 active:text-red-600 cursor-pointer">
                     Выйти
                   </button>
                 </form>
@@ -73,8 +73,8 @@
       <!-- Guest links -->
       {% else %}
         <ul class="hidden md:flex gap-x-6">
-          <li><a href="{% url "register" %}" class="hover:text-blue-600 transition-colors {% active_link "register" %}">Регистрация</a></li>
-          <li><a href="{% url "login" %}" class="hover:text-blue-600 transition-colors {% active_link "login" %}">Войти</a></li>
+          <li><a href="{% url "register" %}" class="hover:text-blue-600 active:text-blue-600 transition-colors {% active_link "register" %}">Регистрация</a></li>
+          <li><a href="{% url "login" %}" class="hover:text-blue-600 active:text-blue-600 transition-colors {% active_link "login" %}">Войти</a></li>
         </ul>
       {% endif %}
 

@@ -1,7 +1,7 @@
 {% if is_author %}
-  <span class="inline-block max-w-28 w-full text-center rounded-full py-1 px-2 primary transition-colors hover:bg-blue-50">Вы автор</span>
-{% elif is_saved%}
-  <span class="inline-block max-w-28 w-full text-center rounded-full py-1 px-2 success transition-colors hover:bg-green-50">Сохранена</span>
+  <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 primary transition-colors hover:bg-blue-50">Вы автор</span>
+{% elif is_saved %}
+  <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 success transition-colors hover:bg-green-50">Сохранена</span>
 {% else %}
-  <span class="inline-block max-w-28 w-full text-center rounded-full py-1 px-2 warning transition-colors hover:bg-orange-50">Новая</span>
+  <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 warning transition-colors hover:bg-orange-50">Новая</span>
 {% endif %}

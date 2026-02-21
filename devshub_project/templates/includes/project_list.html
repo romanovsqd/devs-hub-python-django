@@ -1,16 +1,47 @@
 {% load project_tags %}
 
-<div class="flex gap-4 py-2 px-4 text-gray-500">
-  <p class="flex-2">Обложка</p>
-  <p class="flex-2">Название</p>
-  <p class="flex-1">Репозиторий</p>
-  <p class="flex-1">URL</p>
-  <p class="flex-1 text-right">Автор</p>
+<!-- Project list as table -->
+<div class="hidden lg:table">
+
+  <!-- Project table -->
+  <table class="w-full table-fixed text-gray-500">
+
+    <colgroup>
+      <col class="lg:max-w-2/10 xl w-full">
+      <col class="lg:max-w-3/10 w-full">
+      <col class="lg:max-w-2/10 w-full">
+      <col class="lg:max-w-1/10 w-full">
+      <col class="lg:max-w-2/10 w-full">
+    </colgroup>
+
+    <!-- Project table head-->
+    <thead>
+      <tr>
+        <th class="text-left py-2 px-4 font-normal">Обложка</th>
+        <th class="text-center py-2 px-4 font-normal">Название</th>
+        <th class="text-center py-2 px-4 font-normal">Репозиторий</th>
+        <th class="text-center py-2 px-4 font-normal">URL</th>
+        <th class="text-right py-2 px-4 font-normal">Автор</th>
+      </tr>
+    </thead>
+
+    <!-- Project table body-->
+    <tbody class="divide-y divide-gray-300">
+
+      <!-- Projects -->
+      {% for project in projects %}
+        {% render_project_as_table project=project user=user %}
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
 </div>
-<ul class="divide-y divide-gray-300">
+
+<!-- Project list as projects -->
+<div class="flex flex-col gap-4 lg:hidden">
   {% for project in projects %}
-    <li>
-      {% render_project project=project user=request.user %}
-    </li>
+    {% render_project project=project user=user %}
   {% endfor %}
-</ul>
+</div>

@@ -1,20 +1,47 @@
 {% load user_tags %}
 
-<div class="flex gap-4 py-2 px-4 text-gray-500">
-  <p class="flex-1">Аватар</p>
-  <p class="flex-1">Имя</p>
-  <p class="flex-1">Направление</p>
-  <p class="flex-1">Навыки</p>
-  <p class="flex-1 text-right">Профиль codewars</p>
+<!-- Project list as table -->
+<div class="hidden lg:table">
+
+  <!-- Project table -->
+  <table class="w-full table-fixed text-gray-500">
+
+    <colgroup>
+      <col class="lg:max-w-2/10 xl w-full">
+      <col class="lg:max-w-2/10 w-full">
+      <col class="lg:max-w-2/10 w-full">
+      <col class="lg:max-w-2/10 w-full">
+      <col class="lg:max-w-2/10 w-full">
+    </colgroup>
+
+    <!-- Project table head-->
+    <thead>
+      <tr>
+        <th class="text-left py-2 px-4 font-normal"><span class="pl-4">Аватар</span></th>
+        <th class="text-center py-2 px-4 font-normal">Имя</th>
+        <th class="text-center py-2 px-4 font-normal">Направление</th>
+        <th class="text-center py-2 px-4 font-normal">Навыки</th>
+        <th class="text-right py-2 px-4 font-normal">Профиль codewars</th>
+      </tr>
+    </thead>
+
+    <!-- Project table body-->
+    <tbody class="divide-y divide-gray-300">
+
+      <!-- Projects -->
+      {% for user in users %}
+        {% render_user_as_table user=user %}
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
 </div>
-<ul class="divide-y divide-gray-300">
+
+<!-- Project list as projects -->
+<div class="flex flex-col gap-4 lg:hidden">
   {% for user in users %}
-    <li>
-      {% render_user user=user %}
-    </li>
+    {% render_user user=user %}
   {% endfor %}
-</ul>
-
-
-
-
+</div>

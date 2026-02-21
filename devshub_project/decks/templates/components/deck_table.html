@@ -1,0 +1,41 @@
+<tr class="hover:bg-gray-100 text-gray-800">
+  <!-- Deck title -->
+  <td class="text-left py-2 px-4">
+    <a href="{{ deck.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {{ deck.title|truncatechars:76|striptags }}
+    </a>
+  </td>
+
+  <!-- Deck author -->
+  <td class="text-center py-2 px-4">
+    <a href="{{ deck.author.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {{ deck.author }}
+    </a>
+  </td>
+
+  <!-- Deck status -->
+  <td class="text-right py-2 px-4">
+
+    <!-- Toggle study button -->
+    {% if is_owner %}
+      <form action="{% url "deck_toggle_study" deck.id %}" method="post" data-js-toggle-save-form>
+        {% csrf_token %}
+        {% if deck.id not in studying_decks_ids %}
+          <button type="submit" data-js-toggle-button class="sm:max-w-48 w-full text-center rounded-full py-1 px-2 transition-colors cursor-pointer primary">
+            Добавить в изучаемые
+          </button>
+        {% else %}
+          <button type="submit" data-js-toggle-button class="sm:max-w-48 w-full text-center rounded-full py-1 px-2 transition-colors cursor-pointer danger">
+            Удалить из изучаемых
+          </button>
+        {% endif %}
+      </form>
+    {% endif %}
+
+    <!-- Status -->
+    {% if not is_owner %}
+      {% include "includes/saved_status.html" with is_author=is_author is_saved=is_saved only %}
+    {% endif %}
+  </td>
+
+</tr>

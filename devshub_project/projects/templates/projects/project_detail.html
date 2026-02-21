@@ -12,75 +12,110 @@
 {% endblock head %}
 
 {% block content %}
-  <div class="flex flex-col flex-1 py-8">
+  <div class="py-4 lg:py-8 flex flex-1">
     <div class="container mx-auto px-4 flex flex-col flex-1">
 
+      <!-- Project links -->
       {% if project.live_url or project.repository_url %}
-        <div>
-          <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
+
+         <!-- User buttons -->
+        <div class="mb-2">
+          <div class="flex flex-wrap lg:flex-nowrap gap-2 lg:gap-4 justify-center items-center max-w-xl lg:max-w-5xl mx-auto">
+
             {% if project.live_url %}
-              <a href="{{ project.live_url }}" target="_blank" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success mb-2">Смотреть онлайн</a>
+              <a href="{{ project.live_url }}" target="_blank" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success">Смотреть онлайн</a>
             {% endif %}
+
             {% if project.repository_url %}
-            <a href="{{ project.repository_url }}" target="_blank" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium warning mb-2">Репозиторий проекта</a>
+              <a href="{{ project.repository_url }}" target="_blank" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium warning">Репозиторий проекта</a>
             {% endif %}
+
           </div>
         </div>
-      {% endif %}
-      {% if project.author == request.user %}
-        <div>
-          <div class="max-w-5xl mx-auto flex gap-4 justify-center items-center">
-            <a href="{% url "project_update" project.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary mb-2">Редактировать проект</a>
-            <a href="{% url "project_delete" project.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium danger mb-2">Удалить проект</a>
-          </div>
-        </div>
+
       {% endif %}
 
-      <div class="my-8">
-        {% include "includes/title.html" with text="Проект" title=project.title only %}
+      <!-- Author buttons -->
+      {% if request.user.is_authenticated %}
+        {% if project.author == request.user %}
+
+          <div>
+            <div class="flex flex-wrap lg:flex-nowrap gap-2 lg:gap-4 justify-center items-center max-w-xl lg:max-w-5xl mx-auto">
+              <a href="{% url "project_update" project.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary">Редактировать проект</a>
+              <a href="{% url "project_delete" project.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium danger">Удалить проект</a>
+            </div>
+          </div>
+
+        {% endif %}
+      {% endif %}
+
+      <!-- Title -->
+      <div class="my-4 lg:my-8">
+        {% include "includes/title.html" with title=project.title only %}
       </div>
 
+      <!-- Slider -->
       {% if project.cover_image or project.images.all %}
-      <div class="mb-8">
-        <div class="swiper max-w-7xl max-h-180 mx-auto rounded-lg shadow-md shadow-gray-400">
-          <div class="swiper-wrapper">
-            {% if project.cover_image %}
-              <div class="swiper-slide">
-                {% thumbnail project.cover_image "1280x720" crop="center" as im %}
-                <div class="max-w-7xl max-h-180 overflow-hidden ">
-                  <img src="{{ im.url }}" alt="Обложка {{ project.title }}" class="w-full h-full object-cover">
+        <div>
+          <div class="swiper max-w-7xl mx-auto rounded-lg shadow-md shadow-gray-400">
+            <!-- Slider wrapper-->
+            <div class="swiper-wrapper">
+
+              <!-- Slider images (slides)-->
+              {% if project.cover_image %}
+
+                {% thumbnail project.cover_image "1280x720" crop="center" as cover %}
+                <div class="swiper-slide">
+                  <div class="relative w-full aspect-video overflow-hidden">
+                    <img src="{{ cover.url }}" alt="Обложка {{ project.title }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+                  </div>
                 </div>
-              </div>
-            {% endif %}
-            {% for image in project.images.all %}
-              <div class="swiper-slide">
-                {% thumbnail image.file "1280x720" crop="center" as im %}
-                <div class="max-w-7xl max-h-180 overflow-hidden">
-                  <img src="{{ im.url }}" alt="Изображение {{ project.title }}" class=" w-full h-full object-cover">
+
+              {% endif %}
+
+              {% for image in project.images.all %}
+
+                {% thumbnail image.file "1280x720" crop="center" as image %}
+                <div class="swiper-slide">
+                  <div class="relative w-full aspect-video overflow-hidden">
+                    <img src="{{ image.url }}" alt="Изображение {{ project.title }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+                  </div>
                 </div>
-              </div>
-            {% endfor %}
+
+              {% endfor %}
+
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-scrollbar"></div>
+
           </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-          <div class="swiper-scrollbar"></div>
         </div>
-      </div>
       {% endif %}
 
-      <div class="prose max-w-5xl w-full mx-auto text-lg mb-auto">
+
+      <!-- Project content -->
+      <div class="prose sm:mx-auto text-lg mb-auto">
+
+        <!-- Project description -->
         <div>
           {{ project.description|safe }}
         </div>
+
       </div>
 
-      <div class="text-center text-lg font-medium">
-        <a href="{{ card.author.get_absolute_url }}" class="group">
-          Автор: <span class="group-hover:text-blue-600 transition-colors">{{ project.author }}</span>
+      <!-- Project Author -->
+      <div class="text-center text-lg">
+
+        <a href="{{ project.author.get_absolute_url }}" class="group">
+          Автор: <span class="font-medium group-hover:text-blue-600 active:text-blue-600">{{ project.author }}</span>
         </a>
+
       </div>
 
+    </div>
+  </div>
 {% endblock content %}
 
 {% block scripts %}

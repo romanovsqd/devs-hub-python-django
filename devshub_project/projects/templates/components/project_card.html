@@ -1,0 +1,63 @@
+{% load thumbnail %}
+
+<div class="p-4 flex flex-col gap-4 text-gray-700 rounded-lg border-2 border-gray-200 justify-center items-center">
+
+  <!-- Card header -->
+  <div class="flex flex-col justyfy-center gap-2 items-center w-full">
+
+    <!-- Project title -->
+    <div>
+      <a href="{{ project.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+        {{ project.title|truncatechars:76 }}
+      </a>
+    </div>
+
+    <!-- Project cover -->
+    {% if project.cover_image %}
+      {% thumbnail project.cover_image "400x225" crop="center" as cover %}
+      <div class="relative lg:max-w-80 w-full aspect-video rounded-lg overflow-hidden shadow-md shadow-gray-400">
+        <a href="{{ project.get_absolute_url }}">
+          <img
+            src="{{ cover.url }}"
+            alt="Обложка {{ project.title }}"
+            class="absolute inset-0 w-full h-full object-cover object-center rounded-lg duration-500 transition-transform hover:scale-110">
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Card body -->
+  <div class="flex flex-wrap justify-center items-center gap-4">
+
+    <!-- Project repository url -->
+    {% if project.repository_url %}
+      <div class="flex flex-col justify-center items-center">
+        <span>Репозиторий</span>
+        <a href="{{ project.repository_url }}" target="_blank" class="font-medium hover:text-blue-600 active:text-blue-600 transition-colors">
+          Перейти
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Project live url -->
+    {% if project.live_url %}
+      <div class="flex flex-col justify-center items-center">
+        <span>URL</span>
+        <a href="{{ project.live_url }}" target="_blank" class="font-medium hover:text-blue-600 active:text-blue-600 transition-colors">
+          Перейти
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Project author -->
+    <div class="flex flex-col justify-center items-center">
+      <span>Автор</span>
+      <a href="{{ project.author.get_absolute_url }}" class="font-medium hover:text-blue-600 active:text-blue-600 transition-colors">
+        {{ project.author.username }}
+      </a>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,58 @@
+{% load thumbnail %}
+
+<tr class="hover:bg-gray-100 text-gray-800">
+
+  <!-- User avatar -->
+  <td class="text-left py-2 px-4">
+    {% if user.avatar %}
+      {% thumbnail user.avatar "80x80" crop="center" as avatar %}
+      <div class="relative max-w-20 w-full aspect-square rounded-full overflow-hidden shadow-md shadow-gray-400">
+        <a href="{{ user.get_absolute_url }}">
+          <img
+            src="{{ avatar.url }}"
+            alt="Аватар {{ user.username }}"
+            class="absolute inset-0 w-full h-full object-cover object-center rounded-full duration-500 transition-transform hover:scale-110">
+        </a>
+      </div>
+    {% else %}
+      <span>Без аватарки</span>
+    {% endif %}
+  </td>
+
+  <!-- Username -->
+  <td class="text-center py-2 px-4">
+    <a href="{{ project.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {{ user.username|truncatechars:30 }}
+    </a>
+  </td>
+
+  <!-- User specialization -->
+  <td class="text-center py-2 px-4">
+    {% if user.specialization %}
+      <span>{{ user.specialization }}</span>
+    {% else %}
+      <span>-</span>
+    {% endif %}
+  </td>
+
+  <!-- User skills -->
+  <td class="text-center py-2 px-4">
+    {% if user.skills %}
+      <span>{{ user.skills }}</span>
+    {% else %}
+      <span>-</span>
+    {% endif %}
+  </td>
+
+  <!-- User codewars username -->
+  <td class="text-right py-2 px-4">
+    {% if user.codewars_username %}
+      <a href="https://www.codewars.com/users/{{user.codewars_username}}" target="_blank" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+        {{ user.codewars_username }}
+      </a>
+    {% else %}
+    <span>-</span>
+    {% endif %}
+  </td>
+
+</tr>

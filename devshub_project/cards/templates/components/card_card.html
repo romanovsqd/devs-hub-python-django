@@ -1,0 +1,22 @@
+<div class="p-4 flex flex-col gap-2 text-gray-700 rounded-lg border-2 border-gray-200">
+
+  <!-- Card question -->
+  <div>
+    <a href="{{ card.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {{ card.question|truncatechars:76|striptags }}
+    </a>
+  </div>
+
+  <!-- Card author -->
+  <div>
+    <a href="{{ card.author.get_absolute_url }}" class="group">
+      Автор: <span class="font-medium group-hover:text-blue-600 active:text-blue-600">{{ card.author }}</span>
+    </a>
+  </div>
+
+  <!-- Card status -->
+    <div class="w-full">
+      {% include "includes/saved_status.html" with is_author=is_author is_saved=is_saved only %}
+    </div>
+
+</div>

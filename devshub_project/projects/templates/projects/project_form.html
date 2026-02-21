@@ -9,10 +9,11 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="flex flex-col flex-1 py-8">
+  <div class="flex flex-1 py-4 lg:py-8">
     <div class="container mx-auto px-4 flex flex-col flex-1 justify-center items-center">
 
-      <div class="mb-8">
+      <!-- Title -->
+      <div class="mb-4 lg:mb-8">
         {% if not form.instance.pk %}
           {% include "includes/title.html" with text="Создать проект" only %}
         {% else %}
@@ -20,7 +21,8 @@
         {% endif %}
       </div>
 
-      <div class="max-w-1/2 w-full mx-auto font-medium">
+      <!-- Form -->
+      <div class="w-full lg:max-w-5xl">
         {% include "includes/model_form.html" with form=form has_file_field=True csrf_token=csrf_token only %}
       </div>
 

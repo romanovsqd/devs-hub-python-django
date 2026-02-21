@@ -1,0 +1,21 @@
+<tr class="hover:bg-gray-100 text-gray-800">
+  <!-- Card question -->
+  <td class="text-left py-2 px-4">
+    <a href="{{ card.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {{ card.question|truncatechars:76|striptags }}
+    </a>
+  </td>
+
+  <!-- Card author -->
+  <td class="text-center py-2 px-4">
+    <a href="{{ card.author.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
+      {{ card.author }}
+    </a>
+  </td>
+
+  <!-- Card status -->
+  <td class="text-right py-2 px-4">
+    {% include "includes/saved_status.html" with is_author=is_author is_saved=is_saved only %}
+  </td>
+
+</tr>
