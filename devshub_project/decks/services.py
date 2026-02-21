@@ -33,9 +33,7 @@ def get_user_created_or_saved_deck_by_id(deck_id, user):
     иначе 404.
     """
     return get_object_or_404(
-        Deck,
-        Q(saved_by=user) | Q(author=user),
-        pk=deck_id,
+        Deck.objects.filter(Q(saved_by=user) | Q(author=user), pk=deck_id).distinct()
     )
 
 

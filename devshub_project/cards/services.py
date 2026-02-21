@@ -28,9 +28,7 @@ def get_user_created_or_saved_card_by_id(card_id, user):
     иначе 404.
     """
     return get_object_or_404(
-        Card,
-        Q(saved_by=user) | Q(author=user),
-        pk=card_id,
+        Card.objects.filter(Q(saved_by=user) | Q(author=user), pk=card_id).distinct()
     )
 
 
