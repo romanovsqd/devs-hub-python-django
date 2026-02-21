@@ -2,23 +2,26 @@
 
 <div class="p-4 flex flex-col gap-4 text-gray-700 rounded-lg border-2 border-gray-200 justify-center items-center">
 
-  <!-- Card header -->
-  {% if user.avatar %}
-    <div class="flex flex-col justyfy-center gap-2 items-center w-full">
+    <!-- Card header -->
+    <div class="relative max-w-20 w-full aspect-square rounded-full overflow-hidden shadow-md shadow-gray-400">
 
-    <!-- User avatar -->
-      {% thumbnail user.avatar "80x80" crop="center" as avatar %}
-      <div class="rounded-full overflow-hidden max-w-20 max-h-20 shadow-md shadow-gray-400">
-        <a href="{{ user.get_absolute_url }}">
+      <a href="{{ user.get_absolute_url }}">
+        {% if user.avatar %}
+          <!-- User avatar -->
+          {% thumbnail user.avatar "80x80" crop="center" as avatar %}
           <img
             src="{{ avatar.url }}"
             alt="Аватар {{ user.username }}"
-            class="w-full h-full rounded-full object-cover object-center duration-500 transition-transform hover:scale-110">
-        </a>
-      </div>
+            class="absolute inset-0 w-full h-full object-cover object-center rounded-full duration-500 transition-transform hover:scale-110">
+        {% else %}
+          <!-- User avatar placeholder -->
+          <svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full p-4 text-gray-400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 21C20 19.6044 20 18.9067 19.8278 18.3389C19.44 17.0605 18.4395 16.06 17.1611 15.6722C16.5933 15.5 15.8956 15.5 14.5 15.5H9.5C8.10444 15.5 7.40665 15.5 6.83886 15.6722C5.56045 16.06 4.56004 17.0605 4.17224 18.3389C4 18.9067 4 19.6044 4 21M16.5 7.5C16.5 9.98528 14.4853 12 12 12C9.51472 12 7.5 9.98528 7.5 7.5C7.5 5.01472 9.51472 3 12 3C14.4853 3 16.5 5.01472 16.5 7.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        {% endif %}
+      </a>
 
     </div>
-  {% endif %}
 
   <!-- Card body -->
   <div class="flex flex-col items-center gap-4 w-full">

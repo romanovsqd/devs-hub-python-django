@@ -13,17 +13,19 @@
     </div>
 
     <!-- Project cover -->
-    {% if project.cover_image %}
-      {% thumbnail project.cover_image "400x225" crop="center" as cover %}
-      <div class="relative lg:max-w-80 w-full aspect-video rounded-lg overflow-hidden shadow-md shadow-gray-400">
-        <a href="{{ project.get_absolute_url }}">
+    <div class="relative lg:max-w-80 w-full aspect-video rounded-lg overflow-hidden shadow-md shadow-gray-400">
+      <a href="{{ project.get_absolute_url }}">
+        {% if project.cover_image %}
+          {% thumbnail project.cover_image "320x160" crop="center" as cover %}
           <img
             src="{{ cover.url }}"
             alt="Обложка {{ project.title }}"
             class="absolute inset-0 w-full h-full object-cover object-center rounded-lg duration-500 transition-transform hover:scale-110">
-        </a>
-      </div>
-    {% endif %}
+        {% else %}
+            <svg class="absolute inset-0 w-full h-full p-4 duration-500 transition-transform hover:scale-110" fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 379.864 379.863" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M363.738,207.238h-8.063V52.318c0-8.891-7.24-16.127-16.127-16.127H16.127C7.236,36.191,0,43.428,0,52.318v225.314 c0,8.883,7.236,16.126,16.127,16.126H131.79c-0.604,1.681-0.989,3.476-0.989,5.376v28.41c0,8.882,7.236,16.127,16.126,16.127 h77.051c8.887,0,16.126-7.245,16.126-16.127v-28.41c0-1.9-0.384-3.695-1.002-5.376h47.586v33.786 c0,8.882,7.238,16.127,16.126,16.127h60.925c8.887,0,16.126-7.245,16.126-16.127V223.364 C379.864,214.467,372.625,207.238,363.738,207.238z M223.977,332.926h-77.051c-2.966,0-5.376-2.41-5.376-5.376h87.802 C229.352,330.511,226.937,332.926,223.977,332.926z M229.352,299.135v17.659H141.55v-17.659c0-2.966,2.41-5.376,5.376-5.376 h77.051C226.937,293.759,229.352,296.174,229.352,299.135z M223.977,283.008h-77.051H16.127c-2.966,0-5.375-2.404-5.375-5.375 v-22.656h275.936v28.031H223.977z M369.113,327.55c0,2.966-2.415,5.376-5.375,5.376h-60.925c-2.978,0-5.375-2.41-5.375-5.376 v-39.161v-65.024c0-2.971,2.397-5.375,5.375-5.375h47.485h13.439c2.96,0,5.375,2.404,5.375,5.375V327.55z"></path> </g> </g> </g></svg>
+        {% endif %}
+      </a>
+    </div>
 
   </div>
 
