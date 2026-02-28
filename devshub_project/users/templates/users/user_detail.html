@@ -3,7 +3,11 @@
 {% load thumbnail %}
 
 {% block title %}
-  {% if is_owner %}Мой профиль{% else %}Профиль {{ user.username }}{% endif %}
+  {% if user == request.user %}
+    Мой профиль
+  {% else %}
+    Профиль {{ user.username }}
+  {% endif %}
 {% endblock title %}
 
 {% block content %}
@@ -69,7 +73,7 @@
           <div class="max-w-lg w-full mx-auto">
             <canvas
               data-js-stats-canvas
-              data-js-total-completed-katas="{{ codewars_stats.total_completed_katas }}"
+              data-js-total-completed-katas="{{ user.codewars_profile.total_completed_katas }}"
               data-js-cards-in-study="{{ cards_stats.in_study }}"
               data-js-decks-in-study="{{ decks_stats.in_study }}"
               data-js-total-projects="{{ projects_stats.total }}">
@@ -90,10 +94,10 @@
                       Codewars аккаунт: <span class="font-medium hover:text-red-600 active:text-red-600">{{ user.codewars_username }}</span>
                     </a>
                   </li>
-                  <li>Позиция в топе: {{ codewars_stats.leaderboard_position }}</li>
-                  <li>Решенных здач: {{ codewars_stats.total_completed_katas }}</li>
-                  <li>Языки: {{ codewars_stats.languages|join:', ' }}</li>
-                  <li>Очки (honor): {{ codewars_stats.honor }}</li>
+                  <li>Позиция в топе: {{ user.codewars_profile.leaderboard_position }}</li>
+                  <li>Решенных здач: {{ user.codewars_profile.total_completed_katas }}</li>
+                  <li>Языки: {{ user.codewars_profile.languages|join:', ' }}</li>
+                  <li>Очки (honor): {{ user.codewars_profile.honor }}</li>
                 </ul>
               </div>
             {% endif %}

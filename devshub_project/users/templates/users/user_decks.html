@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
+{% load deck_tags %}
 
 {% block title %}
-  {% if is_owner %}Мои колоды{% else %}Колоды {{ user.username }}{% endif %}
+  {% if user == request.user %}
+    Мои колоды
+  {% else %}
+    Колоды {{ user.username }}
+  {% endif %}
 {% endblock title %}
 
 {% block content %}
@@ -23,12 +28,73 @@
 
       <!-- Search form -->
       <div class="w-full lg:max-w-3xl mx-auto mb-4">
-        {% include "includes/search_form.html" with placeholder="Циклы в Python" request=request request=request only %}
+        {% include "includes/search_form.html" with placeholder="Циклы в Python" request=request only %}
       </div>
 
       <!-- Deck list -->
       <div class="mb-auto">
-        {% include "includes/deck_list.html" with decks=user_decks user=request.user is_owner=is_owner studying_decks_ids=studying_decks_ids only %}
+        <!-- Deck list as table -->
+        <div class="hidden sm:table">
+
+          <!-- Deck table -->
+          <table class="w-full table-fixed text-gray-500">
+
+            <colgroup>
+              <col class="max-w-2/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+            </colgroup>
+
+            <!-- Deck table head-->
+            <thead>
+              <tr>
+                <th class="text-left py-2 px-4 font-normal">
+                  Название
+                </th>
+                <th class="text-center py-2 px-4 font-normal">
+                  Автор
+                </th>
+                <th class="text-right py-2 px-4 font-normal">
+                  <span>Статус</span>
+                </th>
+              </tr>
+            </thead>
+
+            <!-- Deck table body-->
+            <tbody class="divide-y divide-gray-300">
+
+              <!-- Decks -->
+              {% for deck in user_decks %}
+
+                {% if user == request.user %}
+                  {% render_deck_as_table deck=deck user=request.user is_owner=True studying_decks_ids=studying_decks_ids %}
+                {% else %}
+                  {% render_deck_as_table deck=deck user=request.user %}
+                {% endif %}
+
+
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <!-- Deck list as decks -->
+        <div class="flex flex-col gap-4 sm:hidden">
+
+          {% for deck in user_decks %}
+
+            {% if user == request.user %}
+              {% render_deck deck=deck user=request.user is_owner=True studying_decks_ids=studying_decks_ids %}
+            {% else %}
+              {% render_deck deck=deck user=request.user %}
+            {% endif %}
+
+          {% endfor %}
+
+        </div>
       </div>
 
       <!-- Pagination -->
@@ -39,5 +105,5 @@
 {% endblock content %}
 
 {% block scripts %}
-  <script src="{% static "js/toggle_form_state.js" %}"></script>
+  <script src="{% static "js/toggle-study-deck.js" %}"></script>
 {% endblock scripts %}

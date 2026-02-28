@@ -20,7 +20,7 @@
 
           <!-- Messages -->
           {% if messages %}
-            <ul class="messages">
+            <ul class="messages flex flex-col gap-y-2">
               {% for message in messages %}
                 <li class="{{ message.tags }} py-2 px-4">{{ message }}</li>
               {% endfor %}

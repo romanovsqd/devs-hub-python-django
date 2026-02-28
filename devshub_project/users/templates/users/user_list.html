@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load user_tags %}
 
 {% block title %}Список пользователей{% endblock title %}
 
@@ -18,7 +19,53 @@
 
       <!-- User list -->
       <div class="mb-auto">
-        {% include "includes/user_list.html" with users=users only %}
+        <!-- User list as table -->
+        <div class="hidden lg:table">
+
+          <!-- User table -->
+          <table class="w-full table-fixed text-gray-500">
+
+            <colgroup>
+              <col class="lg:max-w-2/10 xl w-full">
+              <col class="lg:max-w-2/10 w-full">
+              <col class="lg:max-w-2/10 w-full">
+              <col class="lg:max-w-2/10 w-full">
+              <col class="lg:max-w-2/10 w-full">
+            </colgroup>
+
+            <!-- User table head-->
+            <thead>
+              <tr>
+                <th class="text-left py-2 px-4 font-normal"><span class="pl-4">Аватар</span></th>
+                <th class="text-center py-2 px-4 font-normal">Имя</th>
+                <th class="text-center py-2 px-4 font-normal">Направление</th>
+                <th class="text-center py-2 px-4 font-normal">Навыки</th>
+                <th class="text-right py-2 px-4 font-normal">Профиль codewars</th>
+              </tr>
+            </thead>
+
+            <!-- User table body-->
+            <tbody class="divide-y divide-gray-300">
+
+              <!-- Users -->
+              {% for user in users %}
+                {% render_user_as_table user=user %}
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <!-- User list as cards -->
+        <div class="flex flex-col gap-4 lg:hidden">
+          {% for user in users %}
+
+            {% render_user user=user %}
+
+          {% endfor %}
+        </div>
       </div>
 
       {% include "includes/pagination.html" with page_obj=users query=query sort_by=sort_by only %}
