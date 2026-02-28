@@ -12,12 +12,14 @@ from .forms import DeckForm
 
 
 def deck_list(request):
+    user = request.user if request.user.is_authenticated else None
+
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
     decks = services.filter_sort_paginate_decks(
-        decks=services.get_all_decks(),
+        decks=services.get_decks_with_saved_status(user=user),
         query=query,
         sort_by=sort_by,
         page_number=page_number,
@@ -34,15 +36,16 @@ def deck_list(request):
 
 
 def deck_detail(request, deck_id):
+    user = request.user if request.user.is_authenticated else None
+
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    deck = services.get_deck_by_id(deck_id=deck_id)
-    is_saved = services.is_deck_saved_by_user(deck=deck, user=request.user)
+    deck = services.get_deck_with_saved_status(deck_id=deck_id, user=user)
 
     cards = card_services.filter_sort_paginate_cards(
-        cards=services.get_deck_cards(deck=deck),
+        cards=services.get_deck_cards_with_saved_status(deck=deck, user=user),
         query=query,
         sort_by=sort_by,
         page_number=page_number,
@@ -54,7 +57,6 @@ def deck_detail(request, deck_id):
         "cards": cards,
         "query": query,
         "sort_by": sort_by,
-        "is_saved": is_saved,
     }
 
     return render(request, "decks/deck_detail.html", context)
@@ -62,14 +64,17 @@ def deck_detail(request, deck_id):
 
 @login_required
 def deck_create(request):
-    form = DeckForm(request.POST or None, user=request.user)
+    if request.method == "POST":
+        form = DeckForm(request.POST, user=request.user)
 
-    if form.is_valid():
-        deck = form.save(commit=False)
-        deck.author = request.user
-        deck.save()
-        form.save_m2m()
-        return redirect(deck.get_absolute_url())
+        if form.is_valid():
+            deck = services.create_deck(
+                **form.cleaned_data,
+                author=request.user,
+            )
+            return redirect(deck.get_absolute_url())
+    else:
+        form = DeckForm(user=request.user)
 
     context = {
         "form": form,
@@ -80,13 +85,19 @@ def deck_create(request):
 
 @login_required
 def deck_update(request, deck_id):
-    deck = services.get_user_created_deck_by_id(deck_id=deck_id, user=request.user)
+    deck = services.get_deck_created_by_user(deck_id=deck_id, user=request.user)
 
-    form = DeckForm(request.POST or None, instance=deck, user=request.user)
+    if request.method == "POST":
+        form = DeckForm(request.POST, instance=deck, user=request.user)
 
-    if form.is_valid():
-        deck = form.save()
-        return redirect(deck.get_absolute_url())
+        if form.is_valid():
+            services.update_deck(
+                **form.cleaned_data,
+                deck=deck,
+            )
+            return redirect(deck.get_absolute_url())
+    else:
+        form = DeckForm(instance=deck, user=request.user)
 
     context = {
         "form": form,
@@ -97,10 +108,10 @@ def deck_update(request, deck_id):
 
 @login_required
 def deck_delete(request, deck_id):
-    deck = services.get_user_created_deck_by_id(deck_id=deck_id, user=request.user)
+    deck = services.get_deck_created_by_user(deck_id=deck_id, user=request.user)
 
     if request.method == "POST":
-        deck.delete()
+        services.delete_deck(deck=deck)
         return redirect("deck_list")
 
     context = {
@@ -113,28 +124,16 @@ def deck_delete(request, deck_id):
 @login_required
 @require_POST
 def deck_toggle_save(request, deck_id):
-    deck = services.get_deck_by_id(deck_id=deck_id)
-    is_deck_saved = services.toggle_deck_save_by_user(deck=deck, user=request.user)
+    deck = services.get_deck_with_saved_status(deck_id=deck_id, user=request.user)
 
-    if is_deck_saved:
-        message = "Колода сохранена в ваш профиль"
-        button_text = "Удалить колоду из моего профиля"
-    else:
-        message = "Колода удалена из вашего профиля"
-        button_text = "Сохранить колоду в мой профиль"
+    success, message = services.toggle_deck_save_by_user(deck=deck, user=request.user)
 
-    return JsonResponse(
-        {
-            "success": is_deck_saved,
-            "message": message,
-            "button_text": button_text,
-        }
-    )
+    return JsonResponse({"success": success, "message": message})
 
 
 @login_required
 def deck_export(request, deck_id):
-    deck = services.get_user_created_or_saved_deck_by_id(
+    deck = services.get_deck_created_or_saved_by_user(
         deck_id=deck_id, user=request.user
     )
     filename, cards_generator = services.prepare_deck_for_export(deck=deck)

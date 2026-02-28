@@ -28,7 +28,7 @@
               {% csrf_token %}
 
               <!-- If not saved-->
-              {% if not is_saved %}
+              {% if not deck.is_saved %}
 
                 <button type="submit" data-js-toggle-button class="w-full text-center rounded-full py-4 px-6 text-md font-medium cursor-pointer primary">
                   Сохранить колоду в мой профиль
@@ -42,6 +42,7 @@
                   Удалить колоду из моего профиля
                 </button>
                 <a href="{% url "deck_export" deck.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success">Экспортировать колоду</a>
+
               {% endif %}
 
             </form>
@@ -61,12 +62,54 @@
       </div>
 
       <!-- Card list -->
-      <div class="mb-auto">
-        {% include "includes/card_list.html" with cards=cards user=request.user only %}
+      <div class="mb-4">
+        <!-- Card list as table -->
+        <div class="hidden sm:table">
+
+          <!-- Card table -->
+          <table class="w-full table-fixed text-gray-500">
+
+            <colgroup>
+              <col class="max-w-2/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+            </colgroup>
+
+            <!-- Card table head-->
+            <thead>
+              <tr>
+                <th class="text-left py-2 px-4 font-normal">Вопрос</th>
+                <th class="text-center py-2 px-4 font-normal">Автор</th>
+                <th class="text-right py-2 px-4 font-normal"><span>Статус</span></th>
+              </tr>
+            </thead>
+
+            <!-- Card table body-->
+            <tbody class="divide-y divide-gray-300">
+              <!-- Cards -->
+              {% for card in cards %}
+
+                {% render_card_as_table card=card user=request.user %}
+
+              {% endfor %}
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <!-- Card list as cards -->
+        <div class="flex flex-col gap-4 sm:hidden">
+          {% for card in cards %}
+
+            {% render_card card=card user=request.user %}
+
+          {% endfor %}
+        </div>
       </div>
 
       <!-- Deck Author -->
-      <div class="text-center text-lg">
+      <div class="text-center text-lg mb-auto">
         <a href="{{ deck.author.get_absolute_url }}" class="group">
           Автор: <span class="font-medium group-hover:text-blue-600 active:text-blue-600">{{ deck.author }}</span>
         </a>
@@ -81,5 +124,5 @@
 {% endblock content %}
 
 {% block scripts %}
-  <script src="{% static "js/toggle_form_state.js" %}"></script>
+  <script src="{% static "js/toggle-deck-save.js" %}"></script>
 {% endblock scripts %}

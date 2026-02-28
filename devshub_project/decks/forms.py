@@ -1,6 +1,6 @@
 from django import forms
 
-from cards.services import get_all_user_created_or_saved_cards
+from cards.services import get_cards_created_or_saved_by_user
 
 from .models import Deck
 
@@ -36,4 +36,4 @@ class DeckForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.user = user
 
-        self.fields["cards"].queryset = get_all_user_created_or_saved_cards(self.user)
+        self.fields["cards"].queryset = get_cards_created_or_saved_by_user(self.user)

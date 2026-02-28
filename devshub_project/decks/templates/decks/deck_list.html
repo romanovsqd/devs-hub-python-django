@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load deck_tags %}
 
 {% block title %}Список колод{% endblock title %}
 
@@ -16,9 +17,61 @@
         {% include "includes/search_form.html" with placeholder="Циклы в Python" request=request only %}
       </div>
 
-      <!-- Card list -->
+      <!-- Deck list -->
       <div class="mb-auto">
-        {% include "includes/deck_list.html" with decks=decks user=request.user only %}
+        <!-- Deck list as table -->
+        <div class="hidden sm:table">
+
+          <!-- Deck table -->
+          <table class="w-full table-fixed text-gray-500">
+
+            <colgroup>
+              <col class="max-w-2/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+            </colgroup>
+
+            <!-- Deck table head-->
+            <thead>
+              <tr>
+                <th class="text-left py-2 px-4 font-normal">
+                  Название
+                </th>
+                <th class="text-center py-2 px-4 font-normal">
+                  Автор
+                </th>
+                <th class="text-right py-2 px-4 font-normal">
+                  <span>Статус</span>
+                </th>
+              </tr>
+            </thead>
+
+            <!-- Deck table body-->
+            <tbody class="divide-y divide-gray-300">
+
+              <!-- Decks -->
+              {% for deck in decks %}
+
+                {% render_deck_as_table deck=deck user=request.user %}
+
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <!-- Deck list as decks -->
+        <div class="flex flex-col gap-4 sm:hidden">
+
+          {% for deck in decks %}
+
+            {% render_deck deck=deck user=request.user %}
+
+          {% endfor %}
+
+        </div>
       </div>
 
       <!-- Pagination -->

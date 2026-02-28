@@ -1,60 +1,126 @@
 from django.core.paginator import Paginator
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 
 from .models import Deck
 
 
-def get_all_decks():
-    """Возврващет queryset всех наборов карточек."""
-    return Deck.objects.all().select_related("author").prefetch_related("saved_by")
+def get_decks():
+    """
+    Возвращает queryset всех колод.
+    """
+    return (
+        Deck.objects.all()
+        .select_related("author")
+        .only("id", "title", "author__username")
+    )
 
 
-def get_deck_by_id(deck_id):
-    """Возвращает набор карточек по id или 404."""
-    return get_object_or_404(Deck, pk=deck_id)
+def get_decks_with_saved_status(user=None):
+    """
+    Возвращает queryset колод с флагом,
+    который указывает сохранена ли колода пользователем.
+    """
+    decks = get_decks()
+
+    if user is not None:
+        return decks.annotate(
+            is_saved=Exists(user.saved_decks.filter(pk=OuterRef("pk")))
+        )
+
+    return decks
+
+
+def get_deck_with_saved_status(deck_id, user=None):
+    """
+    Возвращает колоду с флагом,
+    который указывает сохранена ли колода пользователем.
+    """
+    deck = get_object_or_404(get_decks_with_saved_status(user=user), pk=deck_id)
+
+    return deck
+
+
+def get_deck_created_by_user(deck_id, user):
+    """
+    Возвращает колоду если она создана пользователем.
+    Если пользователь не является автором, или
+    если колоды не существует, вернет 404.
+    """
+    deck = get_object_or_404(Deck.objects.filter(author=user), pk=deck_id)
+    return deck
+
+
+def get_decks_created_or_saved_by_user(user):
+    """
+    Возвращает queryset колод,
+    которые созданы или сохранены пользователем.
+    """
+    decks = get_decks().filter(Q(author=user) | Q(saved_by=user)).distinct()
+    return decks
+
+
+def get_user_decks_with_saved_status(user, current_user):
+    """
+    Возвращает колоды созданные или сохраненные пользователем с флагом,
+    который указывает сохранена ли карточка текущим пользователем.
+    """
+    user_decks = get_decks_created_or_saved_by_user(user=user)
+
+    if current_user is not None:
+        return user_decks.annotate(
+            is_saved=Exists(current_user.saved_decks.filter(pk=OuterRef("pk")))
+        )
+    return user_decks
+
+
+def get_deck_created_or_saved_by_user(deck_id, user):
+    """
+    Возвращает колоду если она создана или сохранена пользоватем.
+    Иначе вернет 404.
+    """
+    deck = get_object_or_404(
+        get_decks().filter(Q(author=user) | Q(saved_by=user)).distinct(), pk=deck_id
+    )
+
+    return deck
+
+
+def get_deck_cards_with_saved_status(deck, user=None):
+    """
+    Возвращает карточки из колоды с флагом,
+    который указывает сохранена ли карточка пользователем.
+    """
+    cards = (
+        deck.cards.all()
+        .select_related("author")
+        .only("id", "question", "answer", "author__username")
+    )
+
+    if user is not None:
+        return cards.annotate(
+            is_saved=Exists(user.saved_cards.filter(pk=OuterRef("pk")))
+        )
+
+    return cards
 
 
 def get_deck_cards(deck):
-    """Возращает все карточки из набора карточек."""
-    return deck.cards.all().select_related("author").prefetch_related("saved_by")
-
-
-def get_user_created_deck_by_id(deck_id, user):
     """
-    Возвращает набор карточек по id, если он создан пользователем, иначе 404.
+    Возвращает все карточки из колоды.
     """
-    return get_object_or_404(Deck, pk=deck_id, author=user)
-
-
-def get_user_created_or_saved_deck_by_id(deck_id, user):
-    """
-    Возвращает набор карточек по id, если он создан или сохранен пользователем,
-    иначе 404.
-    """
-    return get_object_or_404(
-        Deck.objects.filter(Q(saved_by=user) | Q(author=user), pk=deck_id).distinct()
-    )
-
-
-def get_all_user_created_or_saved_decks(user):
-    """
-    возвращает queryset всех наборов карточек,
-    которые пользователь создал или сохранил.
-    """
-    return (
-        Deck.objects.filter(
-            Q(author=user) | Q(saved_by=user),
-        )
+    cards = (
+        deck.cards.all()
         .select_related("author")
-        .prefetch_related("saved_by")
-        .distinct()
+        .only("id", "question", "answer", "author__username")
     )
+
+    return cards
 
 
 def filter_sort_paginate_decks(decks, query, sort_by, page_number, per_page=20):
     """
-    Фильтрует, сортирует, пагинирует наборы карточек. Возвращает page_obj.
+    Фильтрует, сортирует, пагинирует колоды. Возвращает page_obj.
     """
     if query:
         decks = decks.filter(title__icontains=query)
@@ -70,32 +136,65 @@ def filter_sort_paginate_decks(decks, query, sort_by, page_number, per_page=20):
     return page_obj
 
 
-def is_deck_saved_by_user(deck, user):
-    """Проверяет сохранен ли набор карточек пользователем."""
-    return user in deck.saved_by.all()
+def create_deck(author, **kwargs):
+    """
+    Создает и возвращает колоду с указанным автором.
+    """
+    cards = kwargs.pop("cards", None)
+    if not cards:
+        raise ValueError("В колоде должна быть хотя бы одна карточка")
+
+    deck = Deck.objects.create(author=author, **kwargs)
+    deck.cards.set(cards)
+
+    return deck
+
+
+def update_deck(deck, **kwargs):
+    """
+    Обновляет и возвращает колоду.
+    """
+    cards = kwargs.pop("cards", None)
+
+    if not cards:
+        raise ValueError("В колоде должна быть хотя бы одна карточка")
+
+    for key, value in kwargs.items():
+        setattr(deck, key, value)
+    deck.save()
+
+    deck.cards.set(cards)
+
+    return deck
+
+
+def delete_deck(deck):
+    """Удаляет колоду."""
+    deck.delete()
 
 
 def toggle_deck_save_by_user(deck, user):
-    """Переключает состояние сохранения карточки пользователем."""
+    """
+    Переключает состояние сохранения колоды пользователем.
+    Возвращает статус сохранения колоды и сообщение.
+    """
     if deck.author == user:
-        return
+        return False, "Вы автор этой колоды"
 
-    is_saved = is_deck_saved_by_user(deck, user)
-
-    if is_saved:
+    if deck.is_saved:
         user.saved_decks.remove(deck)
-        return False
+        return False, "Колода удалена из вашего профиля"
     else:
         user.saved_decks.add(deck)
-        return True
+        return True, "Колода сохранена в ваш профиль"
 
 
-def generate_cards_data_for_export(deck_cards):
+def _generate_cards_data_for_export(cards):
     """
-    Формирует данные карточки для экспорта в txt формат.
-    Возвращает генератор карточек.
+    Возвращает генератор, который
+    формирует данные карточки для экспорта в txt формат.
     """
-    for card in deck_cards.iterator(chunk_size=1000):
+    for card in cards.iterator(chunk_size=1000):
         yield (
             f"#author_id: {card.author_id}\n"
             f"#card_id: {card.id}\n"
@@ -106,42 +205,25 @@ def generate_cards_data_for_export(deck_cards):
 
 def prepare_deck_for_export(deck):
     """
-    Подготовливает набор карточек к экспорту.
+    Подготовливает колоду к экспорту.
     Возвращает кортеж (filename, cards_generator).
     """
-    deck_cards = get_deck_cards(deck)
+    cards = get_deck_cards(deck)
 
     filename = f"{deck.title}.txt"
-    cards_generator = generate_cards_data_for_export(deck_cards)
+    cards_generator = _generate_cards_data_for_export(cards=cards)
 
     return filename, cards_generator
 
 
-def get_user_decks_stats(user):
-    """возвращает словарь со статистикой наборов карточек для пользователя."""
-    decks = get_all_decks()
+def get_decks_stats(user):
+    decks = get_decks_created_or_saved_by_user(user=user)
 
-    decks_stats = decks.aggregate(
-        total=Count(
-            "id",
-            filter=Q(author=user) | Q(saved_by=user),
-            distinct=True,
-        ),
-        created=Count(
-            "id",
-            filter=Q(author=user),
-            distinct=True,
-        ),
-        saved=Count(
-            "id",
-            filter=Q(saved_by=user),
-            distinct=True,
-        ),
-        in_study=Count(
-            "id",
-            filter=Q(progresses__learner=user),
-            distinct=True,
-        ),
+    stats = decks.aggregate(
+        total=Count("id", distinct=True),
+        created=Count("id", filter=Q(author=user), distinct=True),
+        saved=Count("id", filter=Q(saved_by=user), distinct=True),
+        in_study=Count("id", filter=Q(card_progresses__learner=user), distinct=True),
     )
 
-    return decks_stats
+    return stats

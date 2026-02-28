@@ -1,4 +1,5 @@
 <tr class="hover:bg-gray-100 text-gray-800">
+
   <!-- Deck title -->
   <td class="text-left py-2 px-4">
     <a href="{{ deck.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
@@ -20,7 +21,7 @@
     {% if is_owner %}
       <form action="{% url "deck_toggle_study" deck.id %}" method="post" data-js-toggle-save-form>
         {% csrf_token %}
-        {% if deck.id not in studying_decks_ids %}
+        {% if not deck.is_studying %}
           <button type="submit" data-js-toggle-button class="sm:max-w-48 w-full text-center rounded-full py-1 px-2 transition-colors cursor-pointer primary">
             Добавить в изучаемые
           </button>
@@ -34,7 +35,14 @@
 
     <!-- Status -->
     {% if not is_owner %}
-      {% include "includes/saved_status.html" with is_author=is_author is_saved=is_saved only %}
+      {% if is_author %}
+        <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 primary transition-colors hover:bg-blue-50">Вы автор</span>
+      {% elif deck.is_saved %}
+        <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 success transition-colors hover:bg-green-50">Сохранена</span>
+      {% else %}
+        <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 warning transition-colors hover:bg-orange-50">Новая</span>
+      {% endif %}
+
     {% endif %}
   </td>
 
