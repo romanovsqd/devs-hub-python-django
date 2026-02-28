@@ -15,7 +15,7 @@
 
       <!-- User form -->
       <div class="w-full lg:max-w-3xl mx-auto mb-4 lg:mb-8">
-        <form action="{% url "user_update" user.pk %}" method="post" enctype="multipart/form-data" class="flex flex-col gap-2 lg:gap-4">
+        <form action="{% url "user_update" user.username %}" method="post" enctype="multipart/form-data" class="flex flex-col gap-2 lg:gap-4">
           {% csrf_token %}
 
           <!-- Messages -->
@@ -153,7 +153,7 @@
 
       <!-- Password form -->
       <div class="w-full lg:max-w-3xl mx-auto">
-        <form action="{% url "user_update" user.pk %}" method="post" class="flex flex-col gap-2 lg:gap-4">
+        <form action="{% url "user_update" user.username %}" method="post" class="flex flex-col gap-2 lg:gap-4">
           {% csrf_token %}
 
           <!-- Non field form -->

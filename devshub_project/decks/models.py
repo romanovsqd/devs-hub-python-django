@@ -26,4 +26,4 @@ class Deck(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("deck_detail", kwargs={"deck_id": self.pk})
+        return reverse("deck_detail", kwargs={"pk": self.pk})

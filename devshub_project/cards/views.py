@@ -31,10 +31,10 @@ def card_list(request):
     return render(request, "cards/card_list.html", context)
 
 
-def card_detail(request, card_id):
+def card_detail(request, pk):
     user = request.user if request.user.is_authenticated else None
 
-    card = services.get_card_with_saved_status(card_id=card_id, user=user)
+    card = services.get_card_with_saved_status(card_id=pk, user=user)
 
     context = {"card": card}
     return render(request, "cards/card_detail.html", context)
@@ -59,8 +59,8 @@ def card_create(request):
 
 
 @login_required
-def card_update(request, card_id):
-    card = services.get_card_created_by_user(card_id=card_id, user=request.user)
+def card_update(request, pk):
+    card = services.get_card_created_by_user(card_id=pk, user=request.user)
 
     if request.method == "POST":
         form = CardForm(request.POST, instance=card)
@@ -81,8 +81,8 @@ def card_update(request, card_id):
 
 
 @login_required
-def card_delete(request, card_id):
-    card = services.get_card_created_by_user(card_id=card_id, user=request.user)
+def card_delete(request, pk):
+    card = services.get_card_created_by_user(card_id=pk, user=request.user)
 
     if request.method == "POST":
         services.delete_card(card=card)
@@ -97,8 +97,8 @@ def card_delete(request, card_id):
 
 @login_required
 @require_POST
-def card_toggle_save(request, card_id):
-    card = services.get_card_with_saved_status(card_id=card_id, user=request.user)
+def card_toggle_save(request, pk):
+    card = services.get_card_with_saved_status(card_id=pk, user=request.user)
 
     success, result = services.toggle_card_save_by_user(card=card, user=request.user)
 
@@ -106,10 +106,8 @@ def card_toggle_save(request, card_id):
 
 
 @login_required
-def card_export(request, card_id):
-    card = services.get_card_created_or_saved_by_user(
-        card_id=card_id, user=request.user
-    )
+def card_export(request, pk):
+    card = services.get_card_created_or_saved_by_user(card_id=pk, user=request.user)
 
     filename, content = services.generate_card_data_for_export(card=card)
 

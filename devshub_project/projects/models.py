@@ -29,7 +29,7 @@ class Project(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("project_detail", kwargs={"project_id": self.pk})
+        return reverse("project_detail", kwargs={"pk": self.pk})
 
 
 class ProjectImage(models.Model):

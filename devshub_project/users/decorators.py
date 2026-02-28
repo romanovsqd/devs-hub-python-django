@@ -9,7 +9,7 @@ def redirect_authenticated(view):
     @wraps(view)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("user_detail", user_id=request.user.pk)
+            return redirect("user_detail", username=request.user.username)
         return view(request, *args, **kwargs)
 
     return wrapper

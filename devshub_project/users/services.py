@@ -26,15 +26,15 @@ def get_users():
     )
 
 
-def get_user(user_id):
+def get_user(username):
     """
     Возвращает пользователя.
     Если пользователь не найден, вернет 404.
     """
-    return get_object_or_404(get_users(), pk=user_id)
+    return get_object_or_404(get_users(), username=username)
 
 
-def get_user_with_codewars_profile(user_id):
+def get_user_with_codewars_profile(username):
     """
     Возвращает пользователя с codewars_profile.
     Если пользователь не найден, вернет 404.
@@ -51,7 +51,7 @@ def get_user_with_codewars_profile(user_id):
             "codewars_username",
             "codewars_profile",
         ),
-        pk=user_id,
+        username=username,
     )
 
 

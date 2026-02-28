@@ -27,8 +27,8 @@ def project_list(request):
     return render(request, "projects/project_list.html", context)
 
 
-def project_detail(request, project_id):
-    project = services.get_project(project_id)
+def project_detail(request, pk):
+    project = services.get_project(project_id=pk)
 
     context = {
         "project": project,
@@ -59,10 +59,8 @@ def project_create(request):
 
 
 @login_required
-def project_update(request, project_id):
-    project = services.get_project_created_by_user(
-        project_id=project_id, user=request.user
-    )
+def project_update(request, pk):
+    project = services.get_project_created_by_user(project_id=pk, user=request.user)
 
     if request.method == "POST":
         form = ProjectForm(request.POST, request.FILES, instance=project)
@@ -81,10 +79,8 @@ def project_update(request, project_id):
 
 
 @login_required
-def project_delete(request, project_id):
-    project = services.get_project_created_by_user(
-        project_id=project_id, user=request.user
-    )
+def project_delete(request, pk):
+    project = services.get_project_created_by_user(project_id=pk, user=request.user)
 
     if request.method == "POST":
         services.delete_project(project=project)

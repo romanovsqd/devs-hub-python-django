@@ -42,7 +42,7 @@ def register(request):
         )
         login(request, user)
 
-        return redirect("user_detail", user_id=request.user.pk)
+        return redirect("user_detail", username=request.user.username)
 
     context = {
         "form": form,
@@ -56,7 +56,7 @@ class LoginUserView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        return reverse("user_detail", kwargs={"user_id": self.request.user.pk})
+        return reverse("user_detail", kwargs={"username": self.request.user.username})
 
 
 class UserPasswordResetView(PasswordResetView):
@@ -91,8 +91,8 @@ def user_list(request):
     return render(request, "users/user_list.html", context)
 
 
-def user_detail(request, user_id):
-    user = services.get_user_with_codewars_profile(user_id=user_id)
+def user_detail(request, username):
+    user = services.get_user_with_codewars_profile(username=username)
     cards_stats = card_services.get_cards_stats(user=user)
     decks_stats = deck_services.get_decks_stats(user=user)
     projects_stats = project_services.get_projects_stats(user=user)
@@ -107,8 +107,8 @@ def user_detail(request, user_id):
     return render(request, "users/user_detail.html", context)
 
 
-def user_cards(request, user_id):
-    user = services.get_user(user_id=user_id)
+def user_cards(request, username):
+    user = services.get_user(username=username)
     current_user = request.user if request.user.is_authenticated else None
 
     query = request.GET.get("query", "")
@@ -136,8 +136,8 @@ def user_cards(request, user_id):
     return render(request, "users/user_cards.html", context)
 
 
-def user_decks(request, user_id):
-    user = services.get_user(user_id=user_id)
+def user_decks(request, username):
+    user = services.get_user(username=username)
     current_user = request.user if request.user.is_authenticated else None
     studying_decks_ids = repetition_services.get_studying_decks_ids(user=user)
 
@@ -167,8 +167,8 @@ def user_decks(request, user_id):
     return render(request, "users/user_decks.html", context)
 
 
-def user_projects(request, user_id):
-    user = services.get_user(user_id=user_id)
+def user_projects(request, username):
+    user = services.get_user(username=username)
 
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
@@ -193,8 +193,8 @@ def user_projects(request, user_id):
 
 
 @login_required
-def user_update(request, user_id):
-    user = services.get_user(user_id=user_id)
+def user_update(request, username):
+    user = services.get_user(username=username)
 
     if user != request.user:
         return redirect(user.get_absolute_url())
@@ -221,7 +221,7 @@ def user_update(request, user_id):
                 if email_send:
                     messages.info(request, "Отправлено письмо для подтверждения почты")
 
-                return redirect("user_update", user_id=user.pk)
+                return redirect("user_update", username=user.username)
 
         elif "change_password" in request.POST:
             user_form = UserForm(instance=user)
@@ -233,7 +233,7 @@ def user_update(request, user_id):
 
                 messages.success(request, "Пароль успешно изменен")
 
-                return redirect("user_update", user_id=user.pk)
+                return redirect("user_update", username=user.username)
 
     else:
         user_form = UserForm(instance=user)
@@ -252,4 +252,4 @@ def confirm_email(request, uidb64, token):
 
     if is_email_confirmed:
         messages.success(request, "Ваш email успешно подтвержден")
-    return redirect("user_update", user_id=request.user.pk)
+    return redirect("user_update", username=request.user.username)

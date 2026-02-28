@@ -35,14 +35,14 @@ def deck_list(request):
     return render(request, "decks/deck_list.html", context)
 
 
-def deck_detail(request, deck_id):
+def deck_detail(request, pk):
     user = request.user if request.user.is_authenticated else None
 
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    deck = services.get_deck_with_saved_status(deck_id=deck_id, user=user)
+    deck = services.get_deck_with_saved_status(deck_id=pk, user=user)
 
     cards = card_services.filter_sort_paginate_cards(
         cards=services.get_deck_cards_with_saved_status(deck=deck, user=user),
@@ -84,8 +84,8 @@ def deck_create(request):
 
 
 @login_required
-def deck_update(request, deck_id):
-    deck = services.get_deck_created_by_user(deck_id=deck_id, user=request.user)
+def deck_update(request, pk):
+    deck = services.get_deck_created_by_user(deck_id=pk, user=request.user)
 
     if request.method == "POST":
         form = DeckForm(request.POST, instance=deck, user=request.user)
@@ -107,8 +107,8 @@ def deck_update(request, deck_id):
 
 
 @login_required
-def deck_delete(request, deck_id):
-    deck = services.get_deck_created_by_user(deck_id=deck_id, user=request.user)
+def deck_delete(request, pk):
+    deck = services.get_deck_created_by_user(deck_id=pk, user=request.user)
 
     if request.method == "POST":
         services.delete_deck(deck=deck)
@@ -123,8 +123,8 @@ def deck_delete(request, deck_id):
 
 @login_required
 @require_POST
-def deck_toggle_save(request, deck_id):
-    deck = services.get_deck_with_saved_status(deck_id=deck_id, user=request.user)
+def deck_toggle_save(request, pk):
+    deck = services.get_deck_with_saved_status(deck_id=pk, user=request.user)
 
     success, message = services.toggle_deck_save_by_user(deck=deck, user=request.user)
 
@@ -132,10 +132,8 @@ def deck_toggle_save(request, deck_id):
 
 
 @login_required
-def deck_export(request, deck_id):
-    deck = services.get_deck_created_or_saved_by_user(
-        deck_id=deck_id, user=request.user
-    )
+def deck_export(request, pk):
+    deck = services.get_deck_created_or_saved_by_user(deck_id=pk, user=request.user)
     filename, cards_generator = services.prepare_deck_for_export(deck=deck)
 
     response = StreamingHttpResponse(
