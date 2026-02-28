@@ -13,26 +13,13 @@ from . import services
 @login_required
 @require_POST
 def deck_toggle_study(request, deck_id):
-    deck = deck_services.get_user_created_or_saved_deck_by_id(
+    deck = deck_services.get_deck_created_or_saved_by_user(
         deck_id=deck_id, user=request.user
     )
 
-    is_studying = services.toggle_deck_study_for_user(deck=deck, user=request.user)
+    success, message = services.toggle_deck_study_by_user(deck=deck, user=request.user)
 
-    if is_studying:
-        message = f"Вы изучаете колоду {deck.title}"
-        button_text = "Удалить из изучаемых"
-    else:
-        message = f"Сброшен весь прогресс по колоде {deck.title}"
-        button_text = "Добавить в изучаемые"
-
-    return JsonResponse(
-        {
-            "success": is_studying,
-            "message": message,
-            "button_text": button_text,
-        }
-    )
+    return JsonResponse({"success": success, "message": message})
 
 
 @login_required

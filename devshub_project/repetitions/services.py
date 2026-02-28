@@ -9,47 +9,27 @@ from .models import DeckProgress
 
 
 def get_user_deck_progress(deck, user):
-    """Возвращает прогресс по набору карточек для пользователя."""
+    """Возвращает прогресс пользователя по колоде."""
     return DeckProgress.objects.filter(learner=user, deck=deck)
 
 
 def get_deck_card_progress_for_user(deck_id, card_id, user):
     """
-    Возвращает прогресс по карточке
-    в конкретном наборе карточек для пользователя.
+    Возвращает прогресс пользователя по карточке
+    в колоде.
     """
     return get_object_or_404(
         DeckProgress, learner=user, deck_id=deck_id, card_id=card_id
     )
 
 
-def is_user_studying_deck(deck, user):
-    """проверяет изучает ли пользователь набор карточек"""
-    deck_progress = get_user_deck_progress(deck, user)
-    return deck_progress.exists()
-
-
-def create_deck_progress_for_user(deck, user):
-    """
-    Инизиализиует прогресс изучения всех карточек в наборе для пользователя.
-    """
-    deck_cards = deck_services.get_deck_cards(deck)
-
-    progress = [DeckProgress(learner=user, card=card, deck=deck) for card in deck_cards]
-
-    DeckProgress.objects.bulk_create(progress, ignore_conflicts=True)
-
-
-def toggle_deck_study_for_user(deck, user):
-    """Переключает состояние изучения набора карточек пользователем."""
-    is_studying = is_user_studying_deck(deck, user)
-
-    if is_studying:
-        get_user_deck_progress(deck, user).delete()
-        return False
-    else:
-        create_deck_progress_for_user(deck, user)
-        return True
+def get_studying_decks_ids(user):
+    """Возращает id изучаемых пользователем наборов карточек."""
+    return (
+        DeckProgress.objects.filter(learner=user)
+        .values_list("deck_id", flat=True)
+        .distinct()
+    )
 
 
 def get_next_card_for_review(user):
@@ -79,9 +59,32 @@ def get_next_card_for_review(user):
     return card_data
 
 
+def create_deck_progress_for_user(deck, user):
+    """
+    Инизиализиует прогресс изучения карточек в колоде для пользователя.
+    """
+    deck_cards = deck_services.get_deck_cards(deck)
+
+    progress = [DeckProgress(learner=user, card=card, deck=deck) for card in deck_cards]
+
+    DeckProgress.objects.bulk_create(progress, ignore_conflicts=True)
+
+
+def toggle_deck_study_by_user(deck, user):
+    """Переключает состояние изучения колоды пользователем."""
+    deck_progress = get_user_deck_progress(deck, user)
+
+    if deck_progress.exists():
+        deck_progress.delete()
+        return False, f"Сброшен весь прогресс по колоде {deck.title}"
+    else:
+        create_deck_progress_for_user(deck, user)
+        return True, f"Вы изучаете колоду {deck.title}"
+
+
 def apply_sm2(progress, quality):
     """
-    Применяет алгоритм интервального повторения на основе SM-2 к карточке.
+    Применяет алгоритм интервального повторения на основе SM-2 к прогрессу карточки.
     """
     now = timezone.now()
 
@@ -108,8 +111,3 @@ def apply_sm2(progress, quality):
     progress.save()
 
     return progress
-
-
-def get_user_studying_decks_ids(user):
-    """Возращает id изучаемых пользователем наборов карточек."""
-    return DeckProgress.objects.filter(learner=user).values_list("deck_id", flat=True)

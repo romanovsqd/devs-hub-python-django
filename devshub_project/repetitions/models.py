@@ -6,11 +6,11 @@ from django.utils import timezone
 class DeckProgress(models.Model):
     learner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="deck_progresses",
+        related_name="deck_card_progresses",
         on_delete=models.CASCADE,
     )
     deck = models.ForeignKey(
-        "decks.Deck", related_name="progresses", on_delete=models.CASCADE
+        "decks.Deck", related_name="card_progresses", on_delete=models.CASCADE
     )
     card = models.ForeignKey(
         "cards.Card", related_name="deck_progresses", on_delete=models.CASCADE
