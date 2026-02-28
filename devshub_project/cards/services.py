@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 
 from core.utils import clean_html
@@ -7,48 +7,91 @@ from core.utils import clean_html
 from .models import Card
 
 
-def get_all_cards():
-    """Возврващет queryset всех карточек."""
-    return Card.objects.all().select_related("author").prefetch_related("saved_by")
-
-
-def get_card_by_id(card_id):
-    """Возвращает карточку по id или 404."""
-    return get_object_or_404(Card, pk=card_id)
-
-
-def get_user_created_card_by_id(card_id, user):
-    """Возвращает карточку по id, если она создана пользователем, иначе 404."""
-    return get_object_or_404(Card, pk=card_id, author=user)
-
-
-def get_user_created_or_saved_card_by_id(card_id, user):
+def get_cards():
     """
-    Возвращает карточку по id, если она создана или сохранена пользователем,
-    иначе 404.
-    """
-    return get_object_or_404(
-        Card.objects.filter(Q(saved_by=user) | Q(author=user), pk=card_id).distinct()
-    )
-
-
-def get_all_user_created_or_saved_cards(user):
-    """
-    возвращает queryset всех карточек,
-    которые пользователь создал или сохранил.
+    Возвращает queryset всех карточек.
     """
     return (
-        Card.objects.filter(
-            Q(author=user) | Q(saved_by=user),
-        )
+        Card.objects.all()
         .select_related("author")
-        .prefetch_related("saved_by")
-        .distinct()
+        .only("id", "question", "answer", "author__username")
     )
+
+
+def get_cards_with_saved_status(user=None):
+    """
+    Возвращает queryset карточек с флагом,
+    который указывает сохранена ли карточка пользователем.
+    """
+    cards = get_cards()
+
+    if user is not None:
+        return cards.annotate(
+            is_saved=Exists(user.saved_cards.filter(pk=OuterRef("pk")))
+        )
+
+    return cards
+
+
+def get_card_with_saved_status(card_id, user=None):
+    """
+    Возвращает карточку с флагом,
+    который указывает сохранена ли карточка пользователем.
+    """
+    card = get_object_or_404(get_cards_with_saved_status(user=user), pk=card_id)
+
+    return card
+
+
+def get_card_created_by_user(card_id, user):
+    """
+    Возвращает карточку если она создана пользователем.
+    Если пользователь не является автором, или
+    если карточки не существует, вернет 404.
+    """
+    card = get_object_or_404(Card.objects.filter(author=user), pk=card_id)
+    return card
+
+
+def get_cards_created_or_saved_by_user(user):
+    """
+    Возвращает queryset карточек,
+    которые созданы или сохранены пользователем.
+    """
+    cards = get_cards().filter(Q(author=user) | Q(saved_by=user)).distinct()
+    return cards
+
+
+def get_user_cards_with_saved_status(user, current_user):
+    """
+    Возвращает карточки созданные или сохраненные пользователем с флагом,
+    который указывает сохранена ли карточка текущим пользователем.
+    """
+    user_cards = get_cards_created_or_saved_by_user(user=user)
+
+    if current_user is not None:
+        return user_cards.annotate(
+            is_saved=Exists(current_user.saved_cards.filter(pk=OuterRef("pk")))
+        )
+    return user_cards
+
+
+def get_card_created_or_saved_by_user(card_id, user):
+    """
+    Возвращает карточку если она создана или сохранена пользователем.
+    Иначе вернет 404.
+    """
+    card = get_object_or_404(
+        get_cards().filter(Q(author=user) | Q(saved_by=user)).distinct(), pk=card_id
+    )
+
+    return card
 
 
 def filter_sort_paginate_cards(cards, query, sort_by, page_number, per_page=20):
-    """Фильтрует, сортирует, пагинирует карточки. Возвращает page_obj."""
+    """
+    Фильтрует, сортирует, пагинирует карточки. Возвращает page_obj.
+    """
     if query:
         cards = cards.filter(question__icontains=query)
 
@@ -63,21 +106,56 @@ def filter_sort_paginate_cards(cards, query, sort_by, page_number, per_page=20):
     return page_obj
 
 
-def is_card_saved_by_user(card, user):
-    """Проверяет сохранена ли карточка пользователем."""
-    return user in card.saved_by.all()
+def create_card(question, answer, author, **kwargs):
+    """
+    Создает и возвращает карточку с указанным автором.
+    Очищает question и answer от вредоносного HTML.
+    """
+    return Card.objects.create(
+        question=clean_html(question),
+        answer=clean_html(answer),
+        author=author,
+        **kwargs,
+    )
+
+
+def update_card(card, **kwargs):
+    """
+    Обновляет и возвращает карточку.
+    Очищает question и answer от вредносного HTML.
+    """
+    question = kwargs.pop("question", None)
+    answer = kwargs.pop("answer", None)
+
+    card.question = clean_html(question)
+    card.answer = clean_html(answer)
+
+    for key, value in kwargs.items():
+        setattr(card, key, value)
+    card.save()
+
+    return card
+
+
+def delete_card(card):
+    """Удаляет карточку."""
+    card.delete()
 
 
 def toggle_card_save_by_user(card, user):
-    """Переключает состояние сохранения карточки пользователем."""
-    is_saved = is_card_saved_by_user(card, user)
+    """
+    Переключает состояние сохранения карточки пользователем.
+    Возвращает статус сохранения карточки и сообщение.
+    """
+    if card.author == user:
+        return False, "Вы автор этой карточки"
 
-    if is_saved:
+    if card.is_saved:
         user.saved_cards.remove(card)
-        return False
+        return False, "Карточка удалена из вашего профиля"
     else:
         user.saved_cards.add(card)
-        return True
+        return True, "Карточка сохранена в ваш профиль"
 
 
 def generate_card_data_for_export(card):
@@ -96,49 +174,17 @@ def generate_card_data_for_export(card):
     return filename, content
 
 
-def get_user_cards_stats(user):
-    """возвращает словарь со статистикой карточек для пользователя."""
-    cards = get_all_cards()
+def get_cards_stats(user):
+    """
+    Возвращает словарь со статистикой карточек для пользователя.
+    """
+    cards = get_cards_created_or_saved_by_user(user=user)
 
-    cards_stats = cards.aggregate(
-        total=Count(
-            "id",
-            filter=Q(author=user) | Q(saved_by=user),
-        ),
-        created=Count(
-            "id",
-            filter=Q(author=user),
-        ),
-        saved=Count(
-            "id",
-            filter=Q(saved_by=user),
-        ),
-        in_study=Count(
-            "id",
-            filter=Q(deck_progresses__learner=user),
-            distinct=True,
-        ),
+    stats = cards.aggregate(
+        total=Count("id", distinct=True),
+        created=Count("id", filter=Q(author=user), distinct=True),
+        saved=Count("id", filter=Q(saved_by=user), distinct=True),
+        in_study=Count("id", filter=Q(deck_progresses__learner=user), distinct=True),
     )
 
-    return cards_stats
-
-
-def create_card(question, answer, author):
-    """Создает карточку с указанным автором"""
-    card = Card.objects.create(
-        question=clean_html(question), answer=clean_html(answer), author=author
-    )
-    return card
-
-
-def update_card(card, question, answer):
-    """Обновляет данные карточки"""
-    card.question = clean_html(question)
-    card.answer = clean_html(answer)
-    card.save()
-    return card
-
-
-def delete_card(card):
-    """Удаляет карточку из базы данных."""
-    card.delete()
+    return stats

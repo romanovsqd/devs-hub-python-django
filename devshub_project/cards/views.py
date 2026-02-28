@@ -10,16 +10,17 @@ from .forms import CardForm
 
 
 def card_list(request):
+    user = request.user if request.user.is_authenticated else None
+
     query = request.GET.get("query", "")
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
     cards = services.filter_sort_paginate_cards(
-        cards=services.get_all_cards(),
+        cards=services.get_cards_with_saved_status(user=user),
         query=query,
         sort_by=sort_by,
         page_number=page_number,
-        per_page=20,
     )
 
     context = {
@@ -27,54 +28,50 @@ def card_list(request):
         "query": query,
         "sort_by": sort_by,
     }
-
     return render(request, "cards/card_list.html", context)
 
 
 def card_detail(request, card_id):
-    card = services.get_card_by_id(card_id=card_id)
-    is_saved = services.is_card_saved_by_user(card=card, user=request.user)
+    user = request.user if request.user.is_authenticated else None
 
-    context = {
-        "card": card,
-        "is_saved": is_saved,
-    }
+    card = services.get_card_with_saved_status(card_id=card_id, user=user)
 
+    context = {"card": card}
     return render(request, "cards/card_detail.html", context)
 
 
 @login_required
 def card_create(request):
-    form = CardForm(request.POST or None)
+    if request.method == "POST":
+        form = CardForm(request.POST)
 
-    if form.is_valid():
-        card = services.create_card(
-            question=form.cleaned_data["question"],
-            answer=form.cleaned_data["answer"],
-            author=request.user,
-        )
-        return redirect(card.get_absolute_url())
+        if form.is_valid():
+            card = services.create_card(
+                **form.cleaned_data,
+                author=request.user,
+            )
+            return redirect(card.get_absolute_url())
+    else:
+        form = CardForm()
 
-    context = {
-        "form": form,
-    }
-
+    context = {"form": form}
     return render(request, "cards/card_form.html", context)
 
 
 @login_required
 def card_update(request, card_id):
-    card = services.get_user_created_card_by_id(card_id=card_id, user=request.user)
+    card = services.get_card_created_by_user(card_id=card_id, user=request.user)
 
-    form = CardForm(request.POST or None, instance=card)
-
-    if form.is_valid():
-        services.update_card(
-            card=card,
-            question=form.cleaned_data["question"],
-            answer=form.cleaned_data["answer"],
-        )
-        return redirect(card.get_absolute_url())
+    if request.method == "POST":
+        form = CardForm(request.POST, instance=card)
+        if form.is_valid():
+            services.update_card(
+                **form.cleaned_data,
+                card=card,
+            )
+            return redirect(card.get_absolute_url())
+    else:
+        form = CardForm(instance=card)
 
     context = {
         "form": form,
@@ -85,7 +82,7 @@ def card_update(request, card_id):
 
 @login_required
 def card_delete(request, card_id):
-    card = services.get_user_created_card_by_id(card_id=card_id, user=request.user)
+    card = services.get_card_created_by_user(card_id=card_id, user=request.user)
 
     if request.method == "POST":
         services.delete_card(card=card)
@@ -101,30 +98,19 @@ def card_delete(request, card_id):
 @login_required
 @require_POST
 def card_toggle_save(request, card_id):
-    card = services.get_card_by_id(card_id=card_id)
-    is_card_saved = services.toggle_card_save_by_user(card=card, user=request.user)
+    card = services.get_card_with_saved_status(card_id=card_id, user=request.user)
 
-    if is_card_saved:
-        message = "Карточка сохранена в ваш профиль"
-        button_text = "Удалить карточку из моего профиля"
-    else:
-        message = "Карточка удалена из вашего профиля"
-        button_text = "Сохранить карточку в мой профиль"
+    success, result = services.toggle_card_save_by_user(card=card, user=request.user)
 
-    return JsonResponse(
-        {
-            "success": is_card_saved,
-            "message": message,
-            "button_text": button_text,
-        }
-    )
+    return JsonResponse({"success": success, "message": result})
 
 
 @login_required
 def card_export(request, card_id):
-    card = services.get_user_created_or_saved_card_by_id(
+    card = services.get_card_created_or_saved_by_user(
         card_id=card_id, user=request.user
     )
+
     filename, content = services.generate_card_data_for_export(card=card)
 
     response = HttpResponse(content_type="text/plain")

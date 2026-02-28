@@ -27,7 +27,7 @@
               {% csrf_token %}
 
               <!-- If not saved-->
-              {% if not is_saved %}
+              {% if not card.is_saved %}
 
                 <button type="submit" data-js-toggle-button class="w-full text-center rounded-full py-4 px-6 text-md font-medium cursor-pointer primary">
                   Сохранить карточку в мой профиль
@@ -79,5 +79,5 @@
 {% endblock content %}
 
 {% block scripts %}
-  <script src="{% static "js/toggle_form_state.js" %}"></script>
+  <script src="{% static "js/toggle-card-save.js" %}"></script>
 {% endblock scripts %}

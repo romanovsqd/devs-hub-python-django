@@ -17,9 +17,51 @@
         {% include "includes/search_form.html" with placeholder="Что такое итератор?" request=request only %}
       </div>
 
-      <!-- Deck list -->
+      <!-- Card list -->
       <div class="mb-auto">
-        {% include "includes/card_list.html" with cards=cards user=request.user only %}
+        <!-- Card list as table -->
+        <div class="hidden sm:table">
+
+          <!-- Card table -->
+          <table class="w-full table-fixed text-gray-500">
+
+            <colgroup>
+              <col class="max-w-2/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+              <col class="max-w-1/4 lg:max-w-1/3 w-full">
+            </colgroup>
+
+            <!-- Card table head-->
+            <thead>
+              <tr>
+                <th class="text-left py-2 px-4 font-normal">Вопрос</th>
+                <th class="text-center py-2 px-4 font-normal">Автор</th>
+                <th class="text-right py-2 px-4 font-normal"><span>Статус</span></th>
+              </tr>
+            </thead>
+
+            <!-- Card table body-->
+            <tbody class="divide-y divide-gray-300">
+              <!-- Cards -->
+              {% for card in cards %}
+
+                {% render_card_as_table card=card user=request.user %}
+
+              {% endfor %}
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <!-- Card list as cards -->
+        <div class="flex flex-col gap-4 sm:hidden">
+          {% for card in cards %}
+
+            {% render_card card=card user=request.user %}
+
+          {% endfor %}
+        </div>
       </div>
 
       <!-- Pagination -->

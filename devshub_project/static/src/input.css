@@ -45,6 +45,17 @@
     }
   }
 
+  .info {
+    background-color: var(--color-blue-50);
+    color: var(--color-blue-700);
+    border-color: var(--color-blue-300);
+    &:hover {
+    @media (hover: hover) {
+      background-color: var(--color-blue-100);
+      }
+    }
+  }
+
   .warning {
   background-color: var(--color-orange-50);
   color: var(--color-orange-700);
