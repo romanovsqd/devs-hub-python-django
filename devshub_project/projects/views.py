@@ -11,7 +11,7 @@ def project_list(request):
     page_number = request.GET.get("page", 1)
 
     projects = services.filter_sort_paginate_projects(
-        projects=services.get_all_projects(),
+        projects=services.get_projects(),
         query=query,
         sort_by=sort_by,
         page_number=page_number,
@@ -28,7 +28,7 @@ def project_list(request):
 
 
 def project_detail(request, project_id):
-    project = services.get_project_by_id(project_id=project_id)
+    project = services.get_project(project_id)
 
     context = {
         "project": project,
@@ -39,18 +39,17 @@ def project_detail(request, project_id):
 
 @login_required
 def project_create(request):
-    form = ProjectForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        form = ProjectForm(request.POST, request.FILES)
 
-    if form.is_valid():
-        project = form.save(commit=False)
-        project.author = request.user
-        project.save()
-
-        services.create_images_for_project(
-            project=project, images=form.cleaned_data.get("images")
-        )
-
-        return redirect(project.get_absolute_url())
+        if form.is_valid():
+            project = services.create_project(
+                **form.cleaned_data,
+                author=request.user,
+            )
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectForm()
 
     context = {
         "form": form,
@@ -61,19 +60,18 @@ def project_create(request):
 
 @login_required
 def project_update(request, project_id):
-    project = services.get_user_created_project_by_id(
+    project = services.get_project_created_by_user(
         project_id=project_id, user=request.user
     )
 
-    form = ProjectForm(request.POST or None, request.FILES or None, instance=project)
+    if request.method == "POST":
+        form = ProjectForm(request.POST, request.FILES, instance=project)
 
-    if form.is_valid():
-        new_images = form.cleaned_data.get("images")
-        project = form.save()
-
-        services.update_project_images(project=project, new_images=new_images)
-
-        return redirect(project.get_absolute_url())
+        if form.is_valid():
+            services.update_project(**form.cleaned_data, project=project)
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectForm(instance=project)
 
     context = {
         "form": form,
@@ -84,12 +82,12 @@ def project_update(request, project_id):
 
 @login_required
 def project_delete(request, project_id):
-    project = services.get_user_created_project_by_id(
+    project = services.get_project_created_by_user(
         project_id=project_id, user=request.user
     )
 
     if request.method == "POST":
-        project.delete()
+        services.delete_project(project=project)
         return redirect("project_list")
 
     context = {

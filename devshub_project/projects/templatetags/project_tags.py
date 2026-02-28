@@ -5,7 +5,7 @@ register = template.Library()
 
 @register.inclusion_tag("components/project_card.html")
 def render_project(project, user):
-    is_author = project.author == user
+    is_author = user == project.author
     return {
         "project": project,
         "is_author": is_author,
@@ -14,7 +14,7 @@ def render_project(project, user):
 
 @register.inclusion_tag("components/project_table.html")
 def render_project_as_table(project, user):
-    is_author = project.author == user
+    is_author = user == project.author
     return {
         "project": project,
         "is_author": is_author,

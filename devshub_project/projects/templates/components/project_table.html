@@ -1,5 +1,4 @@
 {% load thumbnail %}
-
 <tr class="hover:bg-gray-100 text-gray-800">
 
   <!-- Project cover -->
@@ -52,7 +51,7 @@
   <td class="text-right py-2 px-4">
 
     <a href="{{ project.author.get_absolute_url }}" class="hover:text-blue-600 active:text-blue-600 transition-colors">
-      {% if project.author == request.user %}
+      {% if is_author %}
         <span class="inline-block sm:max-w-28 w-full text-center rounded-full py-1 px-2 primary transition-colors hover:bg-blue-50">Вы автор</span>
       {% else %}
         {{ project.author.username }}

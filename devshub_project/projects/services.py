@@ -1,31 +1,53 @@
 from django.core.paginator import Paginator
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
+
+from core.utils import clean_html
 
 from .models import Project, ProjectImage
 
 
-def get_all_projects():
-    """Возврващет queryset всех проектов."""
-    return Project.objects.all().select_related("author")
-
-
-def get_project_by_id(project_id):
-    """Возвращает проект по id или 404."""
-    return get_object_or_404(Project, pk=project_id)
-
-
-def get_user_created_project_by_id(project_id, user):
-    """Возвращает проект по id, если он создан пользователем, иначе 404."""
-    return get_object_or_404(Project, pk=project_id, author=user)
-
-
-def get_all_user_created_projects(user):
+def get_projects():
     """
-    возвращает queryset всех проектов,
-    которые пользователь создал.
+    Возвращает queryset всех проектов.
     """
-    return Project.objects.filter(author=user).select_related("author")
+    return (
+        Project.objects.all()
+        .select_related("author")
+        .only(
+            "id",
+            "title",
+            "description",
+            "repository_url",
+            "live_url",
+            "cover_image",
+            "author__username",
+        )
+    )
+
+
+def get_project(project_id):
+    """
+    Возвращает проект.
+    """
+    project = get_object_or_404(
+        get_projects().prefetch_related("images"), pk=project_id
+    )
+
+    return project
+
+
+def get_projects_created_by_user(user):
+    return get_projects().filter(author=user)
+
+
+def get_project_created_by_user(project_id, user):
+    """
+    Возвращает проект если он создан пользователем.
+    Если пользователь не является автором, или
+    если проекта не существует, вернет 404.
+    """
+    return get_object_or_404(Project.objects.filter(author=user), pk=project_id)
 
 
 def filter_sort_paginate_projects(projects, query, sort_by, page_number, per_page=20):
@@ -44,33 +66,77 @@ def filter_sort_paginate_projects(projects, query, sort_by, page_number, per_pag
     return page_obj
 
 
-def get_user_project_stats(user):
-    """возвращает словарь со статистикой проектов для пользователя."""
-    projects = get_all_projects()
-
-    projects_stats = projects.aggregate(
-        total=Count(
-            "id",
-            filter=Q(author=user),
-        ),
+def _create_project_images(project, images):
+    """
+    Создает изображения для указанного проекта.
+    """
+    ProjectImage.objects.bulk_create(
+        [ProjectImage(project=project, file=image) for image in images]
     )
 
-    return projects_stats
+
+def _update_project_images(project, images):
+    """
+    Создает новые изображения для указанного проекта
+    и удаляет старые.
+    """
+    for image in project.images.all():
+        image.file.delete()
+    project.images.all().delete()
+
+    _create_project_images(project, images)
 
 
-def create_images_for_project(project, images):
-    """Создает изображения проекта."""
+def create_project(author, **kwargs):
+    """
+    Создает и возвращает проект с указанным автором.
+    Очищает description от вредоносного HTML.
+    """
+    description = kwargs.pop("description")
+    images = kwargs.pop("images", None)
+
+    project = Project.objects.create(
+        author=author,
+        description=clean_html(description),
+        **kwargs,
+    )
+
     if images:
-        ProjectImage.objects.bulk_create(
-            [ProjectImage(project=project, file=image) for image in images]
-        )
+        _create_project_images(project=project, images=images)
+
+    return project
 
 
-def update_project_images(project, new_images):
-    """Удаляет старые изображения для проекта и создает новые"""
-    if new_images:
-        for image in project.images.all():
-            image.file.delete()
-        project.images.all().delete()
+def update_project(project, **kwargs):
+    """
+    Обновляет и возвращает проект.
+    Очищает description от вредносного HTML.
+    """
+    description = kwargs.pop("description", None)
+    images = kwargs.pop("images", None)
 
-        create_images_for_project(project=project, images=new_images)
+    project.description = clean_html(description)
+
+    for key, value in kwargs.items():
+        setattr(project, key, value)
+    project.save()
+
+    if images:
+        _update_project_images(project=project, images=images)
+
+    return project
+
+
+def delete_project(project):
+    """Удаляет проект."""
+    project.delete()
+
+
+def get_projects_stats(user):
+    projects = get_projects().filter(author=user)
+
+    stats = projects.aggregate(
+        total=Count("id"),
+    )
+
+    return stats
