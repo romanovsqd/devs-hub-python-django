@@ -21,6 +21,8 @@ def get_projects():
             "repository_url",
             "live_url",
             "cover_image",
+            "created_at",
+            "updated_at",
             "author__username",
         )
     )
@@ -115,7 +117,8 @@ def update_project(project, **kwargs):
     description = kwargs.pop("description", None)
     images = kwargs.pop("images", None)
 
-    project.description = clean_html(description)
+    if description:
+        project.description = clean_html(description)
 
     for key, value in kwargs.items():
         setattr(project, key, value)
