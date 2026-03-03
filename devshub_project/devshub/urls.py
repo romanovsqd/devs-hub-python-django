@@ -11,17 +11,18 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-    path("tinymce/", include("tinymce.urls")),
     path("", include("core.urls")),
     path("", include("users.auth_urls")),
+    path("tinymce/", include("tinymce.urls")),
     path("users/", include("users.urls")),
     path("cards/", include("cards.urls")),
     path("decks/", include("decks.urls")),
     path("repetitions/", include("repetitions.urls")),
     path("projects/", include("projects.urls")),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("api/v1/", include("projects.api.v1.urls")),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
