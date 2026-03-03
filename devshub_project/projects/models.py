@@ -13,7 +13,7 @@ class Project(models.Model):
         settings.AUTH_USER_MODEL, related_name="projects", on_delete=models.CASCADE
     )
     cover_image = models.ImageField(
-        upload_to="projects/covers/", max_length=255, blank=True, null=True
+        upload_to="projects/covers/", max_length=255, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
