@@ -14,7 +14,9 @@ def get_cards():
     return (
         Card.objects.all()
         .select_related("author")
-        .only("id", "question", "answer", "author__username")
+        .only(
+            "id", "question", "answer", "created_at", "updated_at", "author__username"
+        )
     )
 
 
@@ -127,8 +129,10 @@ def update_card(card, **kwargs):
     question = kwargs.pop("question", None)
     answer = kwargs.pop("answer", None)
 
-    card.question = clean_html(question)
-    card.answer = clean_html(answer)
+    if question:
+        card.question = clean_html(question)
+    if answer:
+        card.answer = clean_html(answer)
 
     for key, value in kwargs.items():
         setattr(card, key, value)
