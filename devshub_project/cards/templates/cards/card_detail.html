@@ -18,12 +18,12 @@
           {% if card.author == request.user %}
             <div class="flex flex-wrap lg:flex-nowrap gap-2 lg:gap-4 justify-center items-center max-w-xl lg:max-w-5xl mx-auto">
               <a href="{% url "card_update" card.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium primary">Редактировать карточку</a>
-              <a href="{% url "card_export" card.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success">Экспортировать карточку</a>
+              <a href="{% url "card-export" card.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success">Экспортировать карточку</a>
               <a href="{% url "card_delete" card.pk %}" class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium danger">Удалить карточку</a>
             </div>
           <!-- User buttons -->
           {% else %}
-            <form action="{% url "card_toggle_save" card.pk %}" method="post" data-js-toggle-save-form class="flex flex-wrap lg:flex-nowrap gap-2 lg:gap-4 justify-center items-center max-w-xl lg:max-w-5xl mx-auto">
+            <form action="{% url "card-toggle-save" card.pk %}" method="post" data-js-toggle-save-form class="flex flex-wrap lg:flex-nowrap gap-2 lg:gap-4 justify-center items-center max-w-xl lg:max-w-5xl mx-auto">
               {% csrf_token %}
 
               <!-- If not saved-->
@@ -32,7 +32,7 @@
                 <button type="submit" data-js-toggle-button class="w-full text-center rounded-full py-4 px-6 text-md font-medium cursor-pointer primary">
                   Сохранить карточку в мой профиль
                 </button>
-                <a href="{% url "card_export" card.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success inactive">Экспортировать карточку</a>
+                <a href="{% url "card-export" card.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success inactive">Экспортировать карточку</a>
 
               <!-- If saved-->
               {% else %}
@@ -40,7 +40,7 @@
                 <button type="submit" data-js-toggle-button class="w-full text-center rounded-full py-4 px-6 text-md font-medium cursor-pointer danger">
                   Удалить карточку из моего профиля
                 </button>
-                <a href="{% url "card_export" card.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success">Экспортировать карточку</a>
+                <a href="{% url "card-export" card.pk %}" data-js-export-button class="inline-block w-full text-center rounded-full py-4 px-6 text-md font-medium success">Экспортировать карточку</a>
               {% endif %}
 
             </form>

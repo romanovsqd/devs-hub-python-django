@@ -93,28 +93,3 @@ def card_delete(request, pk):
     }
 
     return render(request, "cards/card_confirm_delete.html", context)
-
-
-@login_required
-@require_POST
-def card_toggle_save(request, pk):
-    card = services.get_card_with_saved_status(card_id=pk, user=request.user)
-
-    success, result = services.toggle_card_save_by_user(card=card, user=request.user)
-
-    return JsonResponse({"success": success, "message": result})
-
-
-@login_required
-def card_export(request, pk):
-    card = services.get_card_created_or_saved_by_user(card_id=pk, user=request.user)
-
-    filename, content = services.generate_card_data_for_export(card=card)
-
-    response = HttpResponse(content_type="text/plain")
-    response["Content-Disposition"] = (
-        "attachment; " f"filename*=UTF-8''{quote(filename)}"
-    )
-    response.write(content)
-
-    return response
