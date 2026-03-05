@@ -48,12 +48,15 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
+            "id",
             "title",
             "description",
             "repository_url",
             "live_url",
             "images",
             "cover_image",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
