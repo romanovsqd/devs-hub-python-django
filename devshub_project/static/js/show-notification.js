@@ -1,10 +1,10 @@
-function showNotification(message, success = false) {
+function showNotification(message, isSaved = false) {
   const container = document.getElementById("notifications");
 
   const notification = document.createElement("div");
   notification.className = `
     w-full rounded-md py-2 px-4 text-md font-medium border transition-all duration-300
-    ${success ? "success" : "danger"}
+    ${isSaved ? "success" : "danger"}
     opacity-0 translate-x-4
   `;
 

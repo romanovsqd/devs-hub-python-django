@@ -28,12 +28,11 @@ if (toggleForm) {
       toggleButton.classList.toggle("danger", isPrimary);
       toggleButton.classList.toggle("primary", !isPrimary);
       exportButton.classList.toggle("inactive");
-
-      toggleButton.textContent = data.success
+      toggleButton.textContent = data.is_saved
         ? "Удалить карточку из моего профиля"
         : "Сохранить карточку в мой профиль";
 
-      showNotification(data.message, data.success);
+      showNotification(data.message, data.is_saved);
     } catch (error) {
       console.error(error);
       showNotification("Произошла ошибка. Попробуйте снова.");
