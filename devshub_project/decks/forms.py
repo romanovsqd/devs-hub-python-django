@@ -36,4 +36,6 @@ class DeckForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.user = user
 
-        self.fields["cards"].queryset = get_cards_created_or_saved_by_user(self.user)
+        self.fields["cards"].queryset = get_cards_created_or_saved_by_user(
+            user=self.user
+        )
