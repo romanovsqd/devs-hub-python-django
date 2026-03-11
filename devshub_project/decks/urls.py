@@ -8,6 +8,4 @@ urlpatterns = [
     path("create/", views.deck_create, name="deck_create"),
     path("<int:pk>/edit/", views.deck_update, name="deck_update"),
     path("<int:pk>/delete/", views.deck_delete, name="deck_delete"),
-    path("<int:pk>/toggle-save/", views.deck_toggle_save, name="deck_toggle_save"),
-    path("<int:pk>/export/", views.deck_export, name="deck_export"),
 ]

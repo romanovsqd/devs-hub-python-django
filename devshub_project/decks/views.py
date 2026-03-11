@@ -119,28 +119,3 @@ def deck_delete(request, pk):
     }
 
     return render(request, "decks/deck_confirm_delete.html", context)
-
-
-@login_required
-@require_POST
-def deck_toggle_save(request, pk):
-    deck = services.get_deck_with_saved_status(deck_id=pk, user=request.user)
-
-    success, message = services.toggle_deck_save_by_user(deck=deck, user=request.user)
-
-    return JsonResponse({"success": success, "message": message})
-
-
-@login_required
-def deck_export(request, pk):
-    deck = services.get_deck_created_or_saved_by_user(deck_id=pk, user=request.user)
-    filename, cards_generator = services.prepare_deck_for_export(deck=deck)
-
-    response = StreamingHttpResponse(
-        cards_generator, content_type="text/plain; charset=utf-8"
-    )
-    response["Content-Disposition"] = (
-        "attachment; " f"filename*=UTF-8''{quote(filename)}"
-    )
-
-    return response

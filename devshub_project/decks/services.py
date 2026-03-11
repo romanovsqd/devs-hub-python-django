@@ -12,7 +12,7 @@ def get_decks():
     return (
         Deck.objects.all()
         .select_related("author")
-        .only("id", "title", "author__username")
+        .only("id", "title", "created_at", "updated_at", "author__username")
     )
 
 
