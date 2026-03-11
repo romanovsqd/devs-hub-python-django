@@ -14,10 +14,10 @@ class CardListSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "question",
-            "created_at",
-            "updated_at",
             "is_saved",
             "author",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -31,10 +31,10 @@ class CardDetailSerializer(serializers.ModelSerializer):
             "id",
             "question",
             "answer",
-            "created_at",
-            "updated_at",
             "is_saved",
             "author",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -54,3 +54,17 @@ class CardCreateUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         return services.update_card(card=instance, **validated_data)
+
+
+class CardShortSerializer(serializers.ModelSerializer):
+    author = UserShortSerializer(read_only=True)
+    is_saved = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Card
+        fields = [
+            "id",
+            "question",
+            "is_saved",
+            "author",
+        ]
