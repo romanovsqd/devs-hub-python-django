@@ -16,3 +16,12 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
             return True
 
         return obj.author == request.user
+
+
+class IsOwner(permissions.BasePermission):
+    """
+    Разрешение позволяет редактировать профиль только автору.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user
