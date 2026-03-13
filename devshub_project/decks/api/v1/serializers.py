@@ -12,6 +12,7 @@ from users.api.v1.serializers import UserShortSerializer
 class DeckListSerializer(serializers.ModelSerializer):
     author = UserShortSerializer(read_only=True)
     is_saved = serializers.BooleanField(read_only=True)
+    in_study = serializers.SerializerMethodField()
 
     class Meta:
         model = Deck
@@ -20,9 +21,19 @@ class DeckListSerializer(serializers.ModelSerializer):
             "title",
             "author",
             "is_saved",
+            "in_study",
             "created_at",
             "updated_at",
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.context.get("studying_ids", False):
+            self.fields.pop("in_study", None)
+
+    def get_in_study(self, deck):
+        studying_ids = self.context.get("studying_ids", set())
+        return deck.id in studying_ids
 
 
 class DeckDetailSerializer(serializers.ModelSerializer):
