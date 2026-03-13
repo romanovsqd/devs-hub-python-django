@@ -31,5 +31,4 @@ urlpatterns = [
         PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
-    path("confirm-email/<uidb64>/<token>/", views.confirm_email, name="confirm_email"),
 ]

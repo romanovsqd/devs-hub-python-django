@@ -205,21 +205,13 @@ def user_update(request, username):
             user_form = UserForm(request.POST, request.FILES, instance=user)
             password_form = UserPasswordChangeForm(user)
 
-            old_email = user.email
-            old_codewars_username = user.codewars_username
-
             if user_form.is_valid():
-                user, email_send = services.update_user(
+                user = services.update_user(
                     **user_form.cleaned_data,
                     user=user,
-                    old_email=old_email,
-                    old_codewars_username=old_codewars_username,
-                    base_url=request.build_absolute_uri("/"),
                 )
 
                 messages.success(request, "Данные профиля сохранены")
-                if email_send:
-                    messages.info(request, "Отправлено письмо для подтверждения почты")
 
                 return redirect("user_update", username=user.username)
 
@@ -245,11 +237,3 @@ def user_update(request, username):
     }
 
     return render(request, "users/user_form.html", context)
-
-
-def confirm_email(request, uidb64, token):
-    is_email_confirmed = services.confirm_user_email(uidb64=uidb64, token=token)
-
-    if is_email_confirmed:
-        messages.success(request, "Ваш email успешно подтвержден")
-    return redirect("user_update", username=request.user.username)
