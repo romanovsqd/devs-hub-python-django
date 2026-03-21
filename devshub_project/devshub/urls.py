@@ -26,6 +26,7 @@ urlpatterns = [
     path("api/v1/", include("cards.api.v1.urls")),
     path("api/v1/", include("decks.api.v1.urls")),
     path("api/v1/", include("projects.api.v1.urls")),
+    path("api/v1/", include("repetitions.api.v1.urls")),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
