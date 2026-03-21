@@ -31,7 +31,7 @@ if (toggleStudyForms) {
         toggleButton.classList.toggle("danger", isPrimary);
         toggleButton.classList.toggle("primary", !isPrimary);
 
-        toggleButton.textContent = data.success
+        toggleButton.textContent = data.is_study
           ? "Удалить из изучаемых"
           : "Добавить в изучаемые";
 
@@ -39,7 +39,7 @@ if (toggleStudyForms) {
           exportButton.classList.toggle("inactive");
         }
 
-        showNotification(data.message, data.success);
+        showNotification(data.message, data.is_study);
       } catch (error) {
         console.error(error);
         showNotification("Произошла ошибка. Попробуйте снова.");
