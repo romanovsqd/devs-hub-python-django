@@ -2,6 +2,8 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 
+from repetitions import services as repetition_services
+
 from .models import Deck
 
 
@@ -187,6 +189,18 @@ def toggle_deck_save_by_user(deck, user):
     else:
         user.saved_decks.add(deck)
         return True, "Колода сохранена в ваш профиль"
+
+
+def toggle_deck_study_by_user(deck, user):
+    """Переключает состояние изучения колоды пользователем."""
+    deck_progress = repetition_services.get_user_deck_progress(deck, user)
+
+    if deck_progress.exists():
+        deck_progress.delete()
+        return False, f"Сброшен весь прогресс по колоде {deck.title}"
+    else:
+        repetition_services.create_deck_progress_for_user(deck, user)
+        return True, f"Вы изучаете колоду {deck.title}"
 
 
 def _generate_cards_data_for_export(cards):

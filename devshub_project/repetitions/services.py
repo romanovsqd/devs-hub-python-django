@@ -50,8 +50,8 @@ def get_next_card_for_review(user):
         return None
 
     card_data = {
-        "card_id": progress.card_id,
         "deck_id": progress.deck_id,
+        "card_id": progress.card_id,
         "question": progress.card.question,
         "answer": progress.card.answer,
     }
@@ -68,18 +68,6 @@ def create_deck_progress_for_user(deck, user):
     progress = [DeckProgress(learner=user, card=card, deck=deck) for card in deck_cards]
 
     DeckProgress.objects.bulk_create(progress, ignore_conflicts=True)
-
-
-def toggle_deck_study_by_user(deck, user):
-    """Переключает состояние изучения колоды пользователем."""
-    deck_progress = get_user_deck_progress(deck, user)
-
-    if deck_progress.exists():
-        deck_progress.delete()
-        return False, f"Сброшен весь прогресс по колоде {deck.title}"
-    else:
-        create_deck_progress_for_user(deck, user)
-        return True, f"Вы изучаете колоду {deck.title}"
 
 
 def apply_sm2(progress, quality):
