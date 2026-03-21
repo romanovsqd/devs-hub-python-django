@@ -19,7 +19,7 @@
 
     <!-- Toggle study button -->
     {% if is_owner %}
-      <form action="{% url "deck_toggle_study" deck.pk %}" method="post" data-js-toggle-save-form>
+      <form action="{% url "deck-toggle-study" deck.pk %}" method="post" data-js-toggle-save-form>
         {% csrf_token %}
         {% if not deck.is_studying %}
           <button type="submit" data-js-toggle-button class="w-full rounded-full py-2 px-4 primary transition-colors cursor-pointer">
