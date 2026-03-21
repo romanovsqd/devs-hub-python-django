@@ -38,10 +38,20 @@ class DeckViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def toggle_save(self, request, pk):
         deck = self.get_object()
-        is_saved, result = services.toggle_deck_save_by_user(
+        is_saved, message = services.toggle_deck_save_by_user(
             deck=deck, user=request.user
         )
-        return Response({"is_saved": is_saved, "message": result})
+        return Response({"is_saved": is_saved, "message": message})
+
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    def toggle_study(self, request, pk):
+        deck = services.get_deck_created_or_saved_by_user(deck_id=pk, user=request.user)
+
+        is_study, message = services.toggle_deck_study_by_user(
+            deck=deck, user=request.user
+        )
+
+        return Response({"is_study": is_study, "message": message})
 
     @action(detail=True, methods=["get"], permission_classes=[IsAuthenticated])
     def export(self, request, pk):
