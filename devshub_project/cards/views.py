@@ -1,9 +1,5 @@
-from urllib.parse import quote
-
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.views.decorators.http import require_POST
 
 from . import services
 from .forms import CardForm

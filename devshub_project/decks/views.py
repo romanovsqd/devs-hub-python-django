@@ -1,9 +1,5 @@
-from urllib.parse import quote
-
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import redirect, render
-from django.views.decorators.http import require_POST
 
 from cards import services as card_services
 
