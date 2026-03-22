@@ -1,7 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from cards import services as card_services
 from cards.api.v1.serializers import CardListSerializer
@@ -13,7 +19,32 @@ from projects.api.v1.serializers import ProjectListSerializer
 from repetitions import services as repetition_services
 from users import services
 
-from .serializers import UserDetailSerializer, UserListSerializer, UserUpdateSerializer
+from .serializers import (
+    UserDetailSerializer,
+    UserListSerializer,
+    UserRegisterSerializer,
+    UserShortSerializer,
+    UserUpdateSerializer,
+)
+
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = UserRegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.save()
+        refresh = RefreshToken.for_user(user)
+
+        return Response(
+            {
+                "user": UserShortSerializer(user).data,
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }
+        )
 
 
 class UserViewSet(viewsets.ModelViewSet):

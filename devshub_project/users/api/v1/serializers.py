@@ -94,3 +94,30 @@ class UserShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username"]
+
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ["username", "password1", "password2"]
+
+    def validate(self, data):
+        password1 = data["password1"]
+        password2 = data["password2"]
+
+        if password1 != password2:
+            raise serializers.ValidationError({"password2": "Пароли не совпадают"})
+
+        validate_password(password1)
+
+        return data
+
+    def create(self, validated_data):
+        user = services.create_user(
+            **validated_data,
+            password=validated_data["password1"],
+        )
+        return user
