@@ -54,7 +54,7 @@ def get_project_created_by_user(project_id, user):
 def filter_sort_projects(projects, query, sort_by):
     """Фильтрует, сортирует, пагинирует проекты. Возвращает page_obj."""
     if query:
-        projects = Project.objects.filter(title__icontains=query)
+        projects = projects.filter(title__icontains=query)
 
     if sort_by == "newest":
         projects = projects.order_by("-created_at")
