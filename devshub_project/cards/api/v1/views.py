@@ -38,10 +38,10 @@ class CardViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def toggle_save(self, request, pk):
         card = self.get_object()
-        is_saved, result = services.toggle_card_save_by_user(
+        is_saved, message = services.toggle_card_save_by_user(
             card=card, user=request.user
         )
-        return Response({"is_saved": is_saved, "message": result})
+        return Response({"is_saved": is_saved, "message": message})
 
     @action(detail=True, methods=["get"], permission_classes=[IsAuthenticated])
     def export(self, request, pk):
