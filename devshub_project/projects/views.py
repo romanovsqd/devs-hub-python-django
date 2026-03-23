@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 
 from . import services
@@ -10,16 +11,17 @@ def project_list(request):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    projects = services.filter_sort_paginate_projects(
+    projects = services.filter_sort_projects(
         projects=services.get_projects(),
         query=query,
         sort_by=sort_by,
-        page_number=page_number,
-        per_page=10,
     )
 
+    paginator = Paginator(projects, 20)
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "projects": projects,
+        "projects": page_obj,
         "query": query,
         "sort_by": sort_by,
     }

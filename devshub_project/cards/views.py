@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 
 from . import services
@@ -12,15 +13,17 @@ def card_list(request):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    cards = services.filter_sort_paginate_cards(
+    cards = services.filter_sort_cards(
         cards=services.get_cards_with_saved_status(user=user),
         query=query,
         sort_by=sort_by,
-        page_number=page_number,
     )
 
+    paginator = Paginator(cards, 20)
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "cards": cards,
+        "cards": page_obj,
         "query": query,
         "sort_by": sort_by,
     }

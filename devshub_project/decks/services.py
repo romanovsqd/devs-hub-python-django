@@ -1,4 +1,3 @@
-from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 
@@ -120,7 +119,7 @@ def get_deck_cards(deck):
     return cards
 
 
-def filter_sort_paginate_decks(decks, query, sort_by, page_number, per_page=20):
+def filter_sort_decks(decks, query, sort_by):
     """
     Фильтрует, сортирует, пагинирует колоды. Возвращает page_obj.
     """
@@ -132,10 +131,7 @@ def filter_sort_paginate_decks(decks, query, sort_by, page_number, per_page=20):
     elif sort_by == "oldest":
         decks = decks.order_by("created_at")
 
-    paginator = Paginator(decks, per_page)
-    page_obj = paginator.get_page(page_number)
-
-    return page_obj
+    return decks
 
 
 def create_deck(author, **kwargs):

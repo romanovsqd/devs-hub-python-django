@@ -1,4 +1,3 @@
-from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
@@ -52,7 +51,7 @@ def get_project_created_by_user(project_id, user):
     return get_object_or_404(Project.objects.filter(author=user), pk=project_id)
 
 
-def filter_sort_paginate_projects(projects, query, sort_by, page_number, per_page=20):
+def filter_sort_projects(projects, query, sort_by):
     """Фильтрует, сортирует, пагинирует проекты. Возвращает page_obj."""
     if query:
         projects = Project.objects.filter(title__icontains=query)
@@ -62,10 +61,7 @@ def filter_sort_paginate_projects(projects, query, sort_by, page_number, per_pag
     elif sort_by == "oldest":
         projects = projects.order_by("created_at")
 
-    paginator = Paginator(projects, per_page)
-    page_obj = paginator.get_page(page_number)
-
-    return page_obj
+    return projects
 
 
 def _create_project_images(project, images):

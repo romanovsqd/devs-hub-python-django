@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
@@ -50,7 +49,7 @@ def get_user_with_codewars_profile(username):
     )
 
 
-def filter_sort_paginate_users(users, query, sort_by, page_number, per_page=20):
+def filter_sort_users(users, query, sort_by):
     """Фильтрует, сортирует, пагинирует пользователей. Возвращает page_obj."""
     if query:
         users = users.filter(
@@ -64,10 +63,7 @@ def filter_sort_paginate_users(users, query, sort_by, page_number, per_page=20):
     elif sort_by == "oldest":
         users = users.order_by("date_joined")
 
-    paginator = Paginator(users, per_page)
-    page_obj = paginator.get_page(page_number)
-
-    return page_obj
+    return users
 
 
 def create_user(username, password, **kwargs):

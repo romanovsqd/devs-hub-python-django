@@ -6,6 +6,7 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetView,
 )
+from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 
@@ -74,16 +75,17 @@ def user_list(request):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    users = services.filter_sort_paginate_users(
+    users = services.filter_sort_users(
         users=services.get_users(),
         query=query,
         sort_by=sort_by,
-        page_number=page_number,
-        per_page=20,
     )
 
+    paginator = Paginator(users, 20)
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "users": users,
+        "users": page_obj,
         "query": query,
         "sort_by": sort_by,
     }
@@ -115,20 +117,21 @@ def user_cards(request, username):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    user_cards = card_services.filter_sort_paginate_cards(
+    user_cards = card_services.filter_sort_cards(
         cards=card_services.get_user_cards_with_saved_status(
             user=user,
             current_user=current_user,
         ),
         query=query,
         sort_by=sort_by,
-        page_number=page_number,
-        per_page=20,
     )
+
+    paginator = Paginator(user_cards, 20)
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "user": user,
-        "user_cards": user_cards,
+        "user_cards": page_obj,
         "query": query,
         "sort_by": sort_by,
     }
@@ -145,20 +148,21 @@ def user_decks(request, username):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    user_decks = deck_services.filter_sort_paginate_decks(
+    user_decks = deck_services.filter_sort_decks(
         decks=deck_services.get_user_decks_with_saved_status(
             user=user,
             current_user=current_user,
         ),
         query=query,
         sort_by=sort_by,
-        page_number=page_number,
-        per_page=20,
     )
+
+    paginator = Paginator(user_decks, 20)
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "user": user,
-        "user_decks": user_decks,
+        "user_decks": page_obj,
         "studying_decks_ids": studying_decks_ids,
         "query": query,
         "sort_by": sort_by,
@@ -174,17 +178,18 @@ def user_projects(request, username):
     sort_by = request.GET.get("sort_by", "")
     page_number = request.GET.get("page", 1)
 
-    user_projects = project_services.filter_sort_paginate_projects(
+    user_projects = project_services.filter_sort_projects(
         projects=project_services.get_projects_created_by_user(user=user),
         query=query,
         sort_by=sort_by,
-        page_number=page_number,
-        per_page=10,
     )
+
+    paginator = Paginator(user_projects, 20)
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "user": user,
-        "user_projects": user_projects,
+        "user_projects": page_obj,
         "query": query,
         "sort_by": sort_by,
     }
