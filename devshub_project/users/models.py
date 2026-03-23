@@ -8,9 +8,7 @@ class User(AbstractUser):
     specialization = models.CharField(max_length=100, blank=True)
     skills = models.CharField(max_length=100, blank=True)
     codewars_username = models.CharField(max_length=50, blank=True)
-    avatar = models.ImageField(
-        upload_to="avatars/", max_length=255, blank=True, null=True
-    )
+    avatar = models.ImageField(upload_to="avatars/", max_length=255, blank=True)
 
     class Meta:
         ordering = ["-date_joined"]
