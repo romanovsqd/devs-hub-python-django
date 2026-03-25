@@ -169,6 +169,7 @@ INTERNAL_IPS = [
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "devshub@mail.com"
 
+# Celery beat
 CELERY_BEAT_SCHEDULE = {
     "update_codewars_profiles": {
         "task": "users.tasks.update_codewars_profiles_task",
@@ -176,6 +177,20 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+
+# Cache
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+    }
+}
+
+# Session
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# TinyMCE
 TINYMCE_DEFAULT_CONFIG = {
     "menubar": True,
     "plugins": "codesample code link lists table",
@@ -187,6 +202,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "resize": True,
 }
 
+# Django rest framework
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
@@ -199,6 +215,7 @@ REST_FRAMEWORK = {
     ],
 }
 
+# simple JWT
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
