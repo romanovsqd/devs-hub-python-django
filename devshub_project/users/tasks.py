@@ -4,6 +4,7 @@ import requests
 from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.utils import timezone
 
@@ -62,6 +63,7 @@ def create_or_update_user_codewars_profile_task(user_id, codewars_username):
             "total_completed_katas": total_completed_katas,
         },
     )
+    cache.delete(f"user_profile:{user.username}")
 
 
 @shared_task

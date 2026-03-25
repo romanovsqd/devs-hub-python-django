@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 
@@ -145,6 +146,8 @@ def create_deck(author, **kwargs):
     deck = Deck.objects.create(author=author, **kwargs)
     deck.cards.set(cards)
 
+    cache.delete(f"deck_stats:user:{author.pk}")
+
     return deck
 
 
@@ -168,7 +171,10 @@ def update_deck(deck, **kwargs):
 
 def delete_deck(deck):
     """Удаляет колоду."""
+    author = deck.author
     deck.delete()
+    cache.delete(f"decks_stats:user:{author.pk}")
+    cache.delete(f"cards_stats:user:{author.pk}")
 
 
 def toggle_deck_save_by_user(deck, user):
@@ -181,9 +187,13 @@ def toggle_deck_save_by_user(deck, user):
 
     if deck.is_saved:
         user.saved_decks.remove(deck)
+        cache.delete(f"decks_stats:user:{user.pk}")
+        cache.delete(f"cards_stats:user:{user.pk}")
         return False, "Колода удалена из вашего профиля"
     else:
         user.saved_decks.add(deck)
+        cache.delete(f"decks_stats:user:{user.pk}")
+        cache.delete(f"cards_stats:user:{user.pk}")
         return True, "Колода сохранена в ваш профиль"
 
 
@@ -193,9 +203,13 @@ def toggle_deck_study_by_user(deck, user):
 
     if deck_progress.exists():
         deck_progress.delete()
+        cache.delete(f"decks_stats:user:{user.pk}")
+        cache.delete(f"cards_stats:user:{user.pk}")
         return False, f"Сброшен весь прогресс по колоде {deck.title}"
     else:
         repetition_services.create_deck_progress_for_user(deck, user)
+        cache.delete(f"decks_stats:user:{user.pk}")
+        cache.delete(f"cards_stats:user:{user.pk}")
         return True, f"Вы изучаете колоду {deck.title}"
 
 
@@ -227,13 +241,20 @@ def prepare_deck_for_export(deck):
 
 
 def get_decks_stats(user):
-    decks = get_decks_created_or_saved_by_user(user=user)
+    cache_key = f"decks_stats:user:{user.pk}"
 
-    stats = decks.aggregate(
-        total=Count("id", distinct=True),
-        created=Count("id", filter=Q(author=user), distinct=True),
-        saved=Count("id", filter=Q(saved_by=user), distinct=True),
-        in_study=Count("id", filter=Q(card_progresses__learner=user), distinct=True),
-    )
+    stats = cache.get(cache_key)
+
+    if stats is None:
+        decks = get_decks_created_or_saved_by_user(user=user)
+        stats = decks.aggregate(
+            total=Count("id", distinct=True),
+            created=Count("id", filter=Q(author=user), distinct=True),
+            saved=Count("id", filter=Q(saved_by=user), distinct=True),
+            in_study=Count(
+                "id", filter=Q(card_progresses__learner=user), distinct=True
+            ),
+        )
+        cache.set(cache_key, stats, 60 * 5)
 
     return stats

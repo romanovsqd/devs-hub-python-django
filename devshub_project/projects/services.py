@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
@@ -31,9 +32,15 @@ def get_project(project_id):
     """
     Возвращает проект.
     """
-    project = get_object_or_404(
-        get_projects().prefetch_related("images"), pk=project_id
-    )
+    cache_key = f"project:{project_id}"
+
+    project = cache.get(cache_key)
+
+    if project is None:
+        project = get_object_or_404(
+            get_projects().prefetch_related("images"), pk=project_id
+        )
+        cache.set(cache_key, project, 60 * 5)
 
     return project
 
@@ -102,6 +109,8 @@ def create_project(author, **kwargs):
     if images:
         _create_project_images(project=project, images=images)
 
+    cache.delete(f"projects_stats:users:{author.pk}")
+
     return project
 
 
@@ -123,19 +132,33 @@ def update_project(project, **kwargs):
     if images:
         _update_project_images(project=project, images=images)
 
+    cache.delete(f"project:{project.pk}")
+
     return project
 
 
 def delete_project(project):
     """Удаляет проект."""
+    project_id = project.pk
+    author = project.author
+
     project.delete()
+
+    cache.delete(f"project:{project_id}")
+    cache.delete(f"projects_stats:user:{author.pk}")
 
 
 def get_projects_stats(user):
-    projects = get_projects().filter(author=user)
+    """Возвращает статистику проектов для пользователя."""
+    cache_key = f"projects_stats:user:{user.pk}"
 
-    stats = projects.aggregate(
-        total=Count("id"),
-    )
+    stats = cache.get(cache_key)
+
+    if stats is None:
+        projects = get_projects().filter(author=user)
+        stats = projects.aggregate(
+            total=Count("id"),
+        )
+        cache.set(cache_key, stats, 60 * 5)
 
     return stats

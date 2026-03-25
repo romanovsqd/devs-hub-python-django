@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
@@ -33,20 +34,27 @@ def get_user_with_codewars_profile(username):
     Возвращает пользователя с codewars_profile.
     Если пользователь не найден, вернет 404.
     """
-    return get_object_or_404(
-        get_users()
-        .select_related("codewars_profile")
-        .only(
-            "id",
-            "username",
-            "specialization",
-            "skills",
-            "avatar",
-            "codewars_username",
-            "codewars_profile",
-        ),
-        username=username,
-    )
+    cache_key = f"user_profile:{username}"
+
+    user = cache.get(cache_key)
+    if user is None:
+        user = get_object_or_404(
+            get_users()
+            .select_related("codewars_profile")
+            .only(
+                "id",
+                "username",
+                "specialization",
+                "skills",
+                "avatar",
+                "codewars_username",
+                "codewars_profile",
+            ),
+            username=username,
+        )
+        cache.set(cache_key, user, 60 * 5)
+
+    return user
 
 
 def filter_sort_users(users, query, sort_by):
@@ -82,7 +90,6 @@ def _update_codewars_username(user, codewars_username):
     """
     Обновляет данные codewars аккаута пользователя.
     """
-
     if not codewars_username:
         CodewarsProfile.objects.filter(user=user).delete()
         return
@@ -108,5 +115,7 @@ def update_user(user, **kwargs):
     for key, value in kwargs.items():
         setattr(user, key, value)
     user.save()
+
+    cache.delete(f"user_profile:{user.username}")
 
     return user

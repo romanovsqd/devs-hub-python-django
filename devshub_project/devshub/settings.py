@@ -177,7 +177,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-
 # Cache
 CACHES = {
     "default": {

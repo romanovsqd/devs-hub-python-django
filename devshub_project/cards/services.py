@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 
@@ -109,12 +110,15 @@ def create_card(question, answer, author, **kwargs):
     Создает и возвращает карточку с указанным автором.
     Очищает question и answer от вредоносного HTML.
     """
-    return Card.objects.create(
+    card = Card.objects.create(
         question=clean_html(question),
         answer=clean_html(answer),
         author=author,
         **kwargs,
     )
+    cache.delete(f"cards_stats:user:{author.pk}")
+
+    return card
 
 
 def update_card(card, **kwargs):
@@ -139,7 +143,9 @@ def update_card(card, **kwargs):
 
 def delete_card(card):
     """Удаляет карточку."""
+    author = card.author
     card.delete()
+    cache.delete(f"cards_stats:user:{author.pk}")
 
 
 def toggle_card_save_by_user(card, user):
@@ -152,9 +158,11 @@ def toggle_card_save_by_user(card, user):
 
     if card.is_saved:
         user.saved_cards.remove(card)
+        cache.delete(f"cards_stats:user:{user.pk}")
         return False, "Карточка удалена из вашего профиля"
     else:
         user.saved_cards.add(card)
+        cache.delete(f"cards_stats:user:{user.pk}")
         return True, "Карточка сохранена в ваш профиль"
 
 
@@ -178,13 +186,19 @@ def get_cards_stats(user):
     """
     Возвращает словарь со статистикой карточек для пользователя.
     """
-    cards = get_cards_created_or_saved_by_user(user=user)
+    cache_key = f"cards_stats:user:{user.pk}"
 
-    stats = cards.aggregate(
-        total=Count("id", distinct=True),
-        created=Count("id", filter=Q(author=user), distinct=True),
-        saved=Count("id", filter=Q(saved_by=user), distinct=True),
-        in_study=Count("id", filter=Q(deck_progresses__learner=user), distinct=True),
-    )
+    stats = cache.get(cache_key)
+    if stats is None:
+        cards = get_cards_created_or_saved_by_user(user=user)
+        stats = cards.aggregate(
+            total=Count("id", distinct=True),
+            created=Count("id", filter=Q(author=user), distinct=True),
+            saved=Count("id", filter=Q(saved_by=user), distinct=True),
+            in_study=Count(
+                "id", filter=Q(deck_progresses__learner=user), distinct=True
+            ),
+        )
+        cache.set(cache_key, stats, timeout=60 * 5)
 
     return stats
