@@ -14,6 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from celery.schedules import crontab
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*2@8s+(g9)p1=x+^r$ve53xnnpq1f-f$(rayswh%2f3#&otlbc"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["devs-hub.ru", "www.devs-hub.ru"]
 
 
 # Application definition
@@ -90,11 +91,11 @@ WSGI_APPLICATION = "devshub.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "devshub",
-        "USER": "myuser",
-        "PASSWORD": "mypass",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": config("POSTGRES_DB"),
+        "USER": config("POSTGRES_USER"),
+        "PASSWORD": config("POSTGRES_PASSWORD"),
+        "HOST": config("POSTGRES_HOST"),
+        "PORT": config("POSTGRES_PORT"),
     }
 }
 
@@ -154,7 +155,6 @@ AUTH_USER_MODEL = "users.User"
 
 # Auth urls
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "card_list"
 
 LOGOUT_REDIRECT_URL = "login"
 
@@ -169,9 +169,16 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-# email
+# Email
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-DEFAULT_FROM_EMAIL = "devshub@mail.com"
+
+# Email server configuration
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 # Celery beat
 CELERY_BEAT_SCHEDULE = {
@@ -190,7 +197,7 @@ CACHES = {
 }
 
 # Session
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 
 # TinyMCE
@@ -220,7 +227,7 @@ REST_FRAMEWORK = {
 
 # simple JWT
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
