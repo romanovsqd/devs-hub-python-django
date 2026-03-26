@@ -232,3 +232,6 @@ yarn-error.log*
 
 # npm cache
 .npm
+
+# Django static files collected
+staticfiles/
