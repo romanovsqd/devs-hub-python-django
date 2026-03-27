@@ -182,6 +182,9 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+# Celery
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+
 # Celery beat
 CELERY_BEAT_SCHEDULE = {
     "update_codewars_profiles": {
@@ -194,7 +197,7 @@ CELERY_BEAT_SCHEDULE = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": config("REDIS_LOCATION"),
     }
 }
 
