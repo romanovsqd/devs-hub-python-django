@@ -5,10 +5,10 @@ services:
     volumes:
       - ./devshub_project:/code
     depends_on:
-      - db
+      - postgres
       - redis
       - rabbitmq
-  db:
+  postgres:
     image: postgres:18.3
     container_name: postgres-db
     env_file:
@@ -49,7 +49,7 @@ services:
     volumes:
       - ./devshub_project:/code
     depends_on:
-      - db
+      - postgres
       - redis
       - rabbitmq
 
@@ -60,7 +60,7 @@ services:
     volumes:
       - ./devshub_project:/code
     depends_on:
-      - db
+      - postgres
       - redis
       - rabbitmq
 
