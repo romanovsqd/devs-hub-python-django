@@ -1,57 +1,123 @@
 {% extends "base.html" %}
 {% load deck_tags %}
 
-{% block title %}Главная{% endblock title %}
+{% block title %}DevsHub — платформа для разработчиков{% endblock title %}
 
 {% block content %}
-  <div class="py-4 lg:py-8 flex flex-1">
-    <div class="container mx-auto px-4 flex flex-col flex-1">
+<div class="flex flex-col flex-1">
 
-      <!-- Title -->
-      <div class="mb-8">
-        {% include "includes/title.html" with text="О проекте" only %}
+  <!-- HERO -->
+  <section class="py-16 from-gray-50 to-white border-b">
+    <div class="container mx-auto px-4 text-center max-w-3xl">
+      <h1 class="text-4xl lg:text-5xl font-bold mb-6">
+        DevsHub — развивайся, создавай, сотрудничай
+      </h1>
+      <p class="text-lg text-gray-600 mb-8">
+        Платформа для разработчиков, где обучение, проекты и командная работа объединены в одном месте.
+      </p>
+
+      <div class="flex justify-center gap-4">
+        <a href="{% url "register" %}" class="px-6 py-3 bg-black text-white rounded-xl hover:opacity-90 transition">
+          Начать бесплатно
+        </a>
       </div>
-
-      <div class="max-w-4xl mx-auto">
-
-        <p class="mb-4 border-b-2 border-b-gray-300 py-2">
-          <b>DevsHub</b> — это универсальная платформа для разработчиков и смежных профессий,
-          где обучение, создание проектов и командная работа объединены в одном месте.
-          Здесь вы найдете всё, чтобы развивать навыки, делиться знаниями и находить единомышленников.
-        </p>
-
-        <p class="mb-4 border-b-2 border-b-gray-300 py-2">
-          Создавайте собственные проекты и оформляйте их красиво и удобно с помощью встроенного
-          WYSIWYG-редактора — описание и детали вашего проекта будут выглядеть так же аккуратно,
-          как вы этого хотите.
-        </p>
-
-        <p class="mb-4 border-b-2 border-b-gray-300 py-2">
-          Добавляйте карточки и колоды, сохраняйте их, изучайте с
-          помощью интервального повторения прямо на сайте или экспортируйте в Anki,
-          чтобы закреплять знания наиболее эффективно.
-        </p>
-
-        <p class="mb-4 border-b-2 border-b-gray-300 py-2">
-          Ищите интересные карточки, колоды, проекты и пользователей — <b>DevsHub</b> помогает
-          находить именно то, что вам нужно, будь то готовые материалы для обучения или
-          потенциальные партнёры для совместной работы.
-        </p>
-
-        <p class="mb-4 border-b-2 border-b-gray-300 py-2">
-          Просматривайте свою статистику: сколько карточек вы создали, сколько колод
-          изучили, прогресс по проектам и интеграция с Codewars покажет ваши достижения ещё точнее.
-        </p>
-
-        <p>
-          Для разработчиков доступен полноценный API, который позволяет интегрировать
-          возможности платформы в свои собственные проекты, автоматизировать процессы и
-          создавать новые инструменты на основе <b>DevsHub</b>.
-        </p>
-
     </div>
+  </section>
 
-  </div>
+  <!-- FEATURES -->
+  <section class="py-16">
+    <div class="container mx-auto px-4 max-w-6xl">
+
+      <h2 class="text-2xl font-semibold text-center mb-12">
+        Возможности платформы
+      </h2>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Feature -->
+        <div class="p-6 border rounded-2xl hover:shadow-md transition">
+          <h3 class="font-semibold text-lg mb-2">Проекты</h3>
+          <p class="text-gray-600">
+            Создавайте своё портфолио с красивым описанием через встроенный
+            WYSIWYG-редактор или вдохновляйтесь проектами других участников.
+          </p>
+        </div>
+
+        <div class="p-6 border rounded-2xl hover:shadow-md transition">
+          <h3 class="font-semibold text-lg mb-2">Карточки и колоды</h3>
+          <p class="text-gray-600">
+            Учитесь с помощью интервального повторения или экспортируйте материалы в Anki.
+          </p>
+        </div>
+
+        <div class="p-6 border rounded-2xl hover:shadow-md transition">
+          <h3 class="font-semibold text-lg mb-2">Поиск</h3>
+          <p class="text-gray-600">
+            Находите проекты, карточки и людей для обучения и совместной работы.
+          </p>
+        </div>
+
+        <div class="p-6 border rounded-2xl hover:shadow-md transition">
+          <h3 class="font-semibold text-lg mb-2">Командная работа</h3>
+          <p class="text-gray-600">
+            Объединяйтесь с другими разработчиками и создавайте проекты вместе.
+          </p>
+        </div>
+
+        <div class="p-6 border rounded-2xl hover:shadow-md transition">
+          <h3 class="font-semibold text-lg mb-2">Статистика</h3>
+          <p class="text-gray-600">
+            Отслеживайте прогресс обучения и делитесь своими достижениями на Codewars.
+          </p>
+        </div>
+
+        <div class="p-6 border rounded-2xl hover:shadow-md transition">
+          <h3 class="font-semibold text-lg mb-2">API</h3>
+          <p class="text-gray-600">
+            Интегрируйте DevsHub в свои приложения и автоматизируйте процессы.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="py-16 bg-gray-50 border-y">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <h2 class="text-2xl font-semibold mb-6 text-center">
+        О проекте
+      </h2>
+
+      <div class="space-y-4 text-gray-700 leading-relaxed">
+        <p>
+          <b>DevsHub</b> — это универсальная платформа для разработчиков и смежных профессий.
+        </p>
+        <p>
+          Здесь можно обучаться, создавать проекты и находить единомышленников в одном месте.
+        </p>
+        <p>
+          Платформа объединяет обучение, практику и социальное взаимодействие.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16">
+    <div class="container mx-auto px-4 text-center max-w-2xl">
+      <h2 class="text-2xl font-semibold mb-4">
+        Готов начать?
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Присоединяйся к DevsHub и начни развивать свои навыки уже сегодня.
+      </p>
+
+      <a href="{% url "register" %}" class="px-8 py-3 bg-black text-white rounded-xl hover:opacity-90 transition">
+        Зарегистрироваться
+      </a>
+    </div>
+  </section>
+
 </div>
-
 {% endblock content %}
