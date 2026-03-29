@@ -109,7 +109,7 @@ def create_project(author, **kwargs):
     if images:
         _create_project_images(project=project, images=images)
 
-    cache.delete(f"projects_stats:users:{author.pk}")
+    cache.delete(f"projects_stats:user:{author.pk}")
 
     return project
 
