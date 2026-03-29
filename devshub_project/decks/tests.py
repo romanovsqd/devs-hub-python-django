@@ -73,13 +73,15 @@ class DeckTest(TestCase):
     def test_toggle_study_deck(self):
         test_user = user_services.create_user("test_user", "password123")
 
-        services.create_deck(
+        new_deck = services.create_deck(
             author=test_user,
             title="test deck title",
             cards=self.cards,
         )
 
-        deck = services.get_deck_created_or_saved_by_user(deck_id=1, user=test_user)
+        deck = services.get_deck_created_or_saved_by_user(
+            deck_id=new_deck.pk, user=test_user
+        )
         is_study, message = services.toggle_deck_study_by_user(
             deck=deck, user=test_user
         )
